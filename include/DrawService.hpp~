@@ -1,0 +1,32 @@
+#ifndef DRAW_SERVICE_H
+#define DRAW_SERVICE_H
+
+class DrawService{
+	private:
+		int width;
+		int height;
+		unsigned char *pixels;
+		
+		int CHAR_WIDTH;
+		int CHAR_HEIGHT;
+	public:
+		DrawService(int width, int height, unsigned char *pixels);
+		~DrawService();
+	
+		void fill(unsigned char r, unsigned char g, unsigned char b);
+		void fillArea(int x, int y, unsigned char r, unsigned char g, unsigned char b);
+		void drawChar(int xc, int yc, char c, unsigned char r, unsigned char g, unsigned char b, int size, bool fill);
+		void drawCharCenter(int xc, int yc, char c, char r, char g, char b, int size, bool fill);
+		void drawRectangle(int xc, int yc, int width, int heigth, char r, char g, char b, int degree, bool fill);
+		void drawRectangleCenter(int xc, int yc, int width, int heigth, char r, char g, char b, int degree, bool fill);
+		void drawCircle(int xc, int yc, int radius, char r, char g, char b, bool fill);
+		void drawCircleCenter(int xc, int yc, int radius, char r, char g, char b, bool fill);
+		void drawLine(int xs, int ys, int xe, int ye, char r, char g, char b);
+		void setPixel(int x, int y, char r, char g, char b);
+		
+		unsigned char getRed(int x, int y);
+		unsigned char getGreen(int x, int y);
+		unsigned char getBlue(int x, int y);
+};
+
+#endif
