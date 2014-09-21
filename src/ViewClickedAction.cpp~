@@ -1,9 +1,0 @@
-#include "../include/ViewClickedAction.hpp"
-
-ViewClickedAction::ViewClickedAction(void){
-
-}
-
-ViewClickedAction::~ViewClickedAction(void){
-
-}

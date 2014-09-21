@@ -38,6 +38,7 @@ Menu::~Menu(void){
 		delete (*bodyCameraControllers)[i];
 	}
 	
+	delete hud;
 	delete freeCameraControl;
 	delete bodyCameraControllers;
 }
@@ -87,4 +88,8 @@ void Menu::calculateFuturePath(void){
 
 void Menu::menuClicked(int button, int action, int x, int y){
 	hud->hudClicked(button, action, x, y);
+}
+
+void Menu::toggleHUD(void){
+	hud->toggleVisibility();
 }

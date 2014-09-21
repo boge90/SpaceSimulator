@@ -9,7 +9,7 @@ HUD::HUD(GLFWwindow *window){
 	// Init
 	glfwGetWindowSize(window, &width, &height);
 	this->window = window;
-	this->visible = true;
+	this->visible = false;
 	this->stride = width*3;
 	this->pixels = (unsigned char*)malloc(width*height*3*sizeof(unsigned char));
 	this->drawService = new DrawService(width, height, pixels);
@@ -19,6 +19,8 @@ HUD::HUD(GLFWwindow *window){
 	// Creating GUI elements
 	left = new View(10, height/2, 50, 50);
 	right = new View(width-60, height/2, 50, 50);
+	
+	pages->push_back(new HudPage(10+50+10, 0, width-140, height-1, 1));
 	
 	// Texture
 	float borderColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -48,8 +50,7 @@ HUD::HUD(GLFWwindow *window){
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_DYNAMIC_DRAW);
 						
 	// Generating texture coordinate buffer						
-	//float texCords[] = {0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 1.f, 0.f, 0.f, 1.f}; // Top Down
-	float texCords[] = {0.f, 1.f, 0.f, 0.f, 1.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f}; // Bottom up
+	float texCords[] = {0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 1.f, 0.f, 0.f, 1.f}; // Top Down
 	glGenBuffers(1, &texCordsBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, texCordsBuffer);
     glBufferData(GL_ARRAY_BUFFER, sizeof(texCords), &texCords, GL_DYNAMIC_DRAW);
@@ -57,12 +58,27 @@ HUD::HUD(GLFWwindow *window){
 
 HUD::~HUD(){
 	std::cout << "HUD.cpp\t\t\tFinalizing" << std::endl;
+	
+	// Freeing HUD pages
+	for(size_t i=0; i<pages->size(); i++){
+		delete (*pages)[i];
+	}
+	
+	delete left;
+	delete right;
+	
 	glDeleteTextures(1, &tex);
 }
 
 void HUD::update(void){
+	// Draw page toggle buttons
 	left->draw(drawService);
 	right->draw(drawService);
+	
+	// Draw pages
+	for(size_t i=0; i<pages->size(); i++){
+		(*pages)[i]->draw(drawService);
+	}
 	
 	glActiveTexture(GL_TEXTURE0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
@@ -105,15 +121,16 @@ void HUD::render(void){
 	}
 }
 
-void HUD::toogleVisibility(void){
+void HUD::toggleVisibility(void){
 	this->visible = !visible;
 }
 
 void HUD::hudClicked(int button, int action, int x, int y){
-	if(right->isInside(x, y)){
-		right->clicked(button, action);
-	}else if(left->isInside(x, y)){
-		left->clicked(button, action);
+	if(visible){	
+		if(right->isInside(x, y)){
+			right->clicked(button, action);
+		}else if(left->isInside(x, y)){
+			left->clicked(button, action);
+		}
 	}
-	std::cout << "HUD click " << button << ", " << action << ", " << " (" << x << " x " << y << ")\n";
 }

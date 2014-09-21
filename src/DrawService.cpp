@@ -11,7 +11,7 @@
 
 DrawService::DrawService(int width, int height, unsigned char *pixels){
 	//Print
-	std::cout << "DrawService.cpp\tInitializing" << std::endl;
+	std::cout << "DrawService.cpp\t\tInitializing" << std::endl;
 	
 	// Init
 	this->width = width;
@@ -22,12 +22,9 @@ DrawService::DrawService(int width, int height, unsigned char *pixels){
 }
 
 DrawService::~DrawService(void){
-	std::cout << "DrawService.cpp\tFinalizing" << std::endl;
+	std::cout << "DrawService.cpp\t\tFinalizing" << std::endl;
 }
 
-/*
-*	Fills the entire screen with color rgb
-*/
 void DrawService::fill(unsigned char r, unsigned char g, unsigned char b){
 	int i;
     for(i = 0; i < width*height; i++){
@@ -37,9 +34,6 @@ void DrawService::fill(unsigned char r, unsigned char g, unsigned char b){
     }
 }
 
-/*
-*	Fills the entire area with a given color, 
-*/
 void DrawService::fillArea(int x, int y, unsigned char r, unsigned char g, unsigned char b){
 	setPixel(x, y, r, g, b);
 	
@@ -64,1487 +58,829 @@ void DrawService::fillArea(int x, int y, unsigned char r, unsigned char g, unsig
 	}
 }
 
-/*
-* TODO
-*/
-void DrawService::drawChar(int xc, int yc, char c, unsigned char r, unsigned char g, unsigned char b, int size, bool fill){
-	drawCharCenter(xc+2, yc+4, c, r, g, b, size, fill);
-}
-
-/*
-* TODO
-*/
-void DrawService::drawCharCenter(int xc, int yc, char c, unsigned char r, unsigned char g, unsigned char b, int size, bool fill){
-	int i;
-
+void DrawService::drawChar(int x, int y, char c, unsigned char r, unsigned char g, unsigned char b, int size, bool fill){
 	switch(c){
 		case 'A':
 		{
-			//Init
-			int x[12];
-			int y[12];
-		
-			x[0] = xc-2;
-			y[0] = yc+4;
-			x[1] = xc-1;
-			y[1] = yc+4;
-			x[2] = xc-1;
-			y[2] = yc+2;
-			x[3] = xc+1;
-			y[3] = yc+2;
-			x[4] = xc+1;
-			y[4] = yc+4;
-			x[5] = xc+2;
-			y[5] = yc+4;
-			x[6] = xc+2;
-			y[6] = yc-4;
-			x[7] = xc-2;
-			y[7] = yc-4;
-		
-			x[8] = xc-1;
-			y[8] = yc;
-			x[9] = xc+1;
-			y[9] = yc;
-			x[10] = xc+1;
-			y[10] = yc-2;
-			x[11] = xc-1;
-			y[11] = yc-2;
-		
-			//Scale
-			for(i = 0; i<12; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-		
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[0], y[0], r, g, b);
-			
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[8], y[8], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc+1*size, r, g, b);
-				fillArea(xc, yc-3*size, r, g, b);
-			}
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x+5, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x+5, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+5, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x+5, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+5, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x+5, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+5, y+8, r, g, b);
 			break;
 		}
 		case 'B':
 		{
-			//Init
-			int x[18];
-			int y[18];
-			
-			x[0] = xc-2;
-			y[0] = yc+4;
-			x[1] = xc+1;
-			y[1] = yc+4;
-			x[2] = xc+2;
-			y[2] = yc+2;
-			x[3] = xc+1;
-			y[3] = yc;
-			x[4] = xc+2;
-			y[4] = yc-2;
-			x[5] = xc+1;
-			y[5] = yc-4;
-			x[6] = xc-2;
-			y[6] = yc-4;
-			
-			x[7] = xc-1;
-			y[7] = yc-3;
-			x[8] = xc;
-			y[8] = yc-3;
-			x[9] = xc+1;
-			y[9] = yc-2;
-			x[10] = xc;
-			y[10] = yc-1;
-			x[11] = xc-1;
-			y[11] = yc-1;
-			
-			x[12] = xc-1;
-			y[12] = yc+1;
-			x[13] = xc;
-			y[13] = yc+1;
-			x[14] = xc+1;
-			y[14] = yc+2;
-			x[15] = xc;
-			y[15] = yc+3;
-			x[16] = xc-1;
-			y[16] = yc+3;
-		
-			//Scale
-			for(i = 0; i<17; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[0], y[0], r, g, b);
-			
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[7], y[7], r, g, b);
-			
-			drawLine(x[12], y[12], x[13], y[13], r, g, b);
-			drawLine(x[13], y[13], x[14], y[14], r, g, b);
-			drawLine(x[14], y[14], x[15], y[15], r, g, b);
-			drawLine(x[15], y[15], x[16], y[16], r, g, b);
-			drawLine(x[16], y[16], x[12], y[12], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-size, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+1, r, g, b);
+			setPixel(x+3, y+2, r, g, b);
+			setPixel(x+3, y+3, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
 			break;
 		}
 		case 'C':
 		{
-			//Init
-			int x[14];
-			int y[14];
-			
-			x[0] = xc+2;
-			y[0] = yc-4;
-			x[1] = xc;
-			y[1] = yc-4;
-			x[2] = xc-1;
-			y[2] = yc-3;
-			x[3] = xc-2;
-			y[3] = yc-1;
-			x[4] = xc-2;
-			y[4] = yc+1;
-			x[5] = xc-1;
-			y[5] = yc+3;
-			x[6] = xc;
-			y[6] = yc+4;
-			x[7] = xc+2;
-			y[7] = yc+4;
-			x[8] = xc+2;
-			y[8] = yc+3;
-			x[9] = xc;
-			y[9] = yc+3;
-			x[10] = xc-1;
-			y[10] = yc+1;
-			x[11] = xc-1;
-			y[11] = yc-1;
-			x[12] = xc;
-			y[12] = yc-3;
-			x[13] = xc+2;
-			y[13] = yc-3;
-		
-			//Scale
-			for(i = 0; i<14; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[12], y[12], r, g, b);
-			drawLine(x[12], y[12], x[13], y[13], r, g, b);
-			drawLine(x[13], y[13], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
 			break;
 		}
 		case 'D':
 		{
-			//Init
-			int x[14];
-			int y[14];
-			
-			x[0] = xc-2;
-			y[0] = yc+4;
-			x[1] = xc;
-			y[1] = yc+4;
-			x[2] = xc+1;
-			y[2] = yc+3;
-			x[3] = xc+2;
-			y[3] = yc+1;
-			x[4] = xc+2;
-			y[4] = yc-1;
-			x[5] = xc+1;
-			y[5] = yc-3;
-			x[6] = xc;
-			y[6] = yc-4;
-			x[7] = xc-2;
-			y[7] = yc-4;
-			x[8] = xc-1;
-			y[8] = yc+3;
-			x[9] = xc;
-			y[9] = yc+3;
-			x[10] = xc+1;
-			y[10] = yc+1;
-			x[11] = xc+1;
-			y[11] = yc-1;
-			x[12] = xc;
-			y[12] = yc-3;
-			x[13] = xc-1;
-			y[13] = yc-3;
-		
-			//Scale
-			for(i = 0; i<14; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[0], y[0], r, g, b);
-			
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[12], y[12], r, g, b);
-			drawLine(x[12], y[12], x[13], y[13], r, g, b);
-			drawLine(x[13], y[13], x[8], y[8], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+1, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
 			break;
 		}
 		case 'E':
 		{
-			//Init
-			int x[11];
-			int y[11];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc+2;
-			y[1] = yc-4;
-			x[2] = xc+2;
-			y[2] = yc-2;
-			x[3] = xc-1;
-			y[3] = yc-2;
-			x[4] = xc-1;
-			y[4] = yc;
-			x[5] = xc+2;
-			y[5] = yc;
-			x[6] = xc+2;
-			y[6] = yc+1;
-			x[7] = xc-1;
-			y[7] = yc+1;
-			x[8] = xc-1;
-			y[8] = yc+3;
-			x[9] = xc+2;
-			y[9] = yc+3;
-			x[10] = xc+2;
-			y[10] = yc+4;
-			x[11] = xc-2;
-			y[11] = yc+4;
-		
-			//Scale
-			for(i = 0; i<12; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
 			break;
 		}
 		case 'F':
 		{
-			//Init
-			int x[10];
-			int y[10];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc+2;
-			y[1] = yc-4;
-			x[2] = xc+2;
-			y[2] = yc-2;
-			x[3] = xc-1;
-			y[3] = yc-2;
-			x[4] = xc-1;
-			y[4] = yc;
-			x[5] = xc+2;
-			y[5] = yc;
-			x[6] = xc+2;
-			y[6] = yc+1;
-			x[7] = xc-1;
-			y[7] = yc+1;
-			x[8] = xc-1;
-			y[8] = yc+4;
-			x[9] = xc-2;
-			y[9] = yc+4;
-		
-			//Scale
-			for(i = 0; i<10; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y, r, g, b);
 			break;
 		}
 		case 'G':
 		{
-			//Init
-			int x[16];
-			int y[16];
-			
-			x[0] = xc+2;
-			y[0] = yc-4;
-			x[1] = xc-1;
-			y[1] = yc-4;
-			x[2] = xc-2;
-			y[2] = yc-2;
-			x[3] = xc-2;
-			y[3] = yc+2;
-			x[4] = xc-1;
-			y[4] = yc+4;
-			x[5] = xc+1;
-			y[5] = yc+4;
-			x[6] = xc+2;
-			y[6] = yc+3;
-			x[7] = xc+2;
-			y[7] = yc;
-			x[8] = xc;
-			y[8] = yc;
-			x[9] = xc;
-			y[9] = yc+1;
-			x[10] = xc+1;
-			y[10] = yc+1;
-			x[11] = xc+1;
-			y[11] = yc+3;
-			x[12] = xc;
-			y[12] = yc+3;
-			x[13] = xc-1;
-			y[13] = yc;
-			x[14] = xc;
-			y[14] = yc-3;
-			x[15] = xc+2;
-			y[15] = yc-3;
-		
-			//Scale
-			for(i = 0; i<16; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[12], y[12], r, g, b);
-			drawLine(x[12], y[12], x[13], y[13], r, g, b);
-			drawLine(x[13], y[13], x[14], y[14], r, g, b);
-			drawLine(x[14], y[14], x[15], y[15], r, g, b);
-			drawLine(x[15], y[15], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-				fillArea(xc+size, yc+size, r, g, b);
-			}
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
 			break;
 		}
 		case 'H':
 		{
-			//Init
-			int x[12];
-			int y[12];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc-1;
-			y[1] = yc-4;
-			x[2] = xc-1;
-			y[2] = yc-1;
-			x[3] = xc+1;
-			y[3] = yc-1;
-			x[4] = xc+1;
-			y[4] = yc-4;
-			x[5] = xc+2;
-			y[5] = yc-4;
-			x[6] = xc+2;
-			y[6] = yc+4;
-			x[7] = xc+1;
-			y[7] = yc+4;
-			x[8] = xc+1;
-			y[8] = yc+1;
-			x[9] = xc-1;
-			y[9] = yc+1;
-			x[10] = xc-1;
-			y[10] = yc+4;
-			x[11] = xc-2;
-			y[11] = yc+4;
-		
-			//Scale
-			for(i = 0; i<12; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
 			break;
 		}
 		case 'I':
 		{
-			//Init
-			int x[12];
-			int y[12];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc+2;
-			y[1] = yc-4;
-			x[2] = xc+2;
-			y[2] = yc-3;
-			x[3] = xc+1;
-			y[3] = yc-3;
-			x[4] = xc+1;
-			y[4] = yc+3;
-			x[5] = xc+2;
-			y[5] = yc+3;
-			x[6] = xc+2;
-			y[6] = yc+4;
-			x[7] = xc-2;
-			y[7] = yc+4;
-			x[8] = xc-2;
-			y[8] = yc+3;
-			x[9] = xc-1;
-			y[9] = yc+3;
-			x[10] = xc-1;
-			y[10] = yc-3;
-			x[11] = xc-2;
-			y[11] = yc-3;
-		
-			//Scale
-			for(i = 0; i<12; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc, r, g, b);
-			}
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+2, y+1, r, g, b);
+			setPixel(x+2, y+2, r, g, b);
+			setPixel(x+2, y+3, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x+2, y+6, r, g, b);
+			setPixel(x+2, y+7, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
 			break;
 		}
 		case 'J':
 		{
-			//Init
-			int x[11];
-			int y[11];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc+2;
-			y[1] = yc-4;
-			x[2] = xc+2;
-			y[2] = yc+2;
-			x[3] = xc+1;
-			y[3] = yc+4;
-			x[4] = xc-1;
-			y[4] = yc+4;
-			x[5] = xc-2;
-			y[5] = yc+3;
-			x[6] = xc-1;
-			y[6] = yc+2;
-			x[7] = xc;
-			y[7] = yc+3;
-			x[8] = xc+1;
-			y[8] = yc+3;
-			x[9] = xc+1;
-			y[9] = yc-3;
-			x[10] = xc-2;
-			y[10] = yc-3;
-		
-			//Scale
-			for(i = 0; i<11; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc+2*size-1, yc, r, g, b);
-				fillArea(xc, yc+4*size-1, r, g, b);
-			}
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x, y+6, r, g, b);
 			break;
 		}
 		case 'K':
 		{
-			//Init
-			int x[11];
-			int y[11];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc-1;
-			y[1] = yc-4;
-			x[2] = xc-1;
-			y[2] = yc-1;
-			x[3] = xc+1;
-			y[3] = yc-4;
-			x[4] = xc+2;
-			y[4] = yc-4;
-			x[5] = xc;
-			y[5] = yc;
-			x[6] = xc+2;
-			y[6] = yc+4;
-			x[7] = xc+1;
-			y[7] = yc+4;
-			x[8] = xc-1;
-			y[8] = yc+1;
-			x[9] = xc-1;
-			y[9] = yc+4;
-			x[10] = xc-2;
-			y[10] = yc+4;
-		
-			//Scale
-			for(i = 0; i<11; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y+3, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x+3, y+1, r, g, b);
+			setPixel(x+3, y+2, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
 			break;
 		}
 		case 'L':
 		{
-			//Init
-			int x[6];
-			int y[6];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc-1;
-			y[1] = yc-4;
-			x[2] = xc-1;
-			y[2] = yc+3;
-			x[3] = xc+2;
-			y[3] = yc+3;
-			x[4] = xc+2;
-			y[4] = yc+4;
-			x[5] = xc-2;
-			y[5] = yc+4;
-		
-			//Scale
-			for(i = 0; i<6; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
 			break;
 		}
 		case 'M':
 		{
-			//Init
-			int x[10];
-			int y[10];
-			
-			x[0] = xc-2;
-			y[0] = yc+4;
-			x[1] = xc-2;
-			y[1] = yc-4;
-			x[2] = xc;
-			y[2] = yc-1;
-			x[3] = xc+2;
-			y[3] = yc-4;
-			x[4] = xc+2;
-			y[4] = yc+4;
-			x[5] = xc+1;
-			y[5] = yc+4;
-			x[6] = xc+1;
-			y[6] = yc-1;
-			x[7] = xc;
-			y[7] = yc+1;
-			x[8] = xc-1;
-			y[8] = yc-1;
-			x[9] = xc-1;
-			y[9] = yc+4;
-		
-			//Scale
-			for(i = 0; i<10; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-				fillArea(xc+2*size-1, yc, r, g, b);
-				fillArea(xc, yc-size, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y+1, r, g, b);
+			setPixel(x+2, y+2, r, g, b);
+			setPixel(x+3, y+2, r, g, b);
+			setPixel(x+3, y+3, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+5, y, r, g, b);
+			setPixel(x+6, y, r, g, b);
+			setPixel(x+6, y+1, r, g, b);
+			setPixel(x+6, y+2, r, g, b);
+			setPixel(x+6, y+3, r, g, b);
+			setPixel(x+6, y+4, r, g, b);
+			setPixel(x+6, y+5, r, g, b);
+			setPixel(x+6, y+6, r, g, b);
+			setPixel(x+6, y+7, r, g, b);
+			setPixel(x+6, y+8, r, g, b);
 			break;
 		}
 		case 'N':
 		{
-			//Init
-			int x[10];
-			int y[10];
-			
-			x[0] = xc-2;
-			y[0] = yc+4;
-			x[1] = xc-2;
-			y[1] = yc-4;
-			x[2] = xc-1;
-			y[2] = yc-4;
-			x[3] = xc+1;
-			y[3] = yc+1;
-			x[4] = xc+1;
-			y[4] = yc-4;
-			x[5] = xc+2;
-			y[5] = yc-4;
-			x[6] = xc+2;
-			y[6] = yc+4;
-			x[7] = xc+1;
-			y[7] = yc+4;
-			x[8] = xc-1;
-			y[8] = yc-1;
-			x[9] = xc-1;
-			y[9] = yc+4;
-			
-			//Scale
-			for(i = 0; i<10; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+1, y+2, r, g, b);
+			setPixel(x+1, y+3, r, g, b);
+			setPixel(x+2, y+3, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
 			break;
 		}
 		case 'O':
 		{
-			//Init
-			int x[14];
-			int y[14];
-			
-			x[0] = xc-2;
-			y[0] = yc-3;
-			x[1] = xc-1;
-			y[1] = yc-4;
-			x[2] = xc+1;
-			y[2] = yc-4;
-			x[3] = xc+2;
-			y[3] = yc-3;
-			x[4] = xc+2;
-			y[4] = yc+3;
-			x[5] = xc+1;
-			y[5] = yc+4;
-			x[6] = xc-1;
-			y[6] = yc+4;
-			x[7] = xc-2;
-			y[7] = yc+3;
-			x[8] = xc-1;
-			y[8] = yc-2;
-			x[9] = xc;
-			y[9] = yc-3;
-			x[10] = xc+1;
-			y[10] = yc-2;
-			x[11] = xc+1;
-			y[11] = yc+2;
-			x[12] = xc;
-			y[12] = yc+3;
-			x[13] = xc-1;
-			y[13] = yc+2;
-			
-			//Scale
-			for(i = 0; i<14; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[0], y[0], r, g, b);
-			
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[12], y[12], r, g, b);
-			drawLine(x[12], y[12], x[13], y[13], r, g, b);
-			drawLine(x[13], y[13], x[8], y[8], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x+5, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x+5, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x+5, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x+5, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+5, y+6, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
 			break;
 		}
 		case 'P':
 		{
-			//Init
-			int x[14];
-			int y[14];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;			
-			x[1] = xc+1;
-			y[1] = yc-4;			
-			x[2] = xc+2;
-			y[2] = yc-2;			
-			x[3] = xc+1;
-			y[3] = yc;
-			x[4] = xc-1;
-			y[4] = yc;
-			x[5] = xc-1;
-			y[5] = yc+4;
-			x[6] = xc-2;
-			y[6] = yc+4;
-			x[7] = xc-1;
-			y[7] = yc-3;
-			x[8] = xc;
-			y[8] = yc-3;
-			x[9] = xc+1;
-			y[9] = yc-2;
-			x[10] = xc;
-			y[10] = yc-1;
-			x[11] = xc-1;
-			y[11] = yc-1;
-			
-			//Scale
-			for(i = 0; i<12; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[0], y[0], r, g, b);
-			
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[7], y[7], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
 			break;
 		}
 		case 'Q':
 		{
-			//Init
-			int x[18];
-			int y[18];
-			
-			x[0] = xc-2;
-			y[0] = yc-3;
-			x[1] = xc-1;
-			y[1] = yc-4;
-			x[2] = xc+1;
-			y[2] = yc-4;
-			x[3] = xc+2;
-			y[3] = yc-3;
-			x[4] = xc+2;
-			y[4] = yc+1;
-			x[5] = xc+1;
-			y[5] = yc+2;
-			x[6] = xc+2;
-			y[6] = yc+3;
-			x[7] = xc+1;
-			y[7] = yc+4;
-			x[8] = xc;
-			y[8] = yc+3;
-			x[9] = xc;
-			y[9] = yc+2;
-			x[10] = xc-1;
-			y[10] = yc+2;
-			x[11] = xc-2;
-			y[11] = yc+1;
-			x[12] = xc-1;
-			y[12] = yc-2;
-			x[13] = xc;
-			y[13] = yc-3;
-			x[14] = xc+1;
-			y[14] = yc-2;
-			x[15] = xc+1;
-			y[15] = yc;
-			x[16] = xc;
-			y[16] = yc+1;
-			x[17] = xc-1;
-			y[17] = yc;
-			
-			//Scale
-			for(i = 0; i<18; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[0], y[0], r, g, b);
-			
-			drawLine(x[12], y[12], x[13], y[13], r, g, b);
-			drawLine(x[13], y[13], x[14], y[14], r, g, b);
-			drawLine(x[14], y[14], x[15], y[15], r, g, b);
-			drawLine(x[15], y[15], x[16], y[16], r, g, b);
-			drawLine(x[16], y[16], x[17], y[17], r, g, b);
-			drawLine(x[17], y[17], x[12], y[12], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x+5, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x+5, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x+5, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x+5, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+5, y+6, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+5, y+8, r, g, b);
 			break;
 		}
 		case 'R':
 		{
-			//Init
-			int x[18];
-			int y[18];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc+1;
-			y[1] = yc-4;
-			x[2] = xc+2;
-			y[2] = yc-2;
-			x[3] = xc+1;
-			y[3] = yc;
-			x[4] = xc;
-			y[4] = yc;
-			x[5] = xc+2;
-			y[5] = yc+4;
-			x[6] = xc+1;
-			y[6] = yc+4;
-			x[7] = xc-1;
-			y[7] = yc+1;
-			x[8] = xc-1;
-			y[8] = yc+4;
-			x[9] = xc-2;
-			y[9] = yc+4;
-			x[10] = xc-1;
-			y[10] = yc-3;
-			x[11] = xc;
-			y[11] = yc-3;
-			x[12] = xc+1;
-			y[12] = yc-2;
-			x[13] = xc;
-			y[13] = yc-1;
-			x[14] = xc-1;
-			y[14] = yc-1;
-			
-			//Scale
-			for(i = 0; i<15; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[0], y[0], r, g, b);
-			
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[12], y[12], r, g, b);
-			drawLine(x[12], y[12], x[13], y[13], r, g, b);
-			drawLine(x[13], y[13], x[14], y[14], r, g, b);
-			drawLine(x[14], y[14], x[10], y[10], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
 			break;
 		}
 		case 'S':
 		{
-			//Init
-			int x[12];
-			int y[12];
-			
-			x[0] = xc+2;
-			y[0] = yc-4;
-			x[1] = xc-2;
-			y[1] = yc-4;
-			x[2] = xc-2;
-			y[2] = yc+1; // +0 ?
-			x[3] = xc+1;
-			y[3] = yc+1; // +0 ?
-			x[4] = xc+1;
-			y[4] = yc+3;
-			x[5] = xc-2;
-			y[5] = yc+3;
-			x[6] = xc-2;
-			y[6] = yc+4;
-			x[7] = xc+2;
-			y[7] = yc+4;
-			x[8] = xc+2;
-			y[8] = yc-1;
-			x[9] = xc-1;
-			y[9] = yc-1;
-			x[10] = xc-1;
-			y[10] = yc-3;
-			x[11] = xc+2;
-			y[11] = yc-3;
-			
-			//Scale
-			for(i = 0; i<12; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc, r, g, b);
-			}
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
 			break;
 		}
 		case 'T':
 		{
-			//Init
-			int x[8];
-			int y[8];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc+2;
-			y[1] = yc-4;
-			x[2] = xc+2;
-			y[2] = yc-2;
-			x[3] = xc+1; //+0
-			y[3] = yc-2;
-			x[4] = xc+1; //+0
-			y[4] = yc+4;
-			x[5] = xc-1;
-			y[5] = yc+4;
-			x[6] = xc-1;
-			y[6] = yc-2;
-			x[7] = xc-2;
-			y[7] = yc-2;
-			
-			//Scale
-			for(i = 0; i<8; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+2, y+1, r, g, b);
+			setPixel(x+2, y+2, r, g, b);
+			setPixel(x+2, y+3, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x+2, y+6, r, g, b);
+			setPixel(x+2, y+7, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
 			break;
 		}
 		case 'U':
 		{
-			//Init
-			int x[8];
-			int y[8];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc-2;
-			y[1] = yc+4;
-			x[2] = xc+2;
-			y[2] = yc+4;
-			x[3] = xc+2;
-			y[3] = yc-4;
-			x[4] = xc+1;
-			y[4] = yc-4;
-			x[5] = xc+1;
-			y[5] = yc+3;
-			x[6] = xc-1;
-			y[6] = yc+3;
-			x[7] = xc-1;
-			y[7] = yc-4;
-			
-			//Scale
-			for(i = 0; i<8; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+5, y+6, r, g, b);
+			setPixel(x+5, y+5, r, g, b);
+			setPixel(x+5, y+4, r, g, b);
+			setPixel(x+5, y+3, r, g, b);
+			setPixel(x+5, y+2, r, g, b);
+			setPixel(x+5, y+1, r, g, b);
+			setPixel(x+5, y, r, g, b);
 			break;
 		}
 		case 'V':
 		{
-			//Init
-			int x[7];
-			int y[7];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc-1;
-			y[1] = yc+4;
-			x[2] = xc+1;
-			y[2] = yc+4;
-			x[3] = xc+2;
-			y[3] = yc-4;
-			x[4] = xc+1;
-			y[4] = yc-4;
-			x[5] = xc;
-			y[5] = yc+3;
-			x[6] = xc-1;
-			y[6] = yc-4;
-			
-			//Scale
-			for(i = 0; i<7; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc+4*size-1, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x+1, y+5, r, g, b);
+			setPixel(x+1, y+6, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x+2, y+7, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y, r, g, b);
 			break;
 		}
 		case 'W':
 		{
-			//Init
-			int x[10];
-			int y[10];
-			
-			x[0] = xc+2;
-			y[0] = yc-4;
-			x[1] = xc+2;
-			y[1] = yc+4;
-			x[2] = xc;
-			y[2] = yc+1;
-			x[3] = xc-2;
-			y[3] = yc+4;
-			x[4] = xc-2;
-			y[4] = yc-4;
-			x[5] = xc-1;
-			y[5] = yc-4;
-			x[6] = xc-1;
-			y[6] = yc+1;
-			x[7] = xc;
-			y[7] = yc-1;
-			x[8] = xc+1;
-			y[8] = yc+1;
-			x[9] = xc+1;
-			y[9] = yc-4;
-		
-			//Scale
-			for(i = 0; i<10; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc+1, r, g, b);
-				fillArea(xc+2*size-1, yc, r, g, b);
-				fillArea(xc-2*size+1, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+6, r, g, b);
+			setPixel(x+2, y+7, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+5, y+8, r, g, b);
+			setPixel(x+6, y+8, r, g, b);
+			setPixel(x+6, y+7, r, g, b);
+			setPixel(x+6, y+6, r, g, b);
+			setPixel(x+6, y+5, r, g, b);
+			setPixel(x+6, y+4, r, g, b);
+			setPixel(x+6, y+3, r, g, b);
+			setPixel(x+6, y+2, r, g, b);
+			setPixel(x+6, y+1, r, g, b);
+			setPixel(x+6, y, r, g, b);
 			break;
 		}
 		case 'X':
 		{
-			//Init
-			int x[12];
-			int y[12];
-			
-			x[0] = xc-1;
-			y[0] = yc-4;
-			x[1] = xc;
-			y[1] = yc-1;
-			x[2] = xc+1;
-			y[2] = yc-4;
-			x[3] = xc+2;
-			y[3] = yc-4;
-			x[4] = xc+1;
-			y[4] = yc;
-			x[5] = xc+2;
-			y[5] = yc+4;
-			x[6] = xc+1;
-			y[6] = yc+4;
-			x[7] = xc;
-			y[7] = yc+1;
-			x[8] = xc-1;
-			y[8] = yc+4;
-			x[9] = xc-2;
-			y[9] = yc+4;
-			x[10] = xc-1;
-			y[10] = yc;
-			x[11] = xc-2;
-			y[11] = yc-4;
-		
-			//Scale
-			for(i = 0; i<12; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+1, y+2, r, g, b);
+			setPixel(x+2, y+3, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+6, y, r, g, b);
+			setPixel(x+5, y+1, r, g, b);
+			setPixel(x+5, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+1, y+6, r, g, b);
+			setPixel(x+5, y+6, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x+5, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+6, y+8, r, g, b);
 			break;
 		}
 		case 'Y':
 		{
-			//Init
-			int x[12];
-			int y[12];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc-1;
-			y[1] = yc-4;
-			x[2] = xc-1;
-			y[2] = yc-1;
-			x[3] = xc+1;
-			y[3] = yc-1;
-			x[4] = xc+1;
-			y[4] = yc-4;
-			x[5] = xc+2;
-			y[5] = yc-4;
-			x[6] = xc+2;
-			y[6] = yc;
-			x[7] = xc+1;
-			y[7] = yc;
-			x[8] = xc+1;
-			y[8] = yc+4;
-			x[9] = xc-1;
-			y[9] = yc+4;
-			x[10] = xc-1;
-			y[10] = yc;
-			x[11] = xc-2;
-			y[11] = yc;
-		
-			//Scale
-			for(i = 0; i<12; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[10], y[10], r, g, b);
-			drawLine(x[10], y[10], x[11], y[11], r, g, b);
-			drawLine(x[11], y[11], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+1, y+2, r, g, b);
+			setPixel(x+2, y+3, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+6, y, r, g, b);
+			setPixel(x+5, y+1, r, g, b);
+			setPixel(x+5, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
 			break;
 		}
 		case 'Z':
 		{
-			//Init
-			int x[10];
-			int y[10];
-			
-			x[0] = xc-2;
-			y[0] = yc-4;
-			x[1] = xc+2;
-			y[1] = yc-4;
-			x[2] = xc+2;
-			y[2] = yc-3;
-			x[3] = xc-1;
-			y[3] = yc+3;
-			x[4] = xc+2;
-			y[4] = yc+3;
-			x[5] = xc+2;
-			y[5] = yc+4;
-			x[6] = xc-2;
-			y[6] = yc+4;
-			x[7] = xc-2;
-			y[7] = yc+2;
-			x[8] = xc+1;
-			y[8] = yc-3;
-			x[9] = xc-2;
-			y[9] = yc-3;
-		
-			//Scale
-			for(i = 0; i<10; i++){
-				x[i] = x[i]*size + (xc - xc*size);
-				y[i] = y[i]*size + (yc - yc*size);
-			}
-			
-			//Draw
-			drawLine(x[0], y[0], x[1], y[1], r, g, b);
-			drawLine(x[1], y[1], x[2], y[2], r, g, b);
-			drawLine(x[2], y[2], x[3], y[3], r, g, b);
-			drawLine(x[3], y[3], x[4], y[4], r, g, b);
-			drawLine(x[4], y[4], x[5], y[5], r, g, b);
-			drawLine(x[5], y[5], x[6], y[6], r, g, b);
-			drawLine(x[6], y[6], x[7], y[7], r, g, b);
-			drawLine(x[7], y[7], x[8], y[8], r, g, b);
-			drawLine(x[8], y[8], x[9], y[9], r, g, b);
-			drawLine(x[9], y[9], x[0], y[0], r, g, b);
-			
-			if(fill == 1){
-				fillArea(xc, yc-4*size+1, r, g, b);
-				fillArea(xc, yc+4*size-1, r, g, b);
-			}
+			setPixel(x, y, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+1, y+2, r, g, b);
+			setPixel(x+1, y+3, r, g, b);
+			setPixel(x+2, y+3, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
+			break;
+		}
+		case '0':
+		{
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			break;
+		}
+		case '1':
+		{
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+2, y+1, r, g, b);
+			setPixel(x+3, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x+3, y+2, r, g, b);
+			setPixel(x+3, y+3, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+3, y+6, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			break;
+		}
+		case '2':
+		{
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x+2, y+1, r, g, b);
+			setPixel(x+3, y+1, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+3, y+3, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+1, y+5, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+1, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
+			break;
+		}
+		case '3':
+		{
+			setPixel(x, y+1, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			break;
+		}
+		case '4':
+		{
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+2, y+1, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+1, y+2, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+4, y+8, r, g, b);
+			break;
+		}
+		case '5':
+		{
+			setPixel(x, y, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			break;
+		}
+		case '6':
+		{
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x+1, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			setPixel(x+3, y+7, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+3, y+5, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+1, y+5, r, g, b);
+			break;
+		}
+		case '7':
+		{
+			setPixel(x, y, r, g, b);
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x+4, y, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x+3, y+2, r, g, b);
+			setPixel(x+3, y+3, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+2, y+5, r, g, b);
+			setPixel(x+2, y+6, r, g, b);
+			setPixel(x+2, y+7, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			break;
+		}
+		case '8':
+		{
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			break;
+		}
+		case '9':
+		{
+			setPixel(x+1, y, r, g, b);
+			setPixel(x+2, y, r, g, b);
+			setPixel(x+3, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x+4, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x+4, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x+4, y+3, r, g, b);
+			setPixel(x+1, y+4, r, g, b);
+			setPixel(x+2, y+4, r, g, b);
+			setPixel(x+3, y+4, r, g, b);
+			setPixel(x+4, y+5, r, g, b);
+			setPixel(x+4, y+6, r, g, b);
+			setPixel(x+4, y+7, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x+2, y+8, r, g, b);
+			setPixel(x+3, y+8, r, g, b);
+			break;
+		}
+		case ' ':
+		{
 			break;
 		}
 	}
 }
 
-/*
-* TODO
-*/
 void DrawService::drawRectangle(int xc, int yc, int width, int heigth, unsigned char r, unsigned char g, unsigned char b, int degree, bool fill){
 	drawRectangleCenter(xc+width/2, yc+heigth/2, width, heigth, r, g, b, degree, fill);
 }
 
-/*
-* Draws a rectangle on the screen with cetern = (xc, yc), color rgb, and rotates CW degree, and optional filling
-*/
 void DrawService::drawRectangleCenter(int xc, int yc, int width, int heigth, unsigned char r, unsigned char g, unsigned char b, int degree, bool fill){
 	//Init
 	int x1, y1, x2, y2, x3, y3, x4, y4;
@@ -1593,16 +929,10 @@ void DrawService::drawRectangleCenter(int xc, int yc, int width, int heigth, uns
 	}
 }
 
-/*
-* TODO
-*/
 void DrawService::drawCircle(int xc, int yc, int radius, unsigned char r, unsigned char g, unsigned char b, bool fill){
 	drawCircleCenter(xc+radius/2, yc+radius/2, radius, r, g, b, fill);
 }
 
-/*
-*	Draws a circle with center = (xc, yc), Color RGB, and an optional fill
-*/
 void DrawService::drawCircleCenter(int xc, int yc, int radius, unsigned char r, unsigned char g, unsigned char b, bool fill){
 	//Init
 	int x, y, e;
@@ -1635,9 +965,6 @@ void DrawService::drawCircleCenter(int xc, int yc, int radius, unsigned char r, 
 	}
 }
 
-/*
-*	Draws a line from (xs, ys) -> (xe, ye) with a RGB color
-*/
 void DrawService::drawLine(int xs, int ys, int xe, int ye, unsigned char r, unsigned char g, unsigned char b){
 	//Init
 	int x, y, e, dx, dy, inc_x, inc_y;
@@ -1720,9 +1047,6 @@ void DrawService::drawLine(int xs, int ys, int xe, int ye, unsigned char r, unsi
 	}
 }
 
-/*
-*	Sets a RGB color for a single pixel (x,y)
-*/
 void DrawService::setPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b){
 	//Verify coordinates in screen
 	assert(x < width && x >= 0);
@@ -1734,25 +1058,14 @@ void DrawService::setPixel(int x, int y, unsigned char r, unsigned char g, unsig
 	pixels[y*width*3 + x*3 + 0] = b;
 }
 
-/*
-*	Returns the RED part of the color in (x, y)
-*/
 inline unsigned char DrawService::getRed(int x, int y){
 	return pixels[y*width*3 + x*3 + 2];
 }
 
-
-/*
-*	Returns the GREEN part of the color in (x, y)
-*/
 inline unsigned char DrawService::getGreen(int x, int y){
 	return pixels[y*width*3 + x*3 + 1];
 }
 
-
-/*
-*	Returns the BLUE part of the color in (x, y)
-*/
 inline unsigned char DrawService::getBlue(int x, int y){
 	return pixels[y*width*3 + x*3];
 }

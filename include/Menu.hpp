@@ -72,6 +72,11 @@ class Menu{
         * Called when the mouse callback function is called
         **/
         void menuClicked(int button, int action, int x, int y);
+        
+        /**
+        * Toggle the visibility of the HUD
+        **/
+        void toggleHUD(void);
 };
 
 #endif

@@ -64,7 +64,7 @@ class HUD{
 		/**
 		* Toogles the visibility flag
 		**/
-		void toogleVisibility(void);
+		void toggleVisibility(void);
 		
 		/**
 		* Called when the mouse is clicked

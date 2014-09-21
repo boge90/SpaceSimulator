@@ -20,7 +20,7 @@ class ViewClickedAction{
 		/**
 		*
 		**/
-		virtual void ViewClicked(View *view) = 0;
+		virtual void viewClicked(View *view, int button, int action) = 0;
 };
 
 #endif
