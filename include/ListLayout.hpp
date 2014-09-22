@@ -2,13 +2,11 @@
 #define LIST_LAYOUT_H
 
 #include "../include/DrawService.hpp"
-#include "../include/View.hpp"
+#include "../include/Layout.hpp"
 #include <vector>
 
-class ListLayout: public View{
+class ListLayout: public Layout{
 	private:
-		View *parent;
-		std::vector<View*> *children;
 		
 	public:
 		/**
@@ -22,14 +20,9 @@ class ListLayout: public View{
 		~ListLayout();
 		
 		/**
-		* Adds a child view to this layout
-		**/
-		void addChild(View *view);
-		
-		/**
-		* Executed when the view should be drawn
-		**/
-		void draw(DrawService *draw);
+		* Layout class function
+		**/ 
+		virtual void addChild(View *view);
 };
 
 #endif

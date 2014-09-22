@@ -76,6 +76,11 @@ class Simulator{
 		* Returns the pointer to the BodyTracer renderer
 		**/
 		BodyTracer* getBodyTracer(void);
+		
+		/**
+		* Returns the pointer to the visualization frame
+		**/
+		Frame* getFrame(void);
 };
 
 #endif

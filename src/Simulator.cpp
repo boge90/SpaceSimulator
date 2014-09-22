@@ -86,3 +86,7 @@ RayTracer* Simulator::getRayTracerSimulator(void){
 BodyTracer* Simulator::getBodyTracer(void){
 	return bodyTracer;
 }
+
+Frame* Simulator::getFrame(void){
+	return frame;
+}

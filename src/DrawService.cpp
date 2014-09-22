@@ -243,15 +243,15 @@ void DrawService::drawChar(int x, int y, char c, unsigned char r, unsigned char 
 		}
 		case 'I':
 		{
-			setPixel(x+2, y, r, g, b);
-			setPixel(x+2, y+1, r, g, b);
-			setPixel(x+2, y+2, r, g, b);
-			setPixel(x+2, y+3, r, g, b);
-			setPixel(x+2, y+4, r, g, b);
-			setPixel(x+2, y+5, r, g, b);
-			setPixel(x+2, y+6, r, g, b);
-			setPixel(x+2, y+7, r, g, b);
-			setPixel(x+2, y+8, r, g, b);
+			setPixel(x, y, r, g, b);
+			setPixel(x, y+1, r, g, b);
+			setPixel(x, y+2, r, g, b);
+			setPixel(x, y+3, r, g, b);
+			setPixel(x, y+4, r, g, b);
+			setPixel(x, y+5, r, g, b);
+			setPixel(x, y+6, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x, y+8, r, g, b);
 			break;
 		}
 		case 'J':
@@ -877,55 +877,171 @@ void DrawService::drawChar(int x, int y, char c, unsigned char r, unsigned char 
 	}
 }
 
-void DrawService::drawRectangle(int xc, int yc, int width, int heigth, unsigned char r, unsigned char g, unsigned char b, int degree, bool fill){
-	drawRectangleCenter(xc+width/2, yc+heigth/2, width, heigth, r, g, b, degree, fill);
+int DrawService::widthOf(char c){
+	switch(c){
+		case 'A':
+		{
+			return 6;
+		}
+		case 'B':
+		{
+			return 4;
+		}
+		case 'C':
+		{
+			return 5;
+		}
+		case 'D':
+		{
+			return 5;
+		}
+		case 'E':
+		{
+			return 4;
+		}
+		case 'F':
+		{
+			return 4;
+		}
+		case 'G':
+		{
+			return 5;
+		}
+		case 'H':
+		{
+			return 5;
+		}
+		case 'I':
+		{
+			return 1;
+		}
+		case 'J':
+		{
+			return 5;
+		}
+		case 'K':
+		{
+			return 5;
+		}
+		case 'L':
+		{
+			return 5;
+		}
+		case 'M':
+		{
+			return 7;
+		}
+		case 'N':
+		{
+			return 5;
+		}
+		case 'O':
+		{
+			return 6;
+		}
+		case 'P':
+		{
+			return 5;
+		}
+		case 'Q':
+		{
+			return 6;
+		}
+		case 'R':
+		{
+			return 5;
+		}
+		case 'S':
+		{
+			return 5;
+		}
+		case 'T':
+		{
+			return 5;
+		}
+		case 'U':
+		{
+			return 6;
+		}
+		case 'V':
+		{
+			return 5;
+		}
+		case 'W':
+		{
+			return 7;
+		}
+		case 'X':
+		{
+			return 7;
+		}
+		case 'Y':
+		{
+			return 7;
+		}
+		case 'Z':
+		{
+			return 5;
+		}
+		case '0':
+		{
+			return 5;
+		}
+		case '1':
+		{
+			return 4;
+		}
+		case '2':
+		{
+			return 5;
+		}
+		case '3':
+		{
+			return 5;
+		}
+		case '4':
+		{
+			return 5;
+		}
+		case '5':
+		{
+			return 5;
+		}
+		case '6':
+		{
+			return 5;
+		}
+		case '7':
+		{
+			return 5;
+		}
+		case '8':
+		{
+			return 5;
+		}
+		case '9':
+		{
+			return 5;
+		}
+		case ' ':
+		{
+			return 5;
+		}
+	}
+	
+	return 5;
 }
 
-void DrawService::drawRectangleCenter(int xc, int yc, int width, int heigth, unsigned char r, unsigned char g, unsigned char b, int degree, bool fill){
-	//Init
-	int x1, y1, x2, y2, x3, y3, x4, y4;
-	int dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4;
-	float radians;
-	float sin_val, cos_val;
-	
-	//Calculate initial corners
-	x1 = xc - width/2;
-	y1 = yc - heigth/2;
-	
-	x2 = xc + width/2;
-	y2 = yc - heigth/2;
-	
-	x3 = xc + width/2;
-	y3 = yc + heigth/2;
-	
-	x4 = xc - width/2;
-	y4 = yc + heigth/2;
-	
-	//Rotation
-	radians = degree*PI/180.0f;
-	cos_val = cosf(radians);
-	sin_val = sinf(radians);
-	dx1 = x1*cos_val - y1*sin_val + (-xc*cos_val + yc*sin_val + xc);
-	dy1 = x1*sin_val + y1*cos_val + (-xc*sin_val - yc*cos_val + yc);
-	
-	dx2 = x2*cos_val - y2*sin_val + (-xc*cos_val + yc*sin_val + xc);
-	dy2 = x2*sin_val + y2*cos_val + (-xc*sin_val - yc*cos_val + yc);
-	
-	dx3 = x3*cos_val - y3*sin_val + (-xc*cos_val + yc*sin_val + xc);
-	dy3 = x3*sin_val + y3*cos_val + (-xc*sin_val - yc*cos_val + yc);
-	
-	dx4 = x4*cos_val - y4*sin_val + (-xc*cos_val + yc*sin_val + xc);
-	dy4 = x4*sin_val + y4*cos_val + (-xc*sin_val - yc*cos_val + yc);
-	
+void DrawService::drawRectangle(int x, int y, int reqWidth, int reqHeight, unsigned char r, unsigned char g, unsigned char b, bool fill){
 	//Draw lines
-	drawLine(dx1, dy1, dx2, dy2, r, g, b);
-	drawLine(dx2, dy2, dx3, dy3, r, g, b);
-	drawLine(dx3, dy3, dx4, dy4, r, g, b);
-	drawLine(dx4, dy4, dx1, dy1, r, g, b);
+	drawLine(x, y, x+reqWidth, y, r, g, b);
+	drawLine(x, y, x, y+reqHeight, r, g, b);
+	drawLine(x, y+reqHeight, x+reqWidth, y+reqHeight, r, g, b);
+	drawLine(x+reqWidth, y, x+reqWidth, y+reqHeight, r, g, b);
 	
 	//Fill
-	if(fill == 1){
-		fillArea(xc, yc, r, g, b);
+	if(fill){
+		fillArea(x+1, y+1, r, g, b);
 	}
 }
 

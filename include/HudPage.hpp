@@ -11,7 +11,6 @@ class HudPage: public ListLayout{
 		
 		// GUI
 		TextView *numberView;
-		
 	public:
 		/**
 		* Creates an empty HUD page object
@@ -22,11 +21,6 @@ class HudPage: public ListLayout{
 		* Finalizes the HUD page object
 		**/
 		~HudPage(void);
-		
-		/**
-		* Called when the HUD is updated
-		**/
-		void draw(DrawService *service);
 };
 
 #endif

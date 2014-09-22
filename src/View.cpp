@@ -52,9 +52,6 @@ bool View::isInside(int _x, int _y){
 }
 
 void View::clicked(int button, int action){
-	// Debug
-	std::cout << "Clicked " << this << std::endl;
-	
 	// Fire off listeners
 	for(size_t i=0; i<clickActions->size(); i++){
 		(*clickActions)[i]->viewClicked(this, button, action);

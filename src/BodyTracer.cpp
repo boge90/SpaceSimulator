@@ -55,7 +55,7 @@ void BodyTracer::render(const GLfloat *mvp){
 	}
 }
 
-void BodyTracer::toogle(void){
+void BodyTracer::toggle(void){
 	this->active = !active;
 	if(active){
 		std::cout << "BodyTracer.cpp\t\tTurning ON path visualization" << std::endl;

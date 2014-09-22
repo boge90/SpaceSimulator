@@ -1,8 +1,9 @@
 #include "../include/Hud.hpp"
+#include "../include/MainHudPage.hpp"
 
 #include <iostream>
 
-HUD::HUD(GLFWwindow *window){
+HUD::HUD(GLFWwindow *window, Simulator *simulator){
 	// Debug
 	std::cout << "HUD.cpp\t\t\tInitializing" << std::endl;
 	
@@ -20,7 +21,8 @@ HUD::HUD(GLFWwindow *window){
 	left = new View(10, height/2, 50, 50);
 	right = new View(width-60, height/2, 50, 50);
 	
-	pages->push_back(new HudPage(10+50+10, 0, width-140, height-1, 1));
+	// Adding main HUD page
+	pages->push_back(new MainHudPage(10+50+10, 0, width-140, height-1, simulator));
 	
 	// Texture
 	float borderColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -126,11 +128,31 @@ void HUD::toggleVisibility(void){
 }
 
 void HUD::hudClicked(int button, int action, int x, int y){
-	if(visible){	
+	if(visible && action == GLFW_PRESS){
 		if(right->isInside(x, y)){
 			right->clicked(button, action);
 		}else if(left->isInside(x, y)){
 			left->clicked(button, action);
+		}
+		
+		Layout *layout = (*pages)[activePage];
+		hudClickedRecur(button, action, x, y, layout);
+	}
+}
+
+void HUD::hudClickedRecur(int button, int action, int x, int y, Layout *layout){
+	std::vector<View*> *children = layout->getChildren();
+	
+	for(size_t i=0; i<children->size(); i++){
+		View *child = (*children)[i];
+		
+		Layout *cast = dynamic_cast<Layout*>(child);
+		if(cast == NULL){
+			if(child->isInside(x, y)){
+				child->clicked(button, action);
+			}
+		}else{
+			hudClickedRecur(button, action, x, y, cast);
 		}
 	}
 }

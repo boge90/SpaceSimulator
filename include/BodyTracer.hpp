@@ -39,7 +39,7 @@ class BodyTracer: public Renderable{
 		/**
 		* Enable / Disables the rendering
 		**/
-		void toogle(void);
+		void toggle(void);
 		
 		/**
 		* Updates the visualization buffer base on the new body positions

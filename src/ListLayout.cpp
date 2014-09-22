@@ -1,29 +1,20 @@
 #include "../include/ListLayout.hpp"
 #include <iostream>
 
-ListLayout::ListLayout(int x, int y, int width, int height): View(x, y, width, height){
+ListLayout::ListLayout(int x, int y, int width, int height): Layout(x, y, width, height){
 	// Debug
 	std::cout << "ListLayout.cpp\t\tInitializing" << std::endl;
-	
-	// Init
-	children = new std::vector<View*>();
 }
 
 ListLayout::~ListLayout(){
 	// Debug
 	std::cout << "ListLayout.cpp\t\tFinalizing" << std::endl;
-	
-	// Deleting children
-	for(size_t i=0; i<children->size(); i++){
-		delete (*children)[i];
-	}
-	
-	delete children;
 }
 
-void ListLayout::addChild(View *view){
-	children->push_back(view);
-	
+void ListLayout::addChild(View *view){	
+	//Super
+	Layout::addChild(view);
+
 	int padding = 10;
 	size_t childNumber = children->size();
 	
@@ -40,22 +31,5 @@ void ListLayout::addChild(View *view){
 	
 	if(view->getWidth() < 0){
 		view->setWidth(width - 2*padding);
-	}
-	
-	// Debug
-	std::cout << "Added child x = " << view->getX() << ", y = " << view->getY() << ", width = " << view->getWidth() << ", height = " << view->getHeight() << std::endl;
-}
-
-void ListLayout::draw(DrawService *drawService){
-	// Super
-	View::draw(drawService);
-
-	// Calling parent
-	View::draw(drawService);
-	
-	// Drawing children
-	size_t numChildren = children->size();
-	for(size_t i=0; i<numChildren; i++){
-		(*children)[i]->draw(drawService);
 	}
 }

@@ -1,18 +1,16 @@
 #include "../include/Menu.hpp"
-#include <AntTweakBar.h>
 #include <iostream>
 #include <vector>
 
-Menu::Menu(GLFWwindow *window, Frame *frame){
+Menu::Menu(GLFWwindow *window, Simulator *simulator){
 	// Debug
 	std::cout << "Menu.cpp\t\tInitializing\n";
 
 	// Init
-	this->hud = new HUD(window);
-	this->frame = frame;
+	this->hud = new HUD(window, simulator);
 	this->currentActive = 0;
-	freeCameraControl = new FreeCameraControl(window, frame->getWidth(), frame->getHeight());
-	std::vector<Body*> *bodies = frame->getSimulator()->getBodies();
+	freeCameraControl = new FreeCameraControl(window, simulator->getFrame()->getWidth(), simulator->getFrame()->getHeight());
+	std::vector<Body*> *bodies = simulator->getBodies();
 	bodyCameraControllers = new std::vector<BodyCameraControl*>();
 	
 	// Setting the number of controllers
@@ -21,7 +19,7 @@ Menu::Menu(GLFWwindow *window, Frame *frame){
 	// Initializing body controllers
 	int size = bodies->size();
 	for(int i = 0; i<size; i++){
-		BodyCameraControl *controller = new BodyCameraControl(window, frame, (*bodies)[i]);
+		BodyCameraControl *controller = new BodyCameraControl(window, simulator->getFrame(), (*bodies)[i]);
 		bodyCameraControllers->push_back(controller);
 	}
 	
@@ -66,24 +64,11 @@ void Menu::changeCamera(bool next){
 	activeCamera->activated();
 }
 
-void Menu::toogleWireFrame(void){
-	std::vector<Body*> *bodies = frame->getSimulator()->getBodies();
-	int size = bodies->size();
-	
-	for(int i=0; i<size; i++){
-		(*bodies)[i]->toogleWireFrame();
-	}
-}
-
-void Menu::toogleBodyTracing(void){
-	frame->getSimulator()->getBodyTracer()->toogle();
-}
-
 void Menu::calculateFuturePath(void){
-	size_t number;
-	std::cout << "Enter the number of the body that the path should be calculated for: ";
-	std::cin >> number;
-	frame->getSimulator()->getBodyTracer()->calculateFuturePath(number);
+	//size_t number;
+	//std::cout << "Enter the number of the body that the path should be calculated for: ";
+	//std::cin >> number;
+	//frame->getSimulator()->getBodyTracer()->calculateFuturePath(number);
 }
 
 void Menu::menuClicked(int button, int action, int x, int y){

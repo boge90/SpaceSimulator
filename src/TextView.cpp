@@ -6,6 +6,9 @@ TextView::TextView(std::string text): View(30){
 	std::cout << "TextView.cpp\t\tInitializing" << std::endl;
 
 	this->text = text;
+	this->leftPadding = 10;
+	this->topPadding = 5;
+	this->charPadding = 2;
 }
 
 TextView::~TextView(void){
@@ -20,10 +23,10 @@ void TextView::draw(DrawService *drawService){
 	// Drawing text
 	const char *string = text.c_str();
 	size_t size = text.size();
-	int pos = x+10;
+	int pos = x+leftPadding;
 	
 	for(size_t i=0; i<size; i++){
-		drawService->drawChar(pos, y+5, string[i], 255, 255, 255, 1, false);
-		pos += 10;
+		drawService->drawChar(pos, y+topPadding, string[i], 255, 255, 255, 1, false);
+		pos += drawService->widthOf(string[i]) + charPadding;
 	}
 }

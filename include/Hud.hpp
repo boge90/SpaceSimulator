@@ -1,12 +1,15 @@
 #ifndef HUD_H
 #define HUD_H
 
+class HUD;
+
 #include "../include/common.hpp"
 #include "../include/Renderable.hpp"
 #include "../include/Shader.hpp"
 #include "../include/DrawService.hpp"
 #include "../include/HudPage.hpp"
 #include "../include/View.hpp"
+#include "../include/Simulator.hpp"
 
 #include <vector>
 
@@ -40,11 +43,16 @@ class HUD{
 		
 		// OpenGL
 		GLFWwindow *window;
+		
+		/**
+		* Called when finding a layout class in the view tree, for traversing down the tree
+		**/
+		void hudClickedRecur(int button, int action, int x, int y, Layout *layout);
 	public:
 		/**
 		* Creates the HUD object
 		**/
-		HUD(GLFWwindow *window);
+		HUD(GLFWwindow *window, Simulator *simulator);
 		
 		/**
 		* Destroys the HUD object

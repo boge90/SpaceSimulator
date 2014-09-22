@@ -67,7 +67,7 @@ class View{
 		/**
 		* Called when the view has been clicked on
 		**/
-		void clicked(int button, int action);
+		virtual void clicked(int button, int action);
 		
 		/**
 		* Updates the X coordinate of the view

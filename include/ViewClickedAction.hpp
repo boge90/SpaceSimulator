@@ -10,12 +10,12 @@ class ViewClickedAction{
 		/**
 		*
 		**/
-		ViewClickedAction(void);
+		ViewClickedAction(){};
 		
 		/**
 		*
 		**/
-		virtual ~ViewClickedAction(void) = 0;
+		~ViewClickedAction(void){};
 	
 		/**
 		*

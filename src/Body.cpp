@@ -259,6 +259,12 @@ int Body::getNumVertices(void){
 
 void Body::toogleWireFrame(void){
 	this->wireFrame = !wireFrame;
+	
+	if(wireFrame){
+		std::cout << "Body.cpp\t\tTurning ON wireframe for body " << bodyNum << std::endl;
+	}else{
+		std::cout << "Body.cpp\t\tTurning OFF wireframe for body " << bodyNum << std::endl;
+	}
 }
 
 double Body::getInclination(void){

@@ -11,7 +11,7 @@ class Menu;
 #include "../include/BodyCameraControl.hpp"
 #include "../include/FreeCameraControl.hpp"
 #include "../include/AbstractCamera.hpp"
-#include "../include/Frame.hpp"
+#include "../include/Simulator.hpp"
 #include "../include/Hud.hpp"
 
 class Menu{
@@ -24,14 +24,11 @@ class Menu{
 		
 		// HUD
 		HUD *hud;
-		
-		// Misc
-		Frame *frame;
 	public:
 		/**
 		*
 		**/
-		Menu(GLFWwindow *window, Frame *frame);
+		Menu(GLFWwindow *window, Simulator *simulator);
 		
 		/**
 		*
@@ -52,16 +49,6 @@ class Menu{
         * Changes the active camera type
         **/
         void changeCamera(bool next);
-        
-        /**
-        * Changes the wireframe for all objects
-        **/
-        void toogleWireFrame(void);
-        
-        /**
-        * Enables / Disables the rendering of the future body's path that are currently set
-        **/
-        void toogleBodyTracing(void);
         
         /**
         * Promts the user to specify the body number for which the path for the body should be calculated

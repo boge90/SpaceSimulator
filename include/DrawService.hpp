@@ -16,12 +16,13 @@ class DrawService{
 		void fill(unsigned char r, unsigned char g, unsigned char b);
 		void fillArea(int x, int y, unsigned char r, unsigned char g, unsigned char b);
 		void drawChar(int xc, int yc, char c, unsigned char r, unsigned char g, unsigned char b, int size, bool fill);
-		void drawRectangle(int xc, int yc, int width, int heigth, unsigned char r, unsigned char g, unsigned char b, int degree, bool fill);
-		void drawRectangleCenter(int xc, int yc, int width, int heigth, unsigned char r, unsigned char g, unsigned char b, int degree, bool fill);
+		void drawRectangle(int xc, int yc, int width, int heigth, unsigned char r, unsigned char g, unsigned char b, bool fill);
 		void drawCircle(int xc, int yc, int radius, unsigned char r, unsigned char g, unsigned char b, bool fill);
 		void drawCircleCenter(int xc, int yc, int radius, unsigned char r, unsigned char g, unsigned char b, bool fill);
 		void drawLine(int xs, int ys, int xe, int ye, unsigned char r, unsigned char g, unsigned char b);
 		void setPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b);
+		
+		int widthOf(char c);
 		
 		unsigned char getRed(int x, int y);
 		unsigned char getGreen(int x, int y);

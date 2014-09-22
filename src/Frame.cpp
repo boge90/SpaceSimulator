@@ -20,7 +20,7 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	this->frameWidth = width;
 	this->frameHeight = height;
 	this->prevTime = 0;
-	this->menu = new Menu(window, this);
+	this->menu = new Menu(window, simulator);
 	
 	// Without this vertex array which is not even used, nothing is displayed
     glGenVertexArrays(1, &VertexArrayID);
@@ -107,17 +107,12 @@ void Frame::windowSizeChangeCallback(GLFWwindow* window, int width, int height){
 void Frame::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
 		Frame::instance->menu->toggleHUD();
-		//glfwSetWindowShouldClose(window, GL_TRUE);
 	}else if(key == GLFW_KEY_UP && action == GLFW_PRESS){
 		Frame::instance->menu->changeCamera(true);
 	}else if(key == GLFW_KEY_DOWN && action == GLFW_PRESS){
 		Frame::instance->menu->changeCamera(false);
-	}else if((key == 'q' || key == 'Q') && action == GLFW_PRESS){
-		Frame::instance->menu->toogleWireFrame();
 	}else if((key == 'p' || key == 'P') && action == GLFW_PRESS){
 		Frame::instance->menu->calculateFuturePath();
-	}else if((key == 'o' || key == 'O') && action == GLFW_PRESS){
-		Frame::instance->menu->toogleBodyTracing();
 	}
 }
 
@@ -144,4 +139,8 @@ int Frame::getWidth(void){
 
 int Frame::getHeight(void){
 	return frameHeight;
+}
+
+GLFWwindow* Frame::getWindow(void){
+	return window;
 }

@@ -5,8 +5,11 @@
 #include <string>
 
 class TextView: public View{
-	private:
+	protected:
 		std::string text;
+		int leftPadding;
+		int topPadding;
+		int charPadding;
 		
 	public:
 		/**
