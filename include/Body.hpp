@@ -123,7 +123,7 @@ class Body: public Renderable{
 		/**
 		* Changes the state of the wireFrame mode
 		**/
-		void toogleWireFrame(void);
+		void setWireframeMode(bool active);
 		
 		/**
 		* Returns this body's inclination (rads)

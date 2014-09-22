@@ -1,12 +1,9 @@
 #include "../include/Button.hpp"
 #include <iostream>
 
-Button::Button(std::string text, ViewClickedAction *action): TextView(text){
+Button::Button(std::string text): TextView(text){
 	// debug
 	std::cout << "Button.cpp\t\tInitializing" << std::endl;
-	
-	// Adding click action
-	addViewClickedAction(action);
 }
 
 Button::~Button(){

@@ -1,8 +1,13 @@
 #ifndef CHECK_BOX_H
 #define CHECK_BOX_H
 
+class CheckBox;
+
 #include "../include/Button.hpp"
 #include "../include/ViewClickedAction.hpp"
+#include "../include/CheckBoxStateChangeAction.hpp"
+
+#include <vector>
 
 class CheckBox: public Button, public ViewClickedAction{
 	private:
@@ -10,7 +15,9 @@ class CheckBox: public Button, public ViewClickedAction{
 		unsigned char red;
 		unsigned char green;
 		unsigned char blue;
-	
+		
+		// Listeners
+		std::vector<CheckBoxStateChangeAction*> *listeners;
 	public:
 		/**
 		* Creates an checkbox object
@@ -30,12 +37,17 @@ class CheckBox: public Button, public ViewClickedAction{
 		/**
 		* Called when the view has been clicked
 		**/
-		void viewClicked(View *view, int button, int action);
+		void onClick(View *view, int button, int action);
 		
 		/**
 		* Called when the view is drawn
 		**/
 		void draw(DrawService *drawService);
+		
+		/**
+		* Adds a state change listener
+		**/
+		void addStateChangeAction(CheckBoxStateChangeAction *action);
 };
 
 #endif

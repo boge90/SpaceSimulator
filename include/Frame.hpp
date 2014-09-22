@@ -15,6 +15,8 @@ class Frame;
 #include "../include/Simulator.hpp"
 #include "../include/Menu.hpp"
 
+#include "../include/KeyboardInput.hpp"
+
 class Frame{
 	private:
 		// GLFW
@@ -35,6 +37,7 @@ class Frame{
 		static int frameWidth;
 		static int frameHeight;
 		static Frame *instance;
+		KeyboardInput *keyboardInput;
 		
 		/**
 		* Callback function when clicking the close button on the frame

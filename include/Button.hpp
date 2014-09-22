@@ -5,13 +5,11 @@
 #include <string>
 
 class Button: public TextView{
-	protected:
-		
 	public:
 		/**
 		* Creates a button object
 		**/
-		Button(std::string text, ViewClickedAction *action);
+		Button(std::string text);
 		
 		/**
 		*

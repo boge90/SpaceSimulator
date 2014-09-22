@@ -10,17 +10,7 @@ class ViewClickedAction{
 		/**
 		*
 		**/
-		ViewClickedAction(){};
-		
-		/**
-		*
-		**/
-		~ViewClickedAction(void){};
-	
-		/**
-		*
-		**/
-		virtual void viewClicked(View *view, int button, int action) = 0;
+		virtual void onClick(View *view, int button, int action) = 0;
 };
 
 #endif

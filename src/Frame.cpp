@@ -21,6 +21,7 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	this->frameHeight = height;
 	this->prevTime = 0;
 	this->menu = new Menu(window, simulator);
+	this->keyboardInput = KeyboardInput::getInstance();
 	
 	// Without this vertex array which is not even used, nothing is displayed
     glGenVertexArrays(1, &VertexArrayID);
@@ -111,8 +112,11 @@ void Frame::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 		Frame::instance->menu->changeCamera(true);
 	}else if(key == GLFW_KEY_DOWN && action == GLFW_PRESS){
 		Frame::instance->menu->changeCamera(false);
-	}else if((key == 'p' || key == 'P') && action == GLFW_PRESS){
-		Frame::instance->menu->calculateFuturePath();
+	}
+	
+	// Keyboard input
+	if(key != GLFW_KEY_ESCAPE && action == GLFW_PRESS){	
+		Frame::instance->keyboardInput->addInput(key);
 	}
 }
 

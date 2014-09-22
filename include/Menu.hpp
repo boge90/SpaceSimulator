@@ -51,11 +51,6 @@ class Menu{
         void changeCamera(bool next);
         
         /**
-        * Promts the user to specify the body number for which the path for the body should be calculated
-        **/
-        void calculateFuturePath(void);
-        
-        /**
         * Called when the mouse callback function is called
         **/
         void menuClicked(int button, int action, int x, int y);
@@ -64,6 +59,11 @@ class Menu{
         * Toggle the visibility of the HUD
         **/
         void toggleHUD(void);
+        
+        /**
+        * Returns the visibility of the HUD
+        **/
+        bool isHudVisible(void);
 };
 
 #endif

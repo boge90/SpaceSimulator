@@ -257,8 +257,8 @@ int Body::getNumVertices(void){
 	return numVertices;
 }
 
-void Body::toogleWireFrame(void){
-	this->wireFrame = !wireFrame;
+void Body::setWireframeMode(bool active){
+	this->wireFrame = active;
 	
 	if(wireFrame){
 		std::cout << "Body.cpp\t\tTurning ON wireframe for body " << bodyNum << std::endl;

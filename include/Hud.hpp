@@ -75,6 +75,11 @@ class HUD{
 		void toggleVisibility(void);
 		
 		/**
+		* Returns the visibility flag
+		**/
+		bool isVisible(void);
+		
+		/**
 		* Called when the mouse is clicked
 		**/
 		void hudClicked(int button, int action, int x, int y);

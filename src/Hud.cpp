@@ -127,6 +127,10 @@ void HUD::toggleVisibility(void){
 	this->visible = !visible;
 }
 
+bool HUD::isVisible(void){
+	return visible;
+}
+
 void HUD::hudClicked(int button, int action, int x, int y){
 	if(visible && action == GLFW_PRESS){
 		if(right->isInside(x, y)){

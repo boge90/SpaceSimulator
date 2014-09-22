@@ -47,8 +47,10 @@ void Simulator::simulate(void){
 	nbody->simulateGravity();
 	rayTracer->simulateRays();
 
-	// Check user input
-	frame->getMenu()->getActivatedCamera()->checkUserInput();
+	// Check user input IFF menu is hidden
+	if(!(frame->getMenu()->isHudVisible())){	
+		frame->getMenu()->getActivatedCamera()->checkUserInput();
+	}
 
 	// Misc
 	simulationSteps++;

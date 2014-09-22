@@ -3,14 +3,21 @@
 
 #include "../include/HudPage.hpp"
 #include "../include/Button.hpp"
+#include "../include/CheckBox.hpp"
+#include "../include/InputView.hpp"
+#include "../include/IntegerInputView.hpp"
+#include "../include/CheckBoxStateChangeAction.hpp"
+#include "../include/IntegerInputView.hpp"
+#include "../include/IntegerInputAction.hpp"
 #include "../include/Simulator.hpp"
 
-class MainHudPage: public HudPage, public ViewClickedAction{
+class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStateChangeAction, public IntegerInputAction{
 	private:
 		// GUI elements
-		Button *wireframeButton;
-		Button *futureBodyPathButton;
+		CheckBox *wireframeBox;
+		CheckBox *futureBodyPathBox;
 		Button *exitButton;
+		IntegerInputView *futureBodyInputView;
 		
 		// Pointer to the simulator
 		Simulator *simulator;
@@ -28,7 +35,17 @@ class MainHudPage: public HudPage, public ViewClickedAction{
 		/**
 		* View clicked action listener
 		**/
-		void viewClicked(View *view, int button, int action);
+		void onClick(View *view, int button, int action);
+		
+		/**
+		* CheckBox state change listener
+		**/
+		void onStateChange(CheckBox *box, bool newState);
+		
+		/**
+		* 
+		**/
+		void onIntegerInput(IntegerInputView *view, int value);
 };
 
 #endif

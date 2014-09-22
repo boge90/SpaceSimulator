@@ -1,7 +1,7 @@
 #include "../include/CheckBox.hpp"
 #include <iostream>
 
-CheckBox::CheckBox(std::string text): Button(text, this){
+CheckBox::CheckBox(std::string text): Button(text){
 	// Debug
 	std::cout << "CheckBox.cpp\t\tInitializing" << std::endl;
 	
@@ -10,19 +10,32 @@ CheckBox::CheckBox(std::string text): Button(text, this){
 	this->red = 255;
 	this->green = 255;
 	this->blue = 255;
+	this->listeners = new std::vector<CheckBoxStateChangeAction*>();
+	
+	// Button listener
+	Button::addViewClickedAction(this);
 }
 
 CheckBox::~CheckBox(){
 	// Debug
 	std::cout << "CheckBox.cpp\t\tFinalizing" << std::endl;
+	
+	// Free
+	delete listeners;
 }
 
 bool CheckBox::getState(){
 	return state;
 }
 
-void CheckBox::viewClicked(View *view, int button, int action){
+void CheckBox::onClick(View *view, int button, int action){
+	// Changing state
 	state = !state;
+	
+	// Fire off listeners
+	for(size_t i=0; i<listeners->size(); i++){
+		(*listeners)[i]->onStateChange(this, state);
+	}
 }
 
 void CheckBox::draw(DrawService *drawService){
@@ -46,4 +59,8 @@ void CheckBox::draw(DrawService *drawService){
 		drawService->drawLine(_x + leftPadding, y+topPadding, _x + leftPadding + 9, y+topPadding + 9, 0, 0, 0);
 		drawService->drawLine(_x + leftPadding+9, y+topPadding, _x + leftPadding, y+topPadding + 9, 0, 0, 0);
 	}
+}
+
+void CheckBox::addStateChangeAction(CheckBoxStateChangeAction *action){
+	listeners->push_back(action);
 }

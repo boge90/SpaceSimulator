@@ -64,17 +64,20 @@ void Menu::changeCamera(bool next){
 	activeCamera->activated();
 }
 
-void Menu::calculateFuturePath(void){
-	//size_t number;
-	//std::cout << "Enter the number of the body that the path should be calculated for: ";
-	//std::cin >> number;
-	//frame->getSimulator()->getBodyTracer()->calculateFuturePath(number);
-}
-
 void Menu::menuClicked(int button, int action, int x, int y){
 	hud->hudClicked(button, action, x, y);
 }
 
 void Menu::toggleHUD(void){
 	hud->toggleVisibility();
+	
+	// Reactivating camera after HUD is hidden, such that DELTA timing
+	// used in cameras are not WAY too high
+	if(!isHudVisible()){
+		activeCamera->activated();
+	}
+}
+
+bool Menu::isHudVisible(void){
+	return hud->isVisible();
 }
