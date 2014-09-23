@@ -21,7 +21,7 @@ class Body: public Renderable{
 		bool star;
 		
 		// Functions
-		void generateVertices(std::vector<glm::vec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth);
+		void generateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth);
 		
 		// Body number
 		static int bodyNumber;
@@ -34,6 +34,7 @@ class Body: public Renderable{
 		glm::vec3 rgb;
 		GLuint vertexBuffer;
 		GLuint colorBuffer;
+		GLuint texCoordBuffer;
 		GLuint indexBuffer;
 		
 		// Texture

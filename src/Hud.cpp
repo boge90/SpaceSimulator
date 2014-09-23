@@ -1,5 +1,6 @@
 #include "../include/Hud.hpp"
 #include "../include/MainHudPage.hpp"
+#include "../include/BodyHudPage.hpp"
 
 #include <iostream>
 
@@ -21,8 +22,18 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator){
 	left = new View(10, height/2, 50, 50);
 	right = new View(width-60, height/2, 50, 50);
 	
+	// Adding Click listeners for left and right
+	left->addViewClickedAction(this);
+	right->addViewClickedAction(this);
+	
 	// Adding main HUD page
 	pages->push_back(new MainHudPage(10+50+10, 0, width-140, height-1, simulator));
+	
+	// Adding Body HUD pages
+	std::vector<Body*> *bodies = simulator->getBodies();
+	for(size_t i=0; i<bodies->size(); i++){
+		pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, i+2, (*bodies)[i]));
+	}
 	
 	// Texture
 	float borderColor[] = { 1.0f, 0.0f, 0.0f, 1.0f };
@@ -77,10 +88,8 @@ void HUD::update(void){
 	left->draw(drawService);
 	right->draw(drawService);
 	
-	// Draw pages
-	for(size_t i=0; i<pages->size(); i++){
-		(*pages)[i]->draw(drawService);
-	}
+	// Draw active page
+	(*pages)[activePage]->draw(drawService);
 	
 	glActiveTexture(GL_TEXTURE0);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
@@ -159,4 +168,14 @@ void HUD::hudClickedRecur(int button, int action, int x, int y, Layout *layout){
 			hudClickedRecur(button, action, x, y, cast);
 		}
 	}
+}
+
+void HUD::onClick(View *view, int button, int action){
+	if(view == left && activePage > 0){
+		activePage--;
+	}else if(view == right && activePage < pages->size()-1){
+		activePage++;
+	}
+	
+	drawService->fill(0, 0, 0);
 }

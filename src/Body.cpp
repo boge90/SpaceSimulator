@@ -50,20 +50,21 @@ Body::~Body(){
 
 void Body::init(){
 	// Loading shader
+	//shader = new Shader("src/shaders/bodyVertex.glsl", "src/shaders/bodyFragment.glsl");
 	shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl");
 	
 	// Calculates vertices and colors
-	std::vector<glm::vec3> *vertices = new std::vector<glm::vec3>();
+	std::vector<glm::dvec3> *vertices = new std::vector<glm::dvec3>();
 	std::vector<glm::vec3> *color = new std::vector<glm::vec3>();
 	std::vector<GLuint> *indices = new std::vector<GLuint>();
 	
 	// Starting vertices
-	vertices->push_back(glm::vec3(center.x, center.y + radius, center.z));
-	vertices->push_back(glm::vec3(center.x, center.y, center.z - radius));
-	vertices->push_back(glm::vec3(center.x + radius, center.y, center.z));
-	vertices->push_back(glm::vec3(center.x, center.y, center.z + radius));
-	vertices->push_back(glm::vec3(center.x - radius, center.y, center.z));
-	vertices->push_back(glm::vec3(center.x, center.y - radius, center.z));
+	vertices->push_back(glm::dvec3(center.x, center.y + radius, center.z));
+	vertices->push_back(glm::dvec3(center.x, center.y, center.z - radius));
+	vertices->push_back(glm::dvec3(center.x + radius, center.y, center.z));
+	vertices->push_back(glm::dvec3(center.x, center.y, center.z + radius));
+	vertices->push_back(glm::dvec3(center.x - radius, center.y, center.z));
+	vertices->push_back(glm::dvec3(center.x, center.y - radius, center.z));
 	color->push_back(rgb);
 	color->push_back(rgb);
 	color->push_back(rgb);
@@ -88,7 +89,7 @@ void Body::init(){
 	// Normalize vertices into sphere
 	for(int i=0; i<numVertices; i++){
 		// Calculating direction vector
-		glm::vec3 vertex = (*vertices)[i];
+		glm::dvec3 vertex = (*vertices)[i];
 		vertex -= center;
 		vertex /= glm::length(vertex);
 		
@@ -105,41 +106,58 @@ void Body::init(){
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(GLuint), &(indices->front()), GL_STATIC_DRAW);
 	glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(float), &(vertices->front()), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(double), &(vertices->front()), GL_DYNAMIC_DRAW);
 	glGenBuffers(1, &colorBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
     glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(float), &(color->front()), GL_DYNAMIC_DRAW);
     
+    // Texture coordinate buffer
+    glGenBuffers(1, &texCoordBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
+    std::vector<glm::vec2> *coords = new std::vector<glm::vec2>();
+    for(size_t i=0; i<vertices->size(); i++){
+    	glm::dvec3 vertex = (*vertices)[i];
+    	
+    	vertex = center - vertex;
+    	vertex = glm::normalize(vertex);
+    	
+    	float u = 0.5 + ((atan2(vertex.z, vertex.x))/(2*3.1415));
+    	float v = 0.5 - (asin(vertex.y)/3.1415);
+    	
+    	coords->push_back(glm::vec2(u, v));
+    }
+    glBufferData(GL_ARRAY_BUFFER, coords->size()*2*sizeof(float), coords, GL_STATIC_DRAW);
+    
     // Generating texture
-    glActiveTexture(GL_TEXTURE0 + bodyNum);
+    glActiveTexture(GL_TEXTURE1 + bodyNum);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp->getWidth(), bmp->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, bmp->getData());
-	glUniform1i(glGetUniformLocation(shader->getID(), "mytexture"), bodyNum);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp->getWidth(), bmp->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, bmp->getData());
     
     // Freeing temporary memory
     free(vertices);
     free(color);
     free(indices);
+    free(coords);
     
     std::cout << "Body.cpp\t\tInitialized " << numVertices << " vertices for body " << bodyNum << std::endl;
 }
 
-void Body::generateVertices(std::vector<glm::vec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth){
+void Body::generateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth){
 	if(currentDepth < finalDepth){ // Generate more vertices	
 		// Triangle vertices
-		glm::vec3 v1 = (*vertices)[i1];
-		glm::vec3 v2 = (*vertices)[i2];
-		glm::vec3 v3 = (*vertices)[i3];
+		glm::dvec3 v1 = (*vertices)[i1];
+		glm::dvec3 v2 = (*vertices)[i2];
+		glm::dvec3 v3 = (*vertices)[i3];
 		
 		// Calculating additional vertices
 		int u1Idx, u2Idx, u3Idx;
-		glm::vec3 u1 = glm::vec3(((v2.x-v1.x)/2) + v1.x, ((v2.y-v1.y)/2) + v1.y, ((v2.z-v1.z)/2) + v1.z);
-		glm::vec3 u2 = glm::vec3(((v3.x-v1.x)/2) + v1.x, ((v3.y-v1.y)/2) + v1.y, ((v3.z-v1.z)/2) + v1.z);
-		glm::vec3 u3 = glm::vec3(((v3.x-v2.x)/2) + v2.x, ((v3.y-v2.y)/2) + v2.y, ((v3.z-v2.z)/2) + v2.z);
+		glm::dvec3 u1 = glm::dvec3(((v2.x-v1.x)/2) + v1.x, ((v2.y-v1.y)/2) + v1.y, ((v2.z-v1.z)/2) + v1.z);
+		glm::dvec3 u2 = glm::dvec3(((v3.x-v1.x)/2) + v1.x, ((v3.y-v1.y)/2) + v1.y, ((v3.z-v1.z)/2) + v1.z);
+		glm::dvec3 u3 = glm::dvec3(((v3.x-v2.x)/2) + v2.x, ((v3.y-v2.y)/2) + v2.y, ((v3.z-v2.z)/2) + v2.z);
 		
 		colors->push_back(rgb);
 		vertices->push_back(u1);
@@ -176,18 +194,20 @@ void Body::render(const GLfloat *mvp){
 	// Binding vertex VBO
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
+	glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, sizeof(double)*3, 0);
 	
 	// Binding color VBO
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
 	
+	// Binding texture coordinate buffer
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, sizeof(float)*2, 0);
+	
 	// Indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-    
-    // Texture
-    glActiveTexture(GL_TEXTURE0 + bodyNum);
     
 	// Enable wireframe
 	if(wireFrame){
@@ -205,6 +225,7 @@ void Body::render(const GLfloat *mvp){
 	// Disabling buffers
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -234,11 +255,11 @@ double Body::getRadius(void){
 }
 
 void Body::setCenter(glm::dvec3 center){
-	this->center = glm::vec3(center);
+	this->center = center;
 }
 
 void Body::setVelocity(glm::dvec3 velocity){
-	this->velocity = glm::vec3(velocity);
+	this->velocity = velocity;
 }
 
 void Body::setForce(glm::dvec3 force){

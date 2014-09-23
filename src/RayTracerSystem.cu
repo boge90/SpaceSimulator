@@ -9,7 +9,7 @@
 static std::vector<RayTracingUnit> resources; 
 
 // CUDA function prototypes
-void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, float3 *bodyVertices, float3 *starVertices, float3 *bodyColors);
+void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, double3 *bodyVertices, double3 *starVertices, float3 *bodyColors);
 
 void addBodyToRayTracer(GLuint vertexBuffer, GLuint colorBuffer, int numVertices, bool isStar){
 	// Debug
@@ -34,8 +34,8 @@ void addBodyToRayTracer(GLuint vertexBuffer, GLuint colorBuffer, int numVertices
 
 void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2){
 	// Local vars
-	float3 *starVertices = 0;
-	float3 *bodyVertices = 0;
+	double3 *starVertices = 0;
+	double3 *bodyVertices = 0;
 	float3 *bodyColors = 0;
 	size_t num_bytes_starVertices;
 	size_t num_bytes_bodyVertices;
@@ -83,14 +83,14 @@ void finalizeRaySimulation(void){
 }
 
 
-void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, float3 *bodyVertices, float3 *starVertices, float3 *bodyColors){
+void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, double3 *bodyVertices, double3 *starVertices, float3 *bodyColors){
 	// Global thread index
 	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
 
 	// Vertex data
 	float lightIntensity = 0.f;
-	float3 bodyVertex = bodyVertices[index];
-	float3 bodyNormal;
+	double3 bodyVertex = bodyVertices[index];
+	double3 bodyNormal;
 	bodyNormal.x = bodyVertex.x - bc.x;
 	bodyNormal.y = bodyVertex.y - bc.y;
 	bodyNormal.z = bodyVertex.z - bc.z;
@@ -100,12 +100,12 @@ void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int nu
 	
 	// Checking star vertices
 	for(int i=0; i<numStarVertices; i++){
-		float3 starVertex = starVertices[i];
+		double3 starVertex = starVertices[i];
 		
-		float planEq = bodyNormal.x * (starVertex.x - bodyVertex.x) + bodyNormal.y * (starVertex.y - bodyVertex.y) + bodyNormal.z * (starVertex.z - bodyVertex.z);
+		double planEq = bodyNormal.x * (starVertex.x - bodyVertex.x) + bodyNormal.y * (starVertex.y - bodyVertex.y) + bodyNormal.z * (starVertex.z - bodyVertex.z);
 		
 		if(planEq > 0){
-			lightIntensity = 1.f;
+			lightIntensity += 1.f/numStarVertices;
 		}
 	}
 	

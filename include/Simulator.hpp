@@ -7,6 +7,7 @@ class Simulator;
 #include "../include/Renderer.hpp"
 #include "../include/RayTracer.hpp"
 #include "../include/BodyTracer.hpp"
+#include "../include/BodyRotator.hpp"
 #include "../include/Nbody.hpp"
 #include "../include/Body.hpp"
 
@@ -29,6 +30,7 @@ class Simulator{
 
 		// Sub simulators
 		Nbody *nbody;
+		BodyRotator *bodyRotator;
 		RayTracer *rayTracer;
 	public:
 		/**

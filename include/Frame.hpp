@@ -31,6 +31,7 @@ class Frame{
 		long unsigned int totalFrameCount;
 		long unsigned int lastSecondFrameCount;
 		double prevTime;
+		double fps;
 		
 		// Misc
 		GLuint VertexArrayID;
@@ -83,6 +84,11 @@ class Frame{
 		* Returns the frame count (number of times that 'update' has been called)
 		**/
 		long unsigned int getFrameCount(void);
+		
+		/**
+		* Returns the current FPS
+		**/
+		double getFPS(void);
 		
 		/**
 		* Returns the pointer to the Menu

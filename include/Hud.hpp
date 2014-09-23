@@ -9,18 +9,19 @@ class HUD;
 #include "../include/DrawService.hpp"
 #include "../include/HudPage.hpp"
 #include "../include/View.hpp"
+#include "../include/ViewClickedAction.hpp"
 #include "../include/Simulator.hpp"
 
 #include <vector>
 
-class HUD{
+class HUD: public ViewClickedAction{
 	private:
 		// GUI
 		View *left;
 		View *right;
 	
 		// Pages
-		int activePage;
+		size_t activePage;
 		std::vector<HudPage*> *pages;
 	
 		// Texture
@@ -83,6 +84,11 @@ class HUD{
 		* Called when the mouse is clicked
 		**/
 		void hudClicked(int button, int action, int x, int y);
+		
+		/**
+		* Called when the left or right button is clicked
+		**/
+		void onClick(View *view, int button, int action);
 };
 
 #endif

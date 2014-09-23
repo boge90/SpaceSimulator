@@ -34,18 +34,21 @@ BMP* BmpService::loadImage(const char *path){
     }
 
 	// Allocating data for image
-    unsigned char* data = (unsigned char*)malloc(sizeof(unsigned char)*height*width);
-
+    unsigned char *data = (unsigned char*) malloc(sizeof(unsigned char)*height*width*3);
 
 	// Total memory usage
-	memoryUsed += sizeof(unsigned char)*height*width;
+	memoryUsed += sizeof(unsigned char)*height*width*3;
 	std::cout << "BmpService.cpp\t\tTotal memory usage is " << memoryUsed/(1024.0*1024.0) << " MiB\n";
 
 	// Reading image
     fseek(fp, offset, SEEK_SET);
-    readNum = fread(data, sizeof(unsigned char), height*width, fp);
+    readNum = fread(data, sizeof(unsigned char), height*width*3, fp);
     if(readNum != height*width){
     	std::cout << "BmpService.cpp\t\tThere occured an error while reading image data\n";
+    }
+    
+    for(int i=0; i<width*height*3; i++){
+    	data[i] = i%255;
     }
 
 	// Closing file

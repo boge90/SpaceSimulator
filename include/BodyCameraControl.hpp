@@ -17,10 +17,10 @@ class BodyCameraControl: public AbstractCamera{
 		Body *body;
 		
 		//Camera data
-		float distance;
-		float horizontalAngle;
-		float verticalAngle;
-		float mouseSpeed;
+		double distance;
+		double horizontalAngle;
+		double verticalAngle;
+		double mouseSpeed;
 		double previousTime;
 	public:
 		/**

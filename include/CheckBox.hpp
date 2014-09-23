@@ -22,7 +22,7 @@ class CheckBox: public Button, public ViewClickedAction{
 		/**
 		* Creates an checkbox object
 		**/
-		CheckBox(std::string text);
+		CheckBox(std::string text, bool state);
 		
 		/**
 		* Finalizes the checkbox object

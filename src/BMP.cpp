@@ -2,7 +2,7 @@
 #include "iostream"
 
 BMP::BMP(int width, int height, unsigned char *data){
-	std::cout << "BMP.cpp\t\t\tInitializing\n";	
+	std::cout << "BMP.cpp\t\t\tInitializing BMP image (" << width << " x " << height << ")" << std::endl;	
 	
 	this->width = width;
 	this->height = height;

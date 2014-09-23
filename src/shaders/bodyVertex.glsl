@@ -1,8 +1,9 @@
 #version 440 core
 
 // Input vertex data, different for all executions of this shader.
-layout(location = 0) in vec3 vertex;
-layout(location = 1) in vec3 color;
+layout(location = 0) in vec3 in_vertex;
+layout(location = 1) in vec3 in_color;
+layout(location = 2) in vec2 in_texCoord;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 MVP;
@@ -10,10 +11,16 @@ uniform mat4 MVP;
 // Output values
 out vec3 fragmentColor;
 
+// Texture
+out vec2 texCoord;
+
 void main(){
 	// Output position of the vertex, in clip space : MVP * position
-	gl_Position = MVP * vec4(vertex, 1.0);
+	gl_Position = MVP * vec4(in_vertex, 1.0);
+	
+	// Calculating texture coordinates
+	texCoord = in_texCoord;
 	   
 	// Color
-	fragmentColor = color;
+	fragmentColor = in_color;
 }

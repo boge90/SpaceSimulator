@@ -1,12 +1,12 @@
 #include "../include/CheckBox.hpp"
 #include <iostream>
 
-CheckBox::CheckBox(std::string text): Button(text){
+CheckBox::CheckBox(std::string text, bool state): Button(text){
 	// Debug
 	std::cout << "CheckBox.cpp\t\tInitializing" << std::endl;
 	
 	// Init
-	this->state = false;
+	this->state = state;
 	this->red = 255;
 	this->green = 255;
 	this->blue = 255;

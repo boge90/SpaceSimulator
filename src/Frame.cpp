@@ -80,8 +80,8 @@ void Frame::update(void){
 	
 	// Calculate FPS
 	double currTime = glfwGetTime();
-	if((currTime - prevTime) > 10.0){
-		std::cout << "Frame.cpp\t\tFPS " << lastSecondFrameCount/(currTime - prevTime) << "\n";
+	if((currTime - prevTime) > 1.0){
+		fps = lastSecondFrameCount/(currTime - prevTime);
 		prevTime = currTime;
 		lastSecondFrameCount = 0;
 	}
@@ -93,6 +93,10 @@ bool Frame::isClosed(void){
 
 long unsigned int Frame::getFrameCount(void){
 	return totalFrameCount;
+}
+
+double Frame::getFPS(void){
+	return fps;
 }
 
 void Frame::windowCloseCallback(GLFWwindow* window){

@@ -870,6 +870,14 @@ void DrawService::drawChar(int x, int y, char c, unsigned char r, unsigned char 
 			setPixel(x+3, y+8, r, g, b);
 			break;
 		}
+		case '.':
+		{
+			setPixel(x, y+8, r, g, b);
+			setPixel(x+1, y+8, r, g, b);
+			setPixel(x, y+7, r, g, b);
+			setPixel(x+1, y+7, r, g, b);
+			break;
+		}
 		case ' ':
 		{
 			break;
@@ -1022,6 +1030,10 @@ int DrawService::widthOf(char c){
 		case '9':
 		{
 			return 5;
+		}
+		case '.':
+		{
+			return 2;
 		}
 		case ' ':
 		{

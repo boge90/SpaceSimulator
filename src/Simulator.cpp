@@ -27,6 +27,7 @@ Simulator::Simulator(double time, double dt, std::vector<Body*> *bodies){
 	
 	// Initializing sub simulators
 	nbody = new Nbody(bodies, dt);
+	bodyRotator = new BodyRotator(bodies, dt);
 	rayTracer = new RayTracer(bodies);
 }
 
@@ -38,6 +39,7 @@ Simulator::~Simulator(){
 	delete frame;
 	delete renderer;
 	delete nbody;
+	delete bodyRotator;
 	delete rayTracer;
 	delete bodyTracer;
 }
@@ -46,6 +48,7 @@ void Simulator::simulate(void){
 	// Sub - simulations
 	nbody->simulateGravity();
 	rayTracer->simulateRays();
+	bodyRotator->simulateRotation();
 
 	// Check user input IFF menu is hidden
 	if(!(frame->getMenu()->isHudVisible())){	
@@ -55,11 +58,6 @@ void Simulator::simulate(void){
 	// Misc
 	simulationSteps++;
 	time += dt;
-	
-	// Print time
-	if(simulationSteps % 1000 == 0){
-		std::cout << "Simulator.cpp\t\tTime = " << time << "\n";
-	}
 	
 	// Update visualization
 	frame->update();

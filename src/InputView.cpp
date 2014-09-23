@@ -26,8 +26,6 @@ void InputView::onClick(View *view, int button, int action){
 }
 
 void InputView::onKeyInput(int key){
-	std::cout << "keyPressed " << key << std::endl;
-	
 	// Appending key
 	if(key == GLFW_KEY_BACKSPACE){
 		// Remove last

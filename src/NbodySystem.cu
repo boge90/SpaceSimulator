@@ -10,7 +10,7 @@
 static std::vector<struct cudaGraphicsResource*> resources;
 
 // Kernel prototypes
-void __global__ moveBodyKernel(float3 *vertices, int num_vertices, double cx, double cy, double cz, double radius);
+void __global__ moveBodyKernel(double3 *vertices, int num_vertices, double cx, double cy, double cz, double radius);
 
 // CUDA Memory
 __constant__ double cuda_translation_matrix[16];
@@ -32,7 +32,7 @@ void addBodyVertexBuffer(GLuint buffer){
 
 void moveBody(int bodyIndex, int numVertices, double *translation, double cx, double cy, double cz, double radius){
 	// Local vars
-	float3 *vertices = 0;
+	double3 *vertices = 0;
 	size_t num_bytes_vertices;
 	
 	// Getting the vertex array pointer
@@ -57,7 +57,7 @@ void moveBody(int bodyIndex, int numVertices, double *translation, double cx, do
 	}
 }
 
-void __global__ moveBodyKernel(float3 *vertices, int num_vertices, double cx, double cy, double cz, double radius){
+void __global__ moveBodyKernel(double3 *vertices, int num_vertices, double cx, double cy, double cz, double radius){
 	// Global index
 	int i = (blockIdx.x*blockDim.x) + threadIdx.x;
 	

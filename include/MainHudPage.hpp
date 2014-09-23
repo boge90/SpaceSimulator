@@ -14,6 +14,9 @@
 class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStateChangeAction, public IntegerInputAction{
 	private:
 		// GUI elements
+		TextView *fpsView;
+		TextView *timeView;
+		CheckBox *cullBackfaceBox;
 		CheckBox *wireframeBox;
 		CheckBox *futureBodyPathBox;
 		Button *exitButton;
@@ -43,9 +46,14 @@ class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStat
 		void onStateChange(CheckBox *box, bool newState);
 		
 		/**
-		* 
+		* Called when the associated IntergerInputView retrieves input
 		**/
 		void onIntegerInput(IntegerInputView *view, int value);
+		
+		/**
+		*
+		**/
+		void draw(DrawService *drawService);
 };
 
 #endif

@@ -20,13 +20,32 @@ void TextView::draw(DrawService *drawService){
 	// Super
 	View::draw(drawService);
 	
-	// Drawing text
+	// Remove previous text
+	if(previousText.size() > 0){
+		drawText(previousText, drawService, 0, 0, 0);
+		previousText = "";
+	}
+	
+	// Draw current text
+	drawText(text, drawService, 255, 255, 255);
+}
+
+void TextView::setText(std::string text){
+	this->previousText = this->text;
+	this->text = text;
+}
+
+std::string* TextView::getText(void){
+	return &text;
+}
+
+void TextView::drawText(std::string text, DrawService *drawService, unsigned char r, unsigned char g, unsigned char b){
 	const char *string = text.c_str();
 	size_t size = text.size();
 	int pos = x+leftPadding;
 	
 	for(size_t i=0; i<size; i++){
-		drawService->drawChar(pos, y+topPadding, string[i], 255, 255, 255, 1, false);
+		drawService->drawChar(pos, y+topPadding, string[i], r, g, b, 1, false);
 		pos += drawService->widthOf(string[i]) + charPadding;
 	}
 }

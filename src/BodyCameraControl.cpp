@@ -60,14 +60,14 @@ void BodyCameraControl::checkUserInput(void){
 		glfwSetCursorPos(window, frameWidth/2, frameHeight/2);
 
 		// Compute new orientation
-		horizontalAngle += mouseSpeed * deltaTime * float(frameWidth/2.f - xpos);
-		verticalAngle -= mouseSpeed * deltaTime * float(frameHeight/2.f - ypos);
+		horizontalAngle += mouseSpeed * deltaTime * double(frameWidth/2.0 - xpos);
+		verticalAngle -= mouseSpeed * deltaTime * double(frameHeight/2.0 - ypos);
 
 		// Flip upside down check
-		if(verticalAngle > M_PI/2.f){
-			verticalAngle = M_PI/2.f;
-		}else if(verticalAngle < -M_PI/2.f){
-			verticalAngle = -M_PI/2.f;
+		if(verticalAngle > M_PI/2.0){
+			verticalAngle = M_PI/2.0;
+		}else if(verticalAngle < -M_PI/2.0){
+			verticalAngle = -M_PI/2.0;
 		}
 	}else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE){
 		// Showing mouse cursor again after left mouse button is released
@@ -75,16 +75,16 @@ void BodyCameraControl::checkUserInput(void){
 	}
 	   
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
-	glm::vec3 direction(cos(verticalAngle) * sin(horizontalAngle), sin(verticalAngle), cos(verticalAngle) * cos(horizontalAngle));
+	glm::dvec3 direction(cos(verticalAngle) * sin(horizontalAngle), sin(verticalAngle), cos(verticalAngle) * cos(horizontalAngle));
 	direction *= body->getRadius()*distance;
 	
 	// Right vector
-	glm::vec3 right = glm::vec3(sin(horizontalAngle - M_PI/2.0f), 0, cos(horizontalAngle - M_PI/2.0f));
+	glm::dvec3 right = glm::dvec3(sin(horizontalAngle - M_PI/2.0), 0, cos(horizontalAngle - M_PI/2.0));
 	   
 	// Up vector : perpendicular to both direction and right
-	glm::vec3 up = glm::cross(right, direction);
+	glm::dvec3 up = glm::cross(right, direction);
 	
-	glm::vec3 bodyCenter = glm::vec3(body->getCenter());
+	glm::dvec3 bodyCenter = body->getCenter();
 	view = glm::lookAt(bodyCenter+direction, bodyCenter, up);
 	
 	previousTime = currentTime;
