@@ -1,6 +1,8 @@
 #ifndef RAYTRACER_SYSTEM_H
 #define RAYTRACER_SYSTEM_H
 
+#include "../include/Config.hpp"
+
 #include <GL/gl.h>
 
 typedef struct RayTracingUnit_t{
@@ -14,7 +16,7 @@ extern "C"{
 	/**
 	* Adding a body's vertex and color buffer to the ray traycing system
 	**/
-	void addBodyToRayTracer(GLuint vertexBuffer, GLuint colorBuffer, int numVertices, bool isStar);
+	void addBodyToRayTracer(GLuint vertexBuffer, GLuint colorBuffer, int numVertices, bool isStar, Config *config);
 	
 	/**
 	* Simulates the rays for all the bodies and the stars

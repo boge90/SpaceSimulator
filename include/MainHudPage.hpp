@@ -10,12 +10,14 @@
 #include "../include/IntegerInputView.hpp"
 #include "../include/IntegerInputAction.hpp"
 #include "../include/Simulator.hpp"
+#include "../include/Config.hpp"
 
 class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStateChangeAction, public IntegerInputAction{
 	private:
 		// GUI elements
 		TextView *fpsView;
 		TextView *timeView;
+		CheckBox *pausedBox;
 		CheckBox *cullBackfaceBox;
 		CheckBox *wireframeBox;
 		CheckBox *futureBodyPathBox;
@@ -28,7 +30,7 @@ class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStat
 		/**
 		* Creates the main hud page object
 		**/
-		MainHudPage(int x, int y, int width, int height, Simulator *simulator);
+		MainHudPage(int x, int y, int width, int height, Simulator *simulator, Config *config);
 		
 		/**
 		* finalizes the main HUD page object

@@ -1,14 +1,18 @@
 #include "../include/ListLayout.hpp"
 #include <iostream>
 
-ListLayout::ListLayout(int x, int y, int width, int height): Layout(x, y, width, height){
+ListLayout::ListLayout(int x, int y, int width, int height, Config *config): Layout(x, y, width, height, config){
 	// Debug
-	std::cout << "ListLayout.cpp\t\tInitializing" << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "ListLayout.cpp\t\tInitializing" << std::endl;
+	}
 }
 
 ListLayout::~ListLayout(){
 	// Debug
-	std::cout << "ListLayout.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "ListLayout.cpp\t\tFinalizing" << std::endl;
+	}
 }
 
 void ListLayout::addChild(View *view){	

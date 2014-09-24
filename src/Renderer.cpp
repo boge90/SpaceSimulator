@@ -1,7 +1,13 @@
 #include "../include/Renderer.hpp"
 
-Renderer::Renderer(Simulator *simulator){
-	std::cout << "Renderer.cpp\t\tInitializing\n";
+Renderer::Renderer(Simulator *simulator, Config *config){
+	// Init
+	this->debugLevel = config->getDebugLevel();	
+
+	// Debug
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "Renderer.cpp\t\tInitializing\n";
+	}
 	
 	// Initialize
 	renderables = new std::vector<Renderable*>();
@@ -9,13 +15,17 @@ Renderer::Renderer(Simulator *simulator){
 }
 
 Renderer::~Renderer(){
-	std::cout << "Renderer.cpp\t\tFinalizing\n";
+	if((debugLevel & 0x10) == 16){
+		std::cout << "Renderer.cpp\t\tFinalizing\n";
+	}
 	
 	delete renderables;
 }
 
 void Renderer::addRenderable(Renderable *renderable){
-	std::cout << "Renderer.cpp\t\tAdding renderable " << renderable << "\n";
+	if((debugLevel & 0x8) == 8){
+		std::cout << "Renderer.cpp\t\tAdding renderable " << renderable << "\n";
+	}
 
 	renderables->push_back(renderable);
 }

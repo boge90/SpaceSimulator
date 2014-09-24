@@ -1,9 +1,11 @@
 #include "../include/CheckBox.hpp"
 #include <iostream>
 
-CheckBox::CheckBox(std::string text, bool state): Button(text){
+CheckBox::CheckBox(std::string text, bool state, Config *config): Button(text, config){
 	// Debug
-	std::cout << "CheckBox.cpp\t\tInitializing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "CheckBox.cpp\t\tInitializing" << std::endl;
+	}
 	
 	// Init
 	this->state = state;
@@ -18,7 +20,9 @@ CheckBox::CheckBox(std::string text, bool state): Button(text){
 
 CheckBox::~CheckBox(){
 	// Debug
-	std::cout << "CheckBox.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "CheckBox.cpp\t\tFinalizing" << std::endl;
+	}
 	
 	// Free
 	delete listeners;

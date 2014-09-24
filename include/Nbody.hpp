@@ -3,18 +3,23 @@
 
 #include <vector>
 #include "../include/Body.hpp"
+#include "../include/Config.hpp"
 
 class Nbody{
 	private:
+		// Simulation data
 		std::vector<Body*> *bodies;
 		double G;
 		double dt;
+		
+		// Misc
+		size_t debugLevel;
 	
 	public:
 		/**
 		*
 		**/
-		Nbody(std::vector<Body*> *bodies, double dt);
+		Nbody(std::vector<Body*> *bodies, Config *config);
 		
 		/**
 		*

@@ -5,6 +5,7 @@ class View;
 
 #include "../include/ViewClickedAction.hpp"
 #include "../include/DrawService.hpp"
+#include "../include/Config.hpp"
 #include <vector>
 
 class View{
@@ -15,13 +16,16 @@ class View{
 		/**
 		* Initializes the view
 		**/
-		void init(int x, int y, int width, int height);
+		void init(int x, int y, int width, int height, Config *config);
 	protected:
 		// View data
 		int x;
 		int y;
 		int width;
 		int height;
+		
+		// Misc
+		size_t debugLevel;
 		
 		// Color
 		unsigned char red;
@@ -32,17 +36,17 @@ class View{
 		* Creates a view object which has to be added to a Layout view before is can be used
 		* Widt of this object will MATCH the parent view
 		**/
-		View(int height);
+		View(int height, Config *config);
 		
 		/**
 		* Creates a view object which has to be added to a Layout view before is can be used
 		**/
-		View(int width, int height);
+		View(int width, int height, Config *config);
 		
 		/**
 		* Creates a view object at the specified location
 		**/
-		View(int x, int y, int width, int height);
+		View(int x, int y, int width, int height, Config *config);
 		
 		/**
 		* Destroys the view object, and will recurrsivly destroy children

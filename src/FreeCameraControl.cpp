@@ -1,8 +1,11 @@
 #include "../include/FreeCameraControl.hpp"
 #include <iostream>
 
-FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int frameHeight){	
-	std::cout << "FreeCameraControl.cpp\tInitializing\n";
+FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int frameHeight, Config *config){
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "FreeCameraControl.cpp\tInitializing\n";
+	}
 
 	// Initial frame values
 	this->window = window;
@@ -18,7 +21,9 @@ FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int fra
 }
 
 FreeCameraControl::~FreeCameraControl(void){
-	std::cout << "FreeCameraControl.cpp\tFinalizing\n";
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "FreeCameraControl.cpp\tFinalizing\n";
+	}
 }
 
 void FreeCameraControl::activated(void){

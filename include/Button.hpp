@@ -2,6 +2,7 @@
 #define BUTTON_H
 
 #include "../include/TextView.hpp"
+#include "../include/Config.hpp"
 #include <string>
 
 class Button: public TextView{
@@ -9,7 +10,7 @@ class Button: public TextView{
 		/**
 		* Creates a button object
 		**/
-		Button(std::string text);
+		Button(std::string text, Config *config);
 		
 		/**
 		*

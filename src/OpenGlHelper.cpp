@@ -2,14 +2,16 @@
 
 #include <iostream>
 
-GLFWwindow* OpenGlHelper::init(void){
-	std::cout << "OpenGlHelper.cpp\tInitialize" << std::endl;
+GLFWwindow* OpenGlHelper::init(Config *config){
+	if((config->getDebugLevel() & 0x10) == 16){		
+		std::cout << "OpenGlHelper.cpp\tInitializing" << std::endl;
+	}
 	
 	// Initialise GLFW
 	if(!glfwInit()){
 		std::cerr << "Failed to initialize GLFW\n";
 		return NULL;
-	}else{
+	}else if((config->getDebugLevel() & 0x8) == 8){
 		std::cout << "OpenGlHelper.cpp\tInitialized GLFW\n";
 	}
 	
@@ -28,10 +30,14 @@ GLFWwindow* OpenGlHelper::init(void){
     if (GLEW_OK != err){
         std::cout << "OpenGlHelper.cpp\tError: " << glewGetErrorString(err) << "\n";
         return NULL;
-    }else{    
+    }else if((config->getDebugLevel() & 0x8) == 8){ 
 	    std::cout << "OpenGlHelper.cpp\tStatus: Using GLEW " << glewGetString(GLEW_VERSION) << "\n";
     }
-	std::cout << "OpenGlHelper.cpp\tGLEW Init (Error = " << glewGetErrorString(glGetError()) << ")\n";
+    
+    int error = glGetError();
+    if(error != 0){    
+		std::cout << "OpenGlHelper.cpp\tGLEW Init (Error = " << glewGetErrorString(error) << ")\n";
+    }
 	
 	return window;
 }

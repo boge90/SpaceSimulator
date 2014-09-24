@@ -12,6 +12,7 @@ class Menu;
 #include "../include/FreeCameraControl.hpp"
 #include "../include/AbstractCamera.hpp"
 #include "../include/Simulator.hpp"
+#include "../include/Config.hpp"
 #include "../include/Hud.hpp"
 
 class Menu{
@@ -22,13 +23,16 @@ class Menu{
 		AbstractCamera *activeCamera;
 		unsigned int currentActive;
 		
+		// Misc
+		size_t debugLevel;
+		
 		// HUD
 		HUD *hud;
 	public:
 		/**
 		*
 		**/
-		Menu(GLFWwindow *window, Simulator *simulator);
+		Menu(GLFWwindow *window, Simulator *simulator, Config *config);
 		
 		/**
 		*

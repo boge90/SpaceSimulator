@@ -4,8 +4,12 @@ int Frame::frameWidth = 0;
 int Frame::frameHeight = 0;
 Frame* Frame::instance;
 
-Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simulator *simulator){
-	std::cout << "Frame.cpp\t\tInitializing\n";
+Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simulator *simulator, Config *config){	
+	// Debug
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){
+		std::cout << "Frame.cpp\t\tInitializing\n";
+	}
 	
 	// Open a window and create its OpenGL context
 	window = glfwCreateWindow(width, height, title, NULL, NULL);
@@ -20,7 +24,7 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	this->frameWidth = width;
 	this->frameHeight = height;
 	this->prevTime = 0;
-	this->menu = new Menu(window, simulator);
+	this->menu = new Menu(window, simulator, config);
 	this->keyboardInput = KeyboardInput::getInstance();
 	
 	// Without this vertex array which is not even used, nothing is displayed
@@ -46,7 +50,9 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 }
 
 Frame::~Frame(void){
-	std::cout << "Frame.cpp\t\tFinalizing\n";
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "Frame.cpp\t\tFinalizing\n";
+	}
 
 	glDeleteBuffers(1, &VertexArrayID);
 

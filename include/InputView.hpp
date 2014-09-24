@@ -3,6 +3,7 @@
 
 class InputView;
 
+#include "../include/Config.hpp"
 #include "../include/Button.hpp"
 #include "../include/InputViewAction.hpp"
 #include "../include/ViewClickedAction.hpp"
@@ -23,7 +24,7 @@ class InputView: public Button, public ViewClickedAction, public KeyboardInputAc
 		/**
 		* Creates the input view object
 		**/
-		InputView(std::string text);
+		InputView(std::string text, Config *config);
 		
 		/**
 		* Finalizes the input view object

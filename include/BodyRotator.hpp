@@ -2,6 +2,7 @@
 #define BODY_ROTATOR_H
 
 #include "../include/Body.hpp"
+#include "../include/Config.hpp"
 
 #include <vector>
 
@@ -11,11 +12,15 @@ class BodyRotator{
 		std::vector<Body*> *bodies;
 		double dt;
 		
+		// Misc
+		Config *config;
+		size_t debugLevel;
+		
 	public:
 		/**
 		*
 		**/
-		BodyRotator(std::vector<Body*> *bodies, double dt);
+		BodyRotator(std::vector<Body*> *bodies, Config *config);
 		
 		/**
 		*

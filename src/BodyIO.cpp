@@ -2,8 +2,10 @@
 #include <iostream>
 #include <fstream>
 
-void BodyIO::read(double *time, std::vector<Body*> *bodies){
-	std::cout << "BodyIO.cpp\t\tRead\n";
+void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
+	if((config->getDebugLevel() & 0x8) == 8){	
+		std::cout << "BodyIO.cpp\t\tRead\n";
+	}
 
 	std::string line;
 	std::ifstream dataFile("bodies.data");
@@ -92,7 +94,7 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies){
 			// star var is representing a boolean
 			assert(star == 0 || star == 1);
 			
-			Body *body = new Body(glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), radius, mass, inclination, rotationSpeed, star);
+			Body *body = new Body(glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), radius, mass, inclination, rotationSpeed, star, config);
 			bodies->push_back(body);
 		}
 		
@@ -102,8 +104,10 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies){
 	}
 }
 
-void BodyIO::write(double time, std::vector<Body*> *bodies){
-	std::cout << "BodyIO.cpp\t\tWrite\n";
+void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
+	if((config->getDebugLevel() & 0x8) == 8){	
+		std::cout << "BodyIO.cpp\t\tWrite\n";
+	}
 
 	// Opening data file
 	std::ofstream dataFile;

@@ -10,17 +10,21 @@
 static std::vector<struct cudaGraphicsResource*> resources;
 
 // Kernel prototypes
-void __global__ moveBodyKernel(double3 *vertices, int num_vertices, double cx, double cy, double cz, double radius);
+void __global__ moveBodyKernel(double3 *vertices, int num_vertices);
 
 // CUDA Memory
 __constant__ double cuda_translation_matrix[16];
 
-void initializeNbodySystem(void){
-	printf("NbodySystem.cu\t\tInitializing\n");	
+void initializeNbodySystem(Config *config){
+	if((config->getDebugLevel() & 0x10) == 16){	
+		printf("NbodySystem.cu\t\tInitializing\n");	
+	}
 }
 
-void addBodyVertexBuffer(GLuint buffer){
-	printf("NbodySystem.cu\t\tAdding vertex buffer %d\n", buffer);
+void addBodyVertexBuffer(GLuint buffer, Config *config){
+	if((config->getDebugLevel() & 0x0) == 8){		
+		printf("NbodySystem.cu\t\tAdding vertex buffer %d\n", buffer);
+	}
 	
 	// Creating new cuda resource
 	struct cudaGraphicsResource *resource;
@@ -30,7 +34,7 @@ void addBodyVertexBuffer(GLuint buffer){
 	resources.push_back(resource);
 }
 
-void moveBody(int bodyIndex, int numVertices, double *translation, double cx, double cy, double cz, double radius){
+void moveBody(int bodyIndex, int numVertices, double *translation){
 	// Local vars
 	double3 *vertices = 0;
 	size_t num_bytes_vertices;
@@ -45,7 +49,7 @@ void moveBody(int bodyIndex, int numVertices, double *translation, double cx, do
 	// CUDA call
 	dim3 block((numVertices/512) + 1);
 	dim3 grid(512);
-	moveBodyKernel<<<block, grid>>>(vertices, numVertices, cx, cy, cz, radius);
+	moveBodyKernel<<<block, grid>>>(vertices, numVertices);
 	
 	// Unmapping, making ready for rendering
 	cudaGraphicsUnmapResources(1, &resources[bodyIndex]);
@@ -57,7 +61,7 @@ void moveBody(int bodyIndex, int numVertices, double *translation, double cx, do
 	}
 }
 
-void __global__ moveBodyKernel(double3 *vertices, int num_vertices, double cx, double cy, double cz, double radius){
+void __global__ moveBodyKernel(double3 *vertices, int num_vertices){
 	// Global index
 	int i = (blockIdx.x*blockDim.x) + threadIdx.x;
 	
@@ -65,9 +69,9 @@ void __global__ moveBodyKernel(double3 *vertices, int num_vertices, double cx, d
 	if(i >= num_vertices)return;
 
 	// Multiplying vertex and translation matrix, (Rotation around inclination axis and movement of whole body)
-	double vx = cuda_translation_matrix[0]*vertices[i].x + cuda_translation_matrix[1]*vertices[i].y + cuda_translation_matrix[2]*vertices[i].z + cuda_translation_matrix[3];
-	double vy = cuda_translation_matrix[4]*vertices[i].x + cuda_translation_matrix[5]*vertices[i].y + cuda_translation_matrix[6]*vertices[i].z + cuda_translation_matrix[7];
-	double vz = cuda_translation_matrix[8]*vertices[i].x + cuda_translation_matrix[9]*vertices[i].y + cuda_translation_matrix[10]*vertices[i].z + cuda_translation_matrix[11];
+	double vx = cuda_translation_matrix[0]*vertices[i].x + cuda_translation_matrix[4]*vertices[i].y + cuda_translation_matrix[8]*vertices[i].z + cuda_translation_matrix[12];
+	double vy = cuda_translation_matrix[1]*vertices[i].x + cuda_translation_matrix[5]*vertices[i].y + cuda_translation_matrix[9]*vertices[i].z + cuda_translation_matrix[13];
+	double vz = cuda_translation_matrix[2]*vertices[i].x + cuda_translation_matrix[6]*vertices[i].y + cuda_translation_matrix[10]*vertices[i].z + cuda_translation_matrix[14];
 	
 	// Forcing sphere structure
 	vertices[i].x = vx;

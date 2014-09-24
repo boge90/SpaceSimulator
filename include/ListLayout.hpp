@@ -3,6 +3,7 @@
 
 #include "../include/DrawService.hpp"
 #include "../include/Layout.hpp"
+#include "../include/Config.hpp"
 #include <vector>
 
 class ListLayout: public Layout{
@@ -12,7 +13,7 @@ class ListLayout: public Layout{
 		/**
 		* Creates an empty list layout object
 		**/
-		ListLayout(int x, int y, int width, int height);
+		ListLayout(int x, int y, int width, int height, Config *config);
 		
 		/**
 		* Finalizes this ListLayout object

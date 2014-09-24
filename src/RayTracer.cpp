@@ -2,9 +2,12 @@
 #include "../include/RayTracerSystem.cuh"
 #include "iostream"
 
-RayTracer::RayTracer(std::vector<Body*> *bodies){
+RayTracer::RayTracer(std::vector<Body*> *bodies, Config *config){
 	// Debug
-	std::cout << "RayTracer.cpp\t\tInitializing\n";
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "RayTracer.cpp\t\tInitializing\n";
+	}
 	
 	// Init
 	this->bodies = bodies;
@@ -13,13 +16,15 @@ RayTracer::RayTracer(std::vector<Body*> *bodies){
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *body = (*bodies)[i];
 		
-		addBodyToRayTracer(body->getVertexBuffer(), body->getColorBuffer(), body->getNumVertices(), body->isStar());
+		addBodyToRayTracer(body->getVertexBuffer(), body->getColorBuffer(), body->getNumVertices(), body->isStar(), config);
 	}
 }
 
 RayTracer::~RayTracer(){
 	// Debug
-	std::cout << "RayTracer.cpp\t\tFinalizing\n";
+	if((debugLevel & 0x10) == 16){
+		std::cout << "RayTracer.cpp\t\tFinalizing\n";
+	}
 }
 
 void RayTracer::simulateRays(){

@@ -5,17 +5,11 @@
 KeyboardInput* KeyboardInput::instance = NULL;
 
 KeyboardInput::KeyboardInput(void){
-	// Debug
-	std::cout << "KeyboardInput.cpp\tInitializing" << std::endl;
-
 	// Init
 	this->listeners = new std::vector<KeyboardInputAction*>();
 }
 
 KeyboardInput::~KeyboardInput(void){
-	// Debug
-	std::cout << "KeyboardInput.cpp\tFinalizing" << std::endl;
-	
 	delete listeners;
 }
 

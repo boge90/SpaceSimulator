@@ -2,14 +2,17 @@
 #include <iostream>
 #include <vector>
 
-Menu::Menu(GLFWwindow *window, Simulator *simulator){
+Menu::Menu(GLFWwindow *window, Simulator *simulator, Config *config){
 	// Debug
-	std::cout << "Menu.cpp\t\tInitializing\n";
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "Menu.cpp\t\tInitializing\n";
+	}
 
 	// Init
-	this->hud = new HUD(window, simulator);
+	this->hud = new HUD(window, simulator, config);
 	this->currentActive = 0;
-	freeCameraControl = new FreeCameraControl(window, simulator->getFrame()->getWidth(), simulator->getFrame()->getHeight());
+	freeCameraControl = new FreeCameraControl(window, simulator->getFrame()->getWidth(), simulator->getFrame()->getHeight(), config);
 	std::vector<Body*> *bodies = simulator->getBodies();
 	bodyCameraControllers = new std::vector<BodyCameraControl*>();
 	
@@ -19,7 +22,7 @@ Menu::Menu(GLFWwindow *window, Simulator *simulator){
 	// Initializing body controllers
 	int size = bodies->size();
 	for(int i = 0; i<size; i++){
-		BodyCameraControl *controller = new BodyCameraControl(window, simulator->getFrame(), (*bodies)[i]);
+		BodyCameraControl *controller = new BodyCameraControl(window, simulator->getFrame(), (*bodies)[i], config);
 		bodyCameraControllers->push_back(controller);
 	}
 	
@@ -28,7 +31,9 @@ Menu::Menu(GLFWwindow *window, Simulator *simulator){
 }
 
 Menu::~Menu(void){
-	std::cout << "Menu.cpp\t\tFinalizing\n";
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "Menu.cpp\t\tFinalizing\n";
+	}
 	
 	
 	int size = bodyCameraControllers->size();

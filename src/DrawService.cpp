@@ -9,9 +9,12 @@
 // Defines
 #define PI 3.14159265359
 
-DrawService::DrawService(int width, int height, unsigned char *pixels){
-	//Print
-	std::cout << "DrawService.cpp\t\tInitializing" << std::endl;
+DrawService::DrawService(int width, int height, unsigned char *pixels, Config *config){
+	// Debug
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "DrawService.cpp\t\tInitializing" << std::endl;
+	}
 	
 	// Init
 	this->width = width;
@@ -22,7 +25,9 @@ DrawService::DrawService(int width, int height, unsigned char *pixels){
 }
 
 DrawService::~DrawService(void){
-	std::cout << "DrawService.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){			
+		std::cout << "DrawService.cpp\t\tFinalizing" << std::endl;
+	}
 }
 
 void DrawService::fill(unsigned char r, unsigned char g, unsigned char b){

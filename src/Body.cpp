@@ -5,15 +5,22 @@
 
 int Body::bodyNumber = 0;
 
-Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star){
+Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star, Config *config){
 	// Debug
-	std::cout << "Body.cpp\t\tInitializing body " << bodyNumber << " (" << this << ")" << "\n";
-	std::cout << "Body.cpp\t\t\tCenter   = " << center.x << ", " << center.y << ", " << center.z << "\n";
-	std::cout << "Body.cpp\t\t\tVelocity = " << velocity.x << ", " << velocity.y << ", " << velocity.z << "\n";
-	std::cout << "Body.cpp\t\t\tRadius   = " << radius << "\n";
-	std::cout << "Body.cpp\t\t\tMass     = " << mass << "\n";
-	std::cout << "Body.cpp\t\t\tRotation = " << rotationSpeed << "\n";
-	std::cout << "Body.cpp\t\t\tStar     = " << star << "\n";
+	this->config = config;
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "Body.cpp\t\tInitializing body " << bodyNumber << " (" << this << ")" << "\n";
+	}
+	
+	if((debugLevel & 0x8) == 8){	
+		std::cout << "Body.cpp\t\t\tCenter   = " << center.x << ", " << center.y << ", " << center.z << "\n";
+		std::cout << "Body.cpp\t\t\tVelocity = " << velocity.x << ", " << velocity.y << ", " << velocity.z << "\n";
+		std::cout << "Body.cpp\t\t\tRadius   = " << radius << "\n";
+		std::cout << "Body.cpp\t\t\tMass     = " << mass << "\n";
+		std::cout << "Body.cpp\t\t\tRotation = " << rotationSpeed << "\n";
+		std::cout << "Body.cpp\t\t\tStar     = " << star << "\n";
+	}
 	
 	// Init
 	this->bodyNum = bodyNumber++;
@@ -29,17 +36,19 @@ Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius,
 	
 	this->wireFrame = false;
 	this->force = glm::dvec3(0.0, 0.0, 0.0);
-	this->bmp = BmpService::loadImage("texture/earthSmall.bmp");
+	this->bmp = BmpService::loadImage("texture/earthSmall.bmp", config);
 }
 
 Body::~Body(){
-	std::cout << "Body.cpp\t\tFinalizing\n";
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "Body.cpp\t\tFinalizing\n";
+	}
 	
 	// Shader
 	delete shader;
 	
 	// Freeing texture image memory
-	BmpService::freeImage(bmp);
+	BmpService::freeImage(bmp, config);
 	
 	// Freeing buffers
 	glDeleteBuffers(1, &indexBuffer);
@@ -51,7 +60,7 @@ Body::~Body(){
 void Body::init(){
 	// Loading shader
 	//shader = new Shader("src/shaders/bodyVertex.glsl", "src/shaders/bodyFragment.glsl");
-	shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl");
+	shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl", config);
 	
 	// Calculates vertices and colors
 	std::vector<glm::dvec3> *vertices = new std::vector<glm::dvec3>();
@@ -72,7 +81,7 @@ void Body::init(){
 	color->push_back(rgb);
 	color->push_back(rgb);
 	
-	int depth = 4;
+	int depth = config->getBodyVertexDepth();
 	generateVertices(vertices, color, indices, 0, 2, 1, 0, depth);
 	generateVertices(vertices, color, indices, 0, 3, 2, 0, depth);
 	generateVertices(vertices, color, indices, 0, 4, 3, 0, depth);
@@ -111,6 +120,18 @@ void Body::init(){
     glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
     glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(float), &(color->front()), GL_DYNAMIC_DRAW);
     
+	if((debugLevel & 0x40) == 64){
+		long mem = (numVertices*3*sizeof(double)) + numVertices*3*sizeof(float) + numIndices*sizeof(GLuint);
+		
+		if(mem/(1024*1024) > 0){ // MiB		
+			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem/(1024*1024)) << " MiB" << std::endl;
+		}else if(mem/1024 > 0){ // KiB
+			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem/(1024)) << " KiB" << std::endl;
+		}else{
+			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem) << " Bytes" << std::endl;
+		}
+	}
+    
     // Texture coordinate buffer
     glGenBuffers(1, &texCoordBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
@@ -143,7 +164,9 @@ void Body::init(){
     free(indices);
     free(coords);
     
-    std::cout << "Body.cpp\t\tInitialized " << numVertices << " vertices for body " << bodyNum << std::endl;
+	if((debugLevel & 0x8) == 8){	
+	    std::cout << "Body.cpp\t\tInitialized " << numVertices << " vertices for body " << bodyNum << std::endl;
+	}
 }
 
 void Body::generateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth){

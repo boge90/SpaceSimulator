@@ -4,9 +4,12 @@
 
 #include <iostream>
 
-HUD::HUD(GLFWwindow *window, Simulator *simulator){
+HUD::HUD(GLFWwindow *window, Simulator *simulator, Config *config){
 	// Debug
-	std::cout << "HUD.cpp\t\t\tInitializing" << std::endl;
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "HUD.cpp\t\t\tInitializing" << std::endl;
+	}
 	
 	// Init
 	glfwGetWindowSize(window, &width, &height);
@@ -14,25 +17,25 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator){
 	this->visible = false;
 	this->stride = width*3;
 	this->pixels = (unsigned char*)malloc(width*height*3*sizeof(unsigned char));
-	this->drawService = new DrawService(width, height, pixels);
+	this->drawService = new DrawService(width, height, pixels, config);
 	this->pages = new std::vector<HudPage*>();
 	this->activePage = 0;
 	
 	// Creating GUI elements
-	left = new View(10, height/2, 50, 50);
-	right = new View(width-60, height/2, 50, 50);
+	left = new View(10, height/2, 50, 50, config);
+	right = new View(width-60, height/2, 50, 50, config);
 	
 	// Adding Click listeners for left and right
 	left->addViewClickedAction(this);
 	right->addViewClickedAction(this);
 	
 	// Adding main HUD page
-	pages->push_back(new MainHudPage(10+50+10, 0, width-140, height-1, simulator));
+	pages->push_back(new MainHudPage(10+50+10, 0, width-140, height-1, simulator, config));
 	
 	// Adding Body HUD pages
 	std::vector<Body*> *bodies = simulator->getBodies();
 	for(size_t i=0; i<bodies->size(); i++){
-		pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, i+2, (*bodies)[i]));
+		pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, i+2, (*bodies)[i], config));
 	}
 	
 	// Texture
@@ -48,7 +51,7 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator){
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 	
 	// Shader
-	shader = new Shader("src/shaders/hudVertex.glsl", "src/shaders/hudFragment.glsl");
+	shader = new Shader("src/shaders/hudVertex.glsl", "src/shaders/hudFragment.glsl", config);
 	
 	// Generating vertex buffer
 	float z = 0.f;
@@ -70,7 +73,9 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator){
 }
 
 HUD::~HUD(){
-	std::cout << "HUD.cpp\t\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "HUD.cpp\t\t\tFinalizing" << std::endl;
+	}
 	
 	// Freeing HUD pages
 	for(size_t i=0; i<pages->size(); i++){

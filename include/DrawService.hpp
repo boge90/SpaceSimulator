@@ -1,6 +1,8 @@
 #ifndef DRAW_SERVICE_H
 #define DRAW_SERVICE_H
 
+#include "../include/Config.hpp"
+
 class DrawService{
 	private:
 		int width;
@@ -9,8 +11,11 @@ class DrawService{
 		
 		int CHAR_WIDTH;
 		int CHAR_HEIGHT;
+		
+		// Misc
+		size_t debugLevel;
 	public:
-		DrawService(int width, int height, unsigned char *pixels);
+		DrawService(int width, int height, unsigned char *pixels, Config *config);
 		~DrawService();
 	
 		void fill(unsigned char r, unsigned char g, unsigned char b);

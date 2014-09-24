@@ -1,7 +1,8 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-// Includes
+#include "../include/Config.hpp"
+
 #include <string>
 #include <vector>
 #include <fstream>
@@ -17,7 +18,11 @@ using namespace std;
 
 class Shader{
 	private:
+		// OpenGl
 		GLuint shaderId;
+		
+		// Misc
+		size_t debugLevel;
 		
 		/**
 		* Method for loading and compiling shaders
@@ -27,7 +32,7 @@ class Shader{
 		/**
 		* Loads the shaders specified from arguments and compiles them
 		**/
-		Shader(const char *vertexShader, const char *fragmentShader);
+		Shader(const char *vertexShader, const char *fragmentShader, Config *config);
 		
 		/**
 		* Finalizes the shader

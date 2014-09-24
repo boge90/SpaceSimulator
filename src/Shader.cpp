@@ -1,14 +1,20 @@
 #include "../include/Shader.hpp"
 
-Shader::Shader(const char *vertexShader, const char *fragmentShader){
-	std::cout << "Shader.cpp\t\tInitializing\n";
+Shader::Shader(const char *vertexShader, const char *fragmentShader, Config *config){
+	// Debug
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "Shader.cpp\t\tInitializing\n";
+	}
 	
 	// Create and compile our GLSL program from the shaders
 	shaderId = loadShaders(vertexShader, fragmentShader);
 }
 
 Shader::~Shader(void){
-	std::cout << "Shader.cpp\t\tFinalizing\n";
+	if((debugLevel & 0x10) == 16){			
+		std::cout << "Shader.cpp\t\tFinalizing\n";
+	}
 	glDeleteProgram(shaderId);
 }
 
@@ -17,13 +23,19 @@ void Shader::bind(void){
 }
 
 GLuint Shader::loadShaders(const char *vertex_file_path, const char *fragment_file_path){
+	// Debug
+	if((debugLevel & 0x8) == 8){		
+		std::cout << "Shader.cpp\t\tCreating the shader\n";
+	}
+	
 	// Create the shaders
-	std::cout << "Shader.cpp\t\tCreating the shader\n";
 	GLuint VertexShaderID = glCreateShader(GL_VERTEX_SHADER);
 	GLuint FragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
 	
 	// Read the Vertex Shader code from the file
-	std::cout << "Shader.cpp\t\tRead the Vertex Shader code from the file\n";
+	if((debugLevel & 0x8) == 8){		
+		std::cout << "Shader.cpp\t\tRead the Vertex Shader code from the file\n";
+	}
 	std::string VertexShaderCode;
 	std::ifstream VertexShaderStream(vertex_file_path, std::ios::in);
 	if(VertexShaderStream.is_open()){
@@ -34,7 +46,10 @@ GLuint Shader::loadShaders(const char *vertex_file_path, const char *fragment_fi
 	}
 	
 	// Read the Fragment Shader code from the file
-	std::cout << "Shader.cpp\t\tRead the Fragment Shader code from the file\n";
+	if((debugLevel & 0x8) == 8){		
+		std::cout << "Shader.cpp\t\tRead the Fragment Shader code from the file\n";
+	}
+	
 	std::string FragmentShaderCode;
 	std::ifstream FragmentShaderStream(fragment_file_path, std::ios::in);
 	if(FragmentShaderStream.is_open()){
@@ -48,7 +63,9 @@ GLuint Shader::loadShaders(const char *vertex_file_path, const char *fragment_fi
 	int InfoLogLength;
 	
 	// Compile Vertex Shader
-	std::cout << "Shader.cpp\t\tCompiling shader : " << vertex_file_path;
+	if((debugLevel & 0x8) == 8){		
+		std::cout << "Shader.cpp\t\tCompiling shader : " << vertex_file_path << std::endl;
+	}
 	
 	char const * VertexSourcePointer = VertexShaderCode.c_str();
 	glShaderSource(VertexShaderID, 1, &VertexSourcePointer , NULL);
@@ -59,10 +76,15 @@ GLuint Shader::loadShaders(const char *vertex_file_path, const char *fragment_fi
 	glGetShaderiv(VertexShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	std::vector<char> VertexShaderErrorMessage(InfoLogLength);
 	glGetShaderInfoLog(VertexShaderID, InfoLogLength, NULL, &VertexShaderErrorMessage[0]);
-	fprintf(stdout, "%s\n", &VertexShaderErrorMessage[0]);
+	
+	if(InfoLogLength > 1){	
+		fprintf(stdout, "%s\n", &VertexShaderErrorMessage[0]);
+	}
 	
 	// Compile Fragment Shader
-	std::cout << "Shader.cpp\t\tCompiling shader : " << fragment_file_path; 
+	if((debugLevel & 0x8) == 8){		
+		std::cout << "Shader.cpp\t\tCompiling shader : " << fragment_file_path << std::endl; 
+	}
 	
 	char const * FragmentSourcePointer = FragmentShaderCode.c_str();
 	glShaderSource(FragmentShaderID, 1, &FragmentSourcePointer , NULL);
@@ -73,10 +95,15 @@ GLuint Shader::loadShaders(const char *vertex_file_path, const char *fragment_fi
 	glGetShaderiv(FragmentShaderID, GL_INFO_LOG_LENGTH, &InfoLogLength);
 	std::vector<char> FragmentShaderErrorMessage(InfoLogLength);
 	glGetShaderInfoLog(FragmentShaderID, InfoLogLength, NULL, &FragmentShaderErrorMessage[0]);
-	fprintf(stdout, "%s\n", &FragmentShaderErrorMessage[0]);
+	
+	if(InfoLogLength > 1){	
+		fprintf(stdout, "%s\n", &FragmentShaderErrorMessage[0]);
+	}
 	
 	// Link the program
-	std::cout << "Shader.cpp\t\tLinking program\n";
+	if((debugLevel & 0x8) == 8){		
+		std::cout << "Shader.cpp\t\tLinking program\n";
+	}
 	
 	GLuint ProgramID = glCreateProgram();
 	glAttachShader(ProgramID, VertexShaderID);

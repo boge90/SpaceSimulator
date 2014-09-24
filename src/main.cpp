@@ -4,37 +4,33 @@
 #include <string.h>
 
 #include "../include/Body.hpp"
+#include "../include/Config.hpp"
 #include "../include/BodyIO.hpp"
 #include "../include/Simulator.hpp"
 #include "../include/CudaHelper.cuh"
 #include "../include/OpenGlHelper.hpp"
 
 int main(int argc, char **args){	
+	// Reading input params
+	Config *config = new Config(argc, args);
+
 	// Initialize GPU(s)
-	bool cudaSuccessful = CudaHelper::init(0);
-	GLFWwindow *window = OpenGlHelper::init();
+	bool cudaSuccessful = CudaHelper::init(config);
+	GLFWwindow *window = OpenGlHelper::init(config);
 	
 	// Exit if CUDA system was un-successful or OpenGL fails
 	if(!cudaSuccessful || window == NULL){
 		return EXIT_FAILURE;
 	}
 	
-	// Simulation parameters
-	double dt = 10.0;
-	for(int i=0; i<argc; i++){
-		if(strcmp(args[i], "--dt") == 0){
-			dt = strtod(args[++i], NULL);
-		}
-	}
-
 	// Reading bodies from disk
 	double time;
 	std::vector<Body*> *bodies = new std::vector<Body*>();
-	BodyIO::read(&time, bodies);
+	BodyIO::read(&time, bodies, config);
 	
 	// Init
 	glfwDestroyWindow(window);
-	Simulator *simulator = new Simulator(time, dt, bodies);
+	Simulator *simulator = new Simulator(time, bodies, config);
 	
 	// Main loop
 	std::cout << "main.cpp\t\tEntering main loop\n";
@@ -43,11 +39,12 @@ int main(int argc, char **args){
 	}
 	
 	// Writing bodies to disk
-	BodyIO::write(simulator->getTime(), bodies);
+	BodyIO::write(simulator->getTime(), bodies, config);
 	
 	// Cleaning up memory
 	delete bodies;
 	delete simulator;
+	delete config;
 	
 	// Exit application
 	return EXIT_SUCCESS;

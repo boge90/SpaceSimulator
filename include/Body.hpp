@@ -7,6 +7,7 @@
 #include "../include/Renderable.hpp"
 #include "../include/BMP.hpp"
 #include "../include/Shader.hpp"
+#include "../include/Config.hpp"
 
 class Body: public Renderable{
 	private:
@@ -40,11 +41,15 @@ class Body: public Renderable{
 		// Texture
 		GLuint tex;
 		BMP *bmp;
+		
+		// Misc
+		Config *config;
+		size_t debugLevel;
 	public:
 		/**
 		* Creates a body
 		**/
-		Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star);
+		Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star, Config *config);
 		
 		/**
 		* Finalizes

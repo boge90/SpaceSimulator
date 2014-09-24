@@ -2,6 +2,7 @@
 #define BODY_TRACER_H
 
 #include "../include/common.hpp"
+#include "../include/Config.hpp"
 #include "../include/Body.hpp"
 #include <vector>
 
@@ -12,6 +13,9 @@ class BodyTracer: public Renderable{
 		double dt;
 		double G;
 		std::vector<Body*> *bodies;
+		
+		// Misc
+		size_t debugLevel;
 		
 		// OpenGL
 		Shader *shader;
@@ -24,7 +28,7 @@ class BodyTracer: public Renderable{
 		/**
 		*
 		**/
-		BodyTracer(std::vector<Body*> *bodies, double dt);
+		BodyTracer(std::vector<Body*> *bodies, Config *config);
 		
 		/**
 		*

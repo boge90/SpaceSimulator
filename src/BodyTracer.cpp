@@ -1,16 +1,19 @@
 #include "../include/BodyTracer.hpp"
 #include <iostream>
 
-BodyTracer::BodyTracer(std::vector<Body*> *bodies, double dt){	
+BodyTracer::BodyTracer(std::vector<Body*> *bodies, Config *config){	
 	// DEBUG
-	std::cout << "BodyTracer.cpp\t\tInitializing" << std::endl;
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "BodyTracer.cpp\t\tInitializing" << std::endl;
+	}
 
 	// Init
 	this->active = false;
 	this->bodyNum = -1;
 	this->numVertices = 0;
 	this->MAX_VERTICES = 5000000;
-	this->dt = dt;
+	this->dt = config->getDt();
 	this->G = 6.7 * pow(10, -11);
 	this->bodies = bodies;
 	
@@ -19,11 +22,15 @@ BodyTracer::BodyTracer(std::vector<Body*> *bodies, double dt){
 	glGenBuffers(1, &colorBuffer);
 	
 	// Shader
-	shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl");
+	shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl", config);
 }
 
 BodyTracer::~BodyTracer(void){
-	std::cout << "BodyTracer.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "BodyTracer.cpp\t\tFinalizing" << std::endl;
+	}
+	
+	delete shader;
 }
 
 void BodyTracer::render(const GLfloat *mvp){	

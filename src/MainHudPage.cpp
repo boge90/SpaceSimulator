@@ -2,21 +2,25 @@
 #include <iostream>
 #include "../include/FloatInputView.hpp"
 
-MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulator): HudPage(x, y, width, height, 1){
+MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulator, Config *config): HudPage(x, y, width, height, 1, config){
 	// Debug
-	std::cout << "MainHudPage.cpp\t\tInitializing" << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "MainHudPage.cpp\t\tInitializing" << std::endl;
+	}
 	
 	// Init
 	this->simulator = simulator;
-	this->fpsView = new TextView("");
-	this->timeView = new TextView("");
-	this->cullBackfaceBox = new CheckBox("CULL BACK FACE", true);
-	this->wireframeBox = new CheckBox("WIREFRAME", false);
-	this->futureBodyPathBox = new CheckBox("FUTURE PATH", false);
-	this->futureBodyInputView = new IntegerInputView("FUTURE BODY PATH");
-	this->exitButton = new Button("EXIT");
+	this->fpsView = new TextView("", config);
+	this->timeView = new TextView("", config);
+	this->pausedBox = new CheckBox("PAUSE", false, config);
+	this->cullBackfaceBox = new CheckBox("CULL BACK FACE", true, config);
+	this->wireframeBox = new CheckBox("WIREFRAME", false, config);
+	this->futureBodyPathBox = new CheckBox("FUTURE PATH", false, config);
+	this->futureBodyInputView = new IntegerInputView("FUTURE BODY PATH", config);
+	this->exitButton = new Button("EXIT", config);
 	
 	// Adding listeners
+	pausedBox->addStateChangeAction(this);
 	cullBackfaceBox->addStateChangeAction(this);
 	wireframeBox->addStateChangeAction(this);
 	futureBodyPathBox->addStateChangeAction(this);
@@ -26,6 +30,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	// Add view
 	addChild(fpsView);
 	addChild(timeView);
+	addChild(pausedBox);
 	addChild(cullBackfaceBox);
 	addChild(wireframeBox);
 	addChild(futureBodyPathBox);
@@ -35,7 +40,9 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 
 MainHudPage::~MainHudPage(){
 	// Debug
-	std::cout << "MainHudPage.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){			
+		std::cout << "MainHudPage.cpp\t\tFinalizing" << std::endl;
+	}
 }
 
 void MainHudPage::onClick(View *view, int button, int action){
@@ -54,6 +61,8 @@ void MainHudPage::onStateChange(CheckBox *box, bool newState){
 		}
 	}else if(box == futureBodyPathBox){ // Toggle body path visualization
 		simulator->getBodyTracer()->setActive(newState);
+	}else if(box == pausedBox){ // Pause / Unpause the simulation
+		simulator->setPaused(newState);
 	}else if(box == cullBackfaceBox){
 		if(newState){
 			glEnable(GL_CULL_FACE);

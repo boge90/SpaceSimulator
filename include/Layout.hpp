@@ -2,6 +2,7 @@
 #define LAYOUT_H
 
 #include "../include/View.hpp"
+#include "../include/Config.hpp"
 #include <vector>
 
 class Layout: public View{
@@ -12,7 +13,7 @@ class Layout: public View{
 		/**
 		*
 		**/
-		Layout(int x, int y, int width, int height);
+		Layout(int x, int y, int width, int height, Config *config);
 		
 		/**
 		*

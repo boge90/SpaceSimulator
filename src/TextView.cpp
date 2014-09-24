@@ -1,9 +1,11 @@
 #include "../include/TextView.hpp"
 #include <iostream>
 
-TextView::TextView(std::string text): View(30){
+TextView::TextView(std::string text, Config *config): View(30, config){
 	// Debug
-	std::cout << "TextView.cpp\t\tInitializing" << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "TextView.cpp\t\tInitializing" << std::endl;
+	}
 
 	this->text = text;
 	this->leftPadding = 10;
@@ -13,7 +15,9 @@ TextView::TextView(std::string text): View(30){
 
 TextView::~TextView(void){
 	// Debug
-	std::cout << "TextView.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "TextView.cpp\t\tFinalizing" << std::endl;
+	}
 }
 
 void TextView::draw(DrawService *drawService){

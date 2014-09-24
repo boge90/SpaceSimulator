@@ -4,9 +4,11 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
-InputView::InputView(std::string text): Button(text){
+InputView::InputView(std::string text, Config *config): Button(text, config){
 	// Debug
-	std::cout << "InputView.cpp\t\tInitializing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "InputView.cpp\t\tInitializing" << std::endl;
+	}
 	
 	// Init
 	this->repaint = false;
@@ -18,7 +20,11 @@ InputView::InputView(std::string text): Button(text){
 }
 
 InputView::~InputView(){
-	std::cout << "InputView.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "InputView.cpp\t\tFinalizing" << std::endl;
+	}
+	
+	delete listeners;
 }
 
 void InputView::onClick(View *view, int button, int action){

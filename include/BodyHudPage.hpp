@@ -3,6 +3,7 @@
 
 #include "../include/HudPage.hpp"
 #include "../include/Body.hpp"
+#include "../include/Config.hpp"
 
 class BodyHudPage: public HudPage{
 	private:
@@ -20,7 +21,7 @@ class BodyHudPage: public HudPage{
 		/**
 		*
 		**/
-		BodyHudPage(int x, int y, int width, int height, int number, Body *body);
+		BodyHudPage(int x, int y, int width, int height, int number, Body *body, Config *config);
 		
 		/**
 		*

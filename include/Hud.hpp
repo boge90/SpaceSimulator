@@ -11,6 +11,7 @@ class HUD;
 #include "../include/View.hpp"
 #include "../include/ViewClickedAction.hpp"
 #include "../include/Simulator.hpp"
+#include "../include/Config.hpp"
 
 #include <vector>
 
@@ -30,6 +31,9 @@ class HUD: public ViewClickedAction{
 		int height;
 		int stride;
 		unsigned char *pixels;
+		
+		// Misc
+		size_t debugLevel;
 		
 		// Helper class for drawing
 		DrawService *drawService;
@@ -53,7 +57,7 @@ class HUD: public ViewClickedAction{
 		/**
 		* Creates the HUD object
 		**/
-		HUD(GLFWwindow *window, Simulator *simulator);
+		HUD(GLFWwindow *window, Simulator *simulator, Config *config);
 		
 		/**
 		* Destroys the HUD object

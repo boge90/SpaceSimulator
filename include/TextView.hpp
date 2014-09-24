@@ -2,6 +2,7 @@
 #define TEXT_VIEW_H
 
 #include "../include/View.hpp"
+#include "../include/Config.hpp"
 #include <string>
 
 class TextView: public View{
@@ -21,7 +22,7 @@ class TextView: public View{
 		/**
 		* Creates a TextView object with the specified text
 		**/
-		TextView(std::string text);
+		TextView(std::string text, Config *config);
 		
 		/**
 		* Finalizes the TextView object

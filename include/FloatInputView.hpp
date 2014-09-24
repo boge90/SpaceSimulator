@@ -3,6 +3,7 @@
 
 class FloatInputView;
 
+#include "../include/Config.hpp"
 #include "../include/InputView.hpp"
 #include "../include/InputViewAction.hpp"
 #include "../include/FloatInputAction.hpp"
@@ -16,7 +17,7 @@ class FloatInputView: public InputView, public InputViewAction{
 		/**
 		*
 		**/
-		FloatInputView(std::string text);
+		FloatInputView(std::string text, Config *config);
 		
 		/**
 		*

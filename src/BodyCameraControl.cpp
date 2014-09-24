@@ -1,8 +1,11 @@
 #include "../include/BodyCameraControl.hpp"
 #include <iostream>
 
-BodyCameraControl::BodyCameraControl(GLFWwindow *window, Frame *frame, Body *body){
-	std::cout << "BodyCameraControl.cpp\tInitializing for body " << body << "\n";
+BodyCameraControl::BodyCameraControl(GLFWwindow *window, Frame *frame, Body *body, Config *config){
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "BodyCameraControl.cpp\tInitializing for body " << body << "\n";
+	}
 
 	this->body = body;
 	this->window = window;
@@ -16,7 +19,9 @@ BodyCameraControl::BodyCameraControl(GLFWwindow *window, Frame *frame, Body *bod
 }
 
 BodyCameraControl::~BodyCameraControl(void){
-	std::cout << "BodyCameraControl.cpp\tFinalizing for body " << body << "\n";
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "BodyCameraControl.cpp\tFinalizing for body " << body << "\n";
+	}
 }
 
 void BodyCameraControl::checkUserInput(void){

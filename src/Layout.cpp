@@ -1,9 +1,11 @@
 #include "../include/Layout.hpp"
 #include <iostream>
 
-Layout::Layout(int x, int y, int width, int height): View(x, y, width, height){
+Layout::Layout(int x, int y, int width, int height, Config *config): View(x, y, width, height, config){
 	// Debug
-	std::cout << "Layout.cpp\t\tInitializing" << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "Layout.cpp\t\tInitializing" << std::endl;
+	}
 
 	// Init
 	children = new std::vector<View*>();
@@ -11,7 +13,9 @@ Layout::Layout(int x, int y, int width, int height): View(x, y, width, height){
 
 Layout::~Layout(){
 	// Debug
-	std::cout << "Layout.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "Layout.cpp\t\tFinalizing" << std::endl;
+	}
 	
 	// Deleting children
 	for(size_t i=0; i<children->size(); i++){

@@ -1,9 +1,11 @@
 #include "../include/IntegerInputView.hpp"
 #include <iostream>
 
-IntegerInputView::IntegerInputView(std::string text): InputView(text){
+IntegerInputView::IntegerInputView(std::string text, Config *config): InputView(text, config){
 	// Debug
-	std::cout << "IntegerInputView.cpp\tInitializing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "IntegerInputView.cpp\tInitializing" << std::endl;
+	}
 	
 	// Init
 	this->listeners = new std::vector<IntegerInputAction*>();
@@ -14,7 +16,11 @@ IntegerInputView::IntegerInputView(std::string text): InputView(text){
 
 IntegerInputView::~IntegerInputView(){
 	// Debug
-	std::cout << "IntegerInputView.cpp\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "IntegerInputView.cpp\tFinalizing" << std::endl;
+	}
+	
+	delete listeners;
 }
 
 void IntegerInputView::onInput(InputView *view, std::string *input){

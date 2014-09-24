@@ -1,18 +1,20 @@
 #include "../include/BodyHudPage.hpp"
 #include <iostream>
 
-BodyHudPage::BodyHudPage(int x, int y, int width, int height, int number, Body *body): HudPage(x, y, width, height, number){
+BodyHudPage::BodyHudPage(int x, int y, int width, int height, int number, Body *body, Config *config): HudPage(x, y, width, height, number, config){
 	// Debug
-	std::cout << "BodyHudPage.cpp\t\tInitializing for body " << number << std::endl;
+	if((debugLevel & 0x10) == 16){		
+		std::cout << "BodyHudPage.cpp\t\tInitializing for body " << number << std::endl;
+	}
 	
 	// Init
 	this->body = body;
-	this->positionViewX = new TextView("");
-	this->positionViewY = new TextView("");
-	this->positionViewZ = new TextView("");
-	this->velocityViewX = new TextView("");
-	this->velocityViewY = new TextView("");
-	this->velocityViewZ = new TextView("");
+	this->positionViewX = new TextView("", config);
+	this->positionViewY = new TextView("", config);
+	this->positionViewZ = new TextView("", config);
+	this->velocityViewX = new TextView("", config);
+	this->velocityViewY = new TextView("", config);
+	this->velocityViewZ = new TextView("", config);
 	
 	// Adding child
 	addChild(positionViewX);
@@ -24,7 +26,9 @@ BodyHudPage::BodyHudPage(int x, int y, int width, int height, int number, Body *
 }
 
 BodyHudPage::~BodyHudPage(){
-	std::cout << "BodyHudPage.cpp\t\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "BodyHudPage.cpp\t\tFinalizing" << std::endl;
+	}
 }
 
 void BodyHudPage::draw(DrawService *drawService){

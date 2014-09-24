@@ -1,21 +1,24 @@
 #include "../include/View.hpp"
 #include <iostream>
 
-View::View(int height){
-	init(-1, -1, -1, height);
+View::View(int height, Config *config){
+	init(-1, -1, -1, height, config);
 }
 
-View::View(int height, int width){
-	init(-1, -1, width, height);
+View::View(int height, int width, Config *config){
+	init(-1, -1, width, height, config);
 }
 
-View::View(int x, int y, int width, int height){
-	init(x, y, width, height);
+View::View(int x, int y, int width, int height, Config *config){
+	init(x, y, width, height, config);
 }
 
-void View::init(int x, int y, int width, int height){
+void View::init(int x, int y, int width, int height, Config *config){
 	// Debug
-	std::cout << "View.cpp\t\tInitializing(" << x << ", " << y << ", " << width << ", " << height << ", " << this << ")" << std::endl;
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){
+		std::cout << "View.cpp\t\tInitializing(" << x << ", " << y << ", " << width << ", " << height << ", " << this << ")" << std::endl;
+	}
 	
 	// Init
 	this->red = 255;
@@ -30,7 +33,9 @@ void View::init(int x, int y, int width, int height){
 
 View::~View(){
 	// Debug
-	std::cout << "View.cpp\t\tFinalizing " << this << std::endl;
+	if((debugLevel & 0x10) == 16){			
+		std::cout << "View.cpp\t\tFinalizing " << this << std::endl;
+	}
 	
 	// Free
 	delete clickActions;

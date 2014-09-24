@@ -3,6 +3,7 @@
 
 class CheckBox;
 
+#include "../include/Config.hpp"
 #include "../include/Button.hpp"
 #include "../include/ViewClickedAction.hpp"
 #include "../include/CheckBoxStateChangeAction.hpp"
@@ -22,7 +23,7 @@ class CheckBox: public Button, public ViewClickedAction{
 		/**
 		* Creates an checkbox object
 		**/
-		CheckBox(std::string text, bool state);
+		CheckBox(std::string text, bool state, Config *config);
 		
 		/**
 		* Finalizes the checkbox object

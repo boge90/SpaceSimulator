@@ -3,6 +3,7 @@
 
 #include "../include/ListLayout.hpp"
 #include "../include/TextView.hpp"
+#include "../include/Config.hpp"
 
 class HudPage: public ListLayout{
 	private:
@@ -15,7 +16,7 @@ class HudPage: public ListLayout{
 		/**
 		* Creates an empty HUD page object
 		**/
-		HudPage(int x, int y, int width, int height, int number);
+		HudPage(int x, int y, int width, int height, int number, Config *config);
 		
 		/**
 		* Finalizes the HUD page object

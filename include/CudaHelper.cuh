@@ -1,6 +1,8 @@
 #ifndef CUDA_HELPER_H
 #define CUDA_HELPER_H
 
+#include "../include/Config.hpp"
+
 #include </usr/local/cuda/include/cuda_runtime.h>
 #include </usr/local/cuda/include/cuda_gl_interop.h>
 #include <vector>
@@ -19,7 +21,7 @@ class CudaHelper{
 		* Finds the number of GPUs and creates a stream for each GPU, and sets the device input
 		* parameter as the rendering device
 		**/
-		static bool init(int renderingDeviceNumber);
+		static bool init(Config *config);
 		
 		/**
 		* Returns the number of GPUs

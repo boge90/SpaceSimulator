@@ -10,6 +10,7 @@ class Simulator;
 #include "../include/BodyRotator.hpp"
 #include "../include/Nbody.hpp"
 #include "../include/Body.hpp"
+#include "../include/Config.hpp"
 
 #include <vector>
 
@@ -20,6 +21,8 @@ class Simulator{
 		double time;
 		double dt;
 		int simulationSteps;
+		size_t debugLevel;
+		bool paused;
 
 		// Frame for visualization
 		Renderer *renderer;
@@ -36,7 +39,7 @@ class Simulator{
 		/**
 		* Creates the simultor class for N-Body simulation
 		**/
-		Simulator(double time, double dt, std::vector<Body*> *bodies);
+		Simulator(double time, std::vector<Body*> *bodies, Config *config);
 		
 		/**
 		* Finalizes the simulator
@@ -52,6 +55,11 @@ class Simulator{
 		* Returns the time
 		**/
 		double getTime(void);
+		
+		/**
+		* Sets the simulation pause flag
+		**/
+		void setPaused(bool paused);
 		
 		/**
 		* Returns the bodies

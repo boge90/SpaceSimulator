@@ -2,27 +2,33 @@
 #include "../include/NbodySystem.cuh"
 #include <iostream>
 
-Nbody::Nbody(std::vector<Body*> *bodies, double dt){
-	std::cout << "Nbody.cpp\t\tInitializing\n";
+Nbody::Nbody(std::vector<Body*> *bodies, Config *config){
+	// Debug
+	this->debugLevel = config->getDebugLevel();
+	if((debugLevel & 0x10) == 16){
+		std::cout << "Nbody.cpp\t\tInitializing\n";
+	}
 
 	// This
+	this->dt = config->getDt();
 	this->bodies = bodies;
-	this->dt = dt;
 	this->G = 6.7 * pow(10, -11);
 	
 	// CUDA System
-	initializeNbodySystem();
+	initializeNbodySystem(config);
 	
 	// Adding vertex buffers to CUDA system
 	int size = bodies->size();
 	for(int i=0; i<size; i++){
 		GLuint buffer = (*bodies)[i]->getVertexBuffer();
-		addBodyVertexBuffer(buffer);
+		addBodyVertexBuffer(buffer, config);
 	}
 }
 
 Nbody::~Nbody(void){
-	std::cout << "Nbody.cpp\t\tFinalizing\n";
+	if((debugLevel & 0x10) == 16){
+		std::cout << "Nbody.cpp\t\tFinalizing\n";
+	}
 }
 
 void Nbody::simulateGravity(void){
@@ -65,29 +71,15 @@ void Nbody::simulateGravity(void){
 		glm::dvec3 delta = dt*b1->getVelocity();
 		
 		// Updating vertices based on delta vector
-		double translation[4*4];
-		translation[0] = 1.0;
-		translation[1] = 0.0;
-		translation[2] = 0.0;
-		translation[3] = delta.x;
-		
-		translation[4] = 0.0;
-		translation[5] = 1.0;
-		translation[6] = 0.0;
-		translation[7] = delta.y;
-		
-		translation[8] = 0.0;
-		translation[9] = 0.0;
-		translation[10]= 1.0;
-		translation[11]= delta.z;
-		
-		translation[12]= 0.f;
-		translation[13]= 0.f;
-		translation[14]= 0.f;
-		translation[15]= 1.f;
+		glm::dmat4 mat = glm::translate(glm::dmat4(1.0), delta);
 		
 		// Moving all vertices based on translation matrix for body 'i'
-		moveBody(i, b1->getNumVertices(), translation, center.x, center.y, center.z, b1->getRadius());
+		moveBody(i, b1->getNumVertices(), &mat[0][0]);
+		
+		// The below asserts will fail when TOO low DT is being used, causing center + delta to NOT change
+		assert(center.x != (center.x+delta.x) || delta.x == 0);
+		assert(center.y != (center.y+delta.y) || delta.y == 0);
+		assert(center.z != (center.z+delta.z) || delta.z == 0);
 		
 		// Updating new center
 		center += delta;

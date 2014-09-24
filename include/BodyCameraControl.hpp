@@ -5,6 +5,7 @@ class BodyCameraControl;
 
 #include "../include/AbstractCamera.hpp"
 #include "../include/Frame.hpp"
+#include "../include/Config.hpp"
 #include "../include/Body.hpp"
 
 class BodyCameraControl: public AbstractCamera{
@@ -16,6 +17,9 @@ class BodyCameraControl: public AbstractCamera{
 		// Data
 		Body *body;
 		
+		// Misc
+		size_t debugLevel;
+		
 		//Camera data
 		double distance;
 		double horizontalAngle;
@@ -26,7 +30,7 @@ class BodyCameraControl: public AbstractCamera{
 		/**
 		* Creates and initializes the body camera
 		**/
-		BodyCameraControl(GLFWwindow *window, Frame *frame, Body *body);
+		BodyCameraControl(GLFWwindow *window, Frame *frame, Body *body, Config *config);
 		
 		/**
 		* Frees up the memory associated with the camera

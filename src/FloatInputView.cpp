@@ -1,9 +1,11 @@
 #include "../include/FloatInputView.hpp"
 #include <iostream>
 
-FloatInputView::FloatInputView(std::string text): InputView(text){
+FloatInputView::FloatInputView(std::string text, Config *config): InputView(text, config){
 	// Debug
-	std::cout << "FloatInputView.cpp\tInitializing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "FloatInputView.cpp\tInitializing" << std::endl;
+	}
 	
 	// Init
 	this->listeners = new std::vector<FloatInputAction*>();
@@ -14,7 +16,11 @@ FloatInputView::FloatInputView(std::string text): InputView(text){
 
 FloatInputView::~FloatInputView(){
 	// Debug
-	std::cout << "FloatInputView.cpp\tFinalizing" << std::endl;
+	if((debugLevel & 0x10) == 16){	
+		std::cout << "FloatInputView.cpp\tFinalizing" << std::endl;
+	}
+	
+	delete listeners;
 }
 
 void FloatInputView::onInput(InputView *view, std::string *input){

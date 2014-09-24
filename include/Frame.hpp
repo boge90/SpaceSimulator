@@ -14,7 +14,7 @@ class Frame;
 #include "../include/Renderer.hpp"
 #include "../include/Simulator.hpp"
 #include "../include/Menu.hpp"
-
+#include "../include/Config.hpp"
 #include "../include/KeyboardInput.hpp"
 
 class Frame{
@@ -34,6 +34,7 @@ class Frame{
 		double fps;
 		
 		// Misc
+		size_t debugLevel;
 		GLuint VertexArrayID;
 		static int frameWidth;
 		static int frameHeight;
@@ -63,7 +64,7 @@ class Frame{
 		/**
 		* Constructor
 		**/
-		Frame(int width, int height, const char *title, Renderer *renderer, Simulator *simulator);
+		Frame(int width, int height, const char *title, Renderer *renderer, Simulator *simulator, Config *config);
 		
 		/**
 		* Finalizes the frame

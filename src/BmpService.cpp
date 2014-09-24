@@ -4,9 +4,11 @@
 
 long BmpService::memoryUsed = 0l;
 
-BMP* BmpService::loadImage(const char *path){
+BMP* BmpService::loadImage(const char *path, Config *config){
 	// Debug
-	std::cout << "BmpService.cpp\t\tLoading image " << path << "\n";
+	if((config->getDebugLevel() & 0x8) == 8){	
+		std::cout << "BmpService.cpp\t\tLoading image " << path << "\n";
+	}
 	
 	// Open file
 	FILE* fp = fopen(path, "rb");
@@ -38,7 +40,9 @@ BMP* BmpService::loadImage(const char *path){
 
 	// Total memory usage
 	memoryUsed += sizeof(unsigned char)*height*width*3;
-	std::cout << "BmpService.cpp\t\tTotal memory usage is " << memoryUsed/(1024.0*1024.0) << " MiB\n";
+	if((config->getDebugLevel() & 0x40) == 64){	
+		std::cout << "BmpService.cpp\t\tTotal memory usage is " << memoryUsed/(1024.0*1024.0) << " MiB\n";
+	}
 
 	// Reading image
     fseek(fp, offset, SEEK_SET);
@@ -55,15 +59,17 @@ BMP* BmpService::loadImage(const char *path){
     fclose(fp);
 	
 	// Return image
-	return new BMP(width, height, data);
+	return new BMP(width, height, data, config);
 }
 
-void BmpService::freeImage(BMP *bmp){
+void BmpService::freeImage(BMP *bmp, Config *config){
 	memoryUsed -= sizeof(unsigned char)*bmp->getHeight()*bmp->getWidth();
 	free(bmp->getData());
 
 	delete bmp;
 	
 	// Total memory usage
-	std::cout << "BmpService.cpp\t\tTotal memory usage is " << memoryUsed/(1024.0*1024.0) << " MiB\n";
+	if((config->getDebugLevel() & 0x40) == 64){	
+		std::cout << "BmpService.cpp\t\tTotal memory usage is " << memoryUsed/(1024.0*1024.0) << " MiB\n";
+	}
 }

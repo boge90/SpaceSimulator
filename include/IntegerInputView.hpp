@@ -3,6 +3,7 @@
 
 class IntegerInputView;
 
+#include "../include/Config.hpp"
 #include "../include/InputView.hpp"
 #include "../include/InputViewAction.hpp"
 #include "../include/IntegerInputAction.hpp"
@@ -16,7 +17,7 @@ class IntegerInputView: public InputView, public InputViewAction{
 		/**
 		*
 		**/
-		IntegerInputView(std::string text);
+		IntegerInputView(std::string text, Config *config);
 		
 		/**
 		*

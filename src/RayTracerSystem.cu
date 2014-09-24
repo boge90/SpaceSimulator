@@ -11,9 +11,11 @@ static std::vector<RayTracingUnit> resources;
 // CUDA function prototypes
 void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, double3 *bodyVertices, double3 *starVertices, float3 *bodyColors);
 
-void addBodyToRayTracer(GLuint vertexBuffer, GLuint colorBuffer, int numVertices, bool isStar){
+void addBodyToRayTracer(GLuint vertexBuffer, GLuint colorBuffer, int numVertices, bool isStar, Config *config){
 	// Debug
-	printf("RayTracerSystem.cu\tAdding body to ray tracer system (%d, %d, %d, %d)\n", vertexBuffer, colorBuffer, numVertices, isStar);
+	if((config->getDebugLevel() & 0x8) == 8){	
+		printf("RayTracerSystem.cu\tAdding body to ray tracer system (%d, %d, %d, %d)\n", vertexBuffer, colorBuffer, numVertices, isStar);
+	}
 	
 	// Initializing unit
 	struct cudaGraphicsResource *vertexResource;
