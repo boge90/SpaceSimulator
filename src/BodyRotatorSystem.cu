@@ -6,7 +6,7 @@
 #include <cuda_gl_interop.h>
 
 // CUDA resources
-static std::vector<struct cudaGraphicsResource*> resources;
+static std::vector<BodyRotationUnit> resources;
 
 // CUDA Translation matrix
 __constant__ double cuda_translation_matrix[16];
@@ -28,49 +28,53 @@ void finalizeBodyRotatorSystem(Config *config){
 	}
 }
 	
-void addBodyToRotationSystem(GLuint buffer, Config *config){
+void addBodyToRotationSystem(GLuint vertexBuffer, int numVertices, Config *config){
 	// Debug
 	if((config->getDebugLevel() & 0x8) == 8){
 		printf("BodyRotatorSystem.cu\tAdding body to rotation system\n");
 	}
 	
 	// Creating new cuda resource
-	struct cudaGraphicsResource *resource;
-	cudaGraphicsGLRegisterBuffer(&resource, buffer, cudaGraphicsRegisterFlagsNone);
+	struct cudaGraphicsResource *vertexResource;
+	cudaGraphicsGLRegisterBuffer(&vertexResource, vertexBuffer, cudaGraphicsRegisterFlagsNone);
 	
 	// Adding the new resource
-	resources.push_back(resource);
+	BodyRotationUnit unit;
+	unit.vertexResource = vertexResource;
+	unit.numVertices = numVertices;
+	
+	resources.push_back(unit);
 }
 
 void prepareBodyRotation(Config *config){
 	for(size_t i=0; i<resources.size(); i++){
 		// Making the resource available for the CUDA system
-		cudaGraphicsMapResources(1, &resources[i]);
+		cudaGraphicsMapResources(1, &resources[i].vertexResource);
 	}
 }
 
 void endBodyRotation(Config *config){
 	for(size_t i=0; i<resources.size(); i++){
 		// Making the resource available for OpenGl for rendering
-		cudaGraphicsUnmapResources(1, &resources[i]);
+		cudaGraphicsUnmapResources(1, &resources[i].vertexResource);
 	}
 }
 
-void rotateBody(int bodyNum, int numVertices, double *rotMatrix, Config *config){
+void rotateBody(int bodyNum, double *rotMatrix, Config *config){
 	// Local vars
 	double3 *bodyVertices = 0;
 	size_t num_bytes_bodyVertices;
 	
 	// Getting the arrays
-	cudaGraphicsResourceGetMappedPointer((void**)&bodyVertices, &num_bytes_bodyVertices, resources[bodyNum]);
+	cudaGraphicsResourceGetMappedPointer((void**)&bodyVertices, &num_bytes_bodyVertices, resources[bodyNum].vertexResource);
 	
 	// Transferring the matrix
 	cudaMemcpyToSymbol(cuda_translation_matrix, rotMatrix, 4*4*sizeof(double), 0, cudaMemcpyHostToDevice);
 	
 	// Executing CUDA kernel
-	dim3 grid((numVertices/512) + 1);
+	dim3 grid((resources[bodyNum].numVertices/512) + 1);
 	dim3 block(512);	
-	simulateBodyRotation<<<grid, block>>>(bodyVertices, numVertices);
+	simulateBodyRotation<<<grid, block>>>(bodyVertices, resources[bodyNum].numVertices);
 	
 	// Error check
 	cudaError_t error = cudaGetLastError();
@@ -86,13 +90,14 @@ __global__ void simulateBodyRotation(double3 *vertices, int numVertices){
 	// Boundary check
 	if(i >= numVertices)return;
 
+	// Vertex
+	double3 vertex = vertices[i];
+
 	// Multiplying vertex and translation matrix, (Rotation around inclination axis and movement of whole body)
-	double vx = cuda_translation_matrix[0]*vertices[i].x + cuda_translation_matrix[4]*vertices[i].y + cuda_translation_matrix[8]*vertices[i].z + cuda_translation_matrix[12];
-	double vy = cuda_translation_matrix[1]*vertices[i].x + cuda_translation_matrix[5]*vertices[i].y + cuda_translation_matrix[9]*vertices[i].z + cuda_translation_matrix[13];
-	double vz = cuda_translation_matrix[2]*vertices[i].x + cuda_translation_matrix[6]*vertices[i].y + cuda_translation_matrix[10]*vertices[i].z + cuda_translation_matrix[14];
+	vertex.x = cuda_translation_matrix[0]*vertex.x + cuda_translation_matrix[4]*vertex.y + cuda_translation_matrix[8]*vertex.z + cuda_translation_matrix[12];
+	vertex.y = cuda_translation_matrix[1]*vertex.x + cuda_translation_matrix[5]*vertex.y + cuda_translation_matrix[9]*vertex.z + cuda_translation_matrix[13];
+	vertex.z = cuda_translation_matrix[2]*vertex.x + cuda_translation_matrix[6]*vertex.y + cuda_translation_matrix[10]*vertex.z + cuda_translation_matrix[14];
 	
 	// Forcing sphere structure
-	vertices[i].x = vx;
-	vertices[i].y = vy;
-	vertices[i].z = vz;
+	vertices[i] = vertex;
 }

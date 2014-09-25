@@ -16,7 +16,7 @@ RayTracer::RayTracer(std::vector<Body*> *bodies, Config *config){
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *body = (*bodies)[i];
 		
-		addBodyToRayTracer(body->getVertexBuffer(), body->getColorBuffer(), body->getNumVertices(), body->isStar(), config);
+		addBodyToRayTracer(body->getVertexBuffer(), body->getSolarCoverageBuffer(), body->getNumVertices(), body->isStar(), config);
 	}
 }
 

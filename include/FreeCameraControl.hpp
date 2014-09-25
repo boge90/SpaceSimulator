@@ -8,7 +8,6 @@
 class FreeCameraControl: public AbstractCamera{
 	private:
 		//Camera data
-		glm::dvec3 position;
 		double horizontalAngle;
 		double verticalAngle;
 		double speed;
@@ -43,7 +42,7 @@ class FreeCameraControl: public AbstractCamera{
 		/**
 		* Is called when the camera is activated in the menu
 		**/
-		void activated(void);
+		void setActive(bool active);
 };
 
 #endif

@@ -4,6 +4,11 @@
 #include "../include/Config.hpp"
 #include <GL/gl.h>
 
+typedef struct BodyRotationUnit_t{
+	struct cudaGraphicsResource* vertexResource;
+	int numVertices;
+} BodyRotationUnit;
+
 extern "C"{
 	/**
 	*
@@ -18,12 +23,12 @@ extern "C"{
 	/**
 	*
 	**/
-	void addBodyToRotationSystem(GLuint buffer, Config *config);
+	void addBodyToRotationSystem(GLuint vertexBuffer, int numVertices, Config *config);
 	
 	/**
 	*
 	**/
-	void rotateBody(int bodyNum, int numVertices, double *matrix, Config *config);
+	void rotateBody(int bodyNum, double *matrix, Config *config);
 	
 	/**
 	*

@@ -9,6 +9,10 @@ class Config{
 		size_t renderingDeviceNumber;
 		size_t debugLevel;
 		size_t bodyVertexDepth;
+		
+		// MPI
+		int size;
+		int rank;
 	
 	public:
 		/**
@@ -22,24 +26,43 @@ class Config{
 		~Config(void);
 		
 		/**
-		* 
+		* Returns the simulation 'delta time' value
 		**/
 		double getDt(void);
 		
 		/**
-		*
+		* Returns the debug levels, each bit represents the ON/OFF switch
+		* of a certain debug area
 		**/
 		size_t getDebugLevel(void);
 		
 		/**
-		*
+		* Returns the device number that should be used for rendering
 		**/
 		size_t getRenderingDeviceNumber(void);
 		
 		/**
-		*
+		* Returns the  depth that the body vertex generation algorithm
+		* should perform. i.e. number of recursions
 		**/
 		size_t getBodyVertexDepth(void);
+		
+		/**
+		* Returns the pointer to the mpi size
+		**/
+		int* getMpiSizePtr(void);
+		
+		/**
+		* Returns the pointer to the mpi rank
+		**/
+		int* getMpiRankPtr(void);
+		
+		/**
+		* The master is running the visualization, all other processes
+		* are running the local body simulations, and will not perform
+		* any visualization themself.
+		**/
+		bool isMaster(void);
 };
 
 #endif

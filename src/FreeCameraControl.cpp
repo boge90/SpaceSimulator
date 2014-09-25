@@ -1,7 +1,7 @@
 #include "../include/FreeCameraControl.hpp"
 #include <iostream>
 
-FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int frameHeight, Config *config){
+FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int frameHeight, Config *config): AbstractCamera(config){
 	this->debugLevel = config->getDebugLevel();
 	if((debugLevel & 0x10) == 16){		
 		std::cout << "FreeCameraControl.cpp\tInitializing\n";
@@ -12,7 +12,6 @@ FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int fra
 	this->frameWidth = frameWidth;
 	this->frameHeight = frameHeight;
 	this->previousTime = 0;
-	this->position = glm::dvec3(0, 0, 0);
 	
 	this->horizontalAngle = 0;
 	this->verticalAngle = 0;
@@ -26,15 +25,17 @@ FreeCameraControl::~FreeCameraControl(void){
 	}
 }
 
-void FreeCameraControl::activated(void){
+void FreeCameraControl::setActive(bool active){
 	// Calling super
-	AbstractCamera::activated();
+	AbstractCamera::setActive(active);
 	
 	// Debug
-	std::cout << "FreeCameraControl.cpp\tActivated\n";
+	if(active){	
+		std::cout << "FreeCameraControl.cpp\tActivated\n";
 	
-	// preventing glitch bug
-	previousTime = glfwGetTime();
+		// preventing glitch bug
+		previousTime = glfwGetTime();
+	}
 }
 
 void FreeCameraControl::checkUserInput(void){
@@ -70,13 +71,14 @@ void FreeCameraControl::checkUserInput(void){
 	}
 	   
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
-	glm::dvec3 direction(cos(verticalAngle) * sin(horizontalAngle), sin(verticalAngle), cos(verticalAngle) * cos(horizontalAngle));
+	direction = glm::dvec3(cos(verticalAngle) * sin(horizontalAngle), sin(verticalAngle), cos(verticalAngle) * cos(horizontalAngle));
 	   
 	// Right vecto
 	glm::dvec3 right = glm::dvec3(sin(horizontalAngle - M_PI/2.0), 0, cos(horizontalAngle - M_PI/2.0));
 	   
 	// Up vector : perpendicular to both direction and right
-	glm::dvec3 up = glm::cross(right, direction);
+	up = glm::cross(right, direction);
+	
 	// Increasing speed
 	if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){
 		speed = speed*1.05 + 1.0;

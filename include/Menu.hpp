@@ -18,8 +18,8 @@ class Menu;
 class Menu{
 	private:
 		// Camera
-		FreeCameraControl *freeCameraControl;
-		std::vector<BodyCameraControl*> *bodyCameraControllers;
+		std::vector<AbstractCamera*> *cameraControllers;
+		
 		AbstractCamera *activeCamera;
 		unsigned int currentActive;
 		
@@ -48,6 +48,11 @@ class Menu{
         * Returns the camera activated
         **/
         AbstractCamera* getActivatedCamera(void);
+        
+        /**
+        * Returns the camera activated
+        **/
+        std::vector<AbstractCamera*>* getCameras(void);
         
         /**
         * Changes the active camera type

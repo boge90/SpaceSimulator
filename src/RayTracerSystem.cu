@@ -9,36 +9,36 @@
 static std::vector<RayTracingUnit> resources; 
 
 // CUDA function prototypes
-void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, double3 *bodyVertices, double3 *starVertices, float3 *bodyColors);
+void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, double3 *bodyVertices, double3 *starVertices, float *solarCoverageBuffer);
 
-void addBodyToRayTracer(GLuint vertexBuffer, GLuint colorBuffer, int numVertices, bool isStar, Config *config){
+void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, int numVertices, bool isStar, Config *config){
 	// Debug
 	if((config->getDebugLevel() & 0x8) == 8){	
-		printf("RayTracerSystem.cu\tAdding body to ray tracer system (%d, %d, %d, %d)\n", vertexBuffer, colorBuffer, numVertices, isStar);
+		printf("RayTracerSystem.cu\tAdding body to ray tracer system (%d, %d, %d, %d)\n", vertexBuffer, solarCoverageBuffer, numVertices, isStar);
 	}
 	
 	// Initializing unit
 	struct cudaGraphicsResource *vertexResource;
 	cudaGraphicsGLRegisterBuffer(&vertexResource, vertexBuffer, cudaGraphicsRegisterFlagsNone);
 	
-	struct cudaGraphicsResource *colorResource;
-	cudaGraphicsGLRegisterBuffer(&colorResource, colorBuffer, cudaGraphicsRegisterFlagsNone);
+	struct cudaGraphicsResource *solarCoverageResource;
+	cudaGraphicsGLRegisterBuffer(&solarCoverageResource, solarCoverageBuffer, cudaGraphicsRegisterFlagsNone);
 	
 	RayTracingUnit unit;
+	unit.solarCoverageBuffer = solarCoverageResource;
 	unit.vertexBuffer = vertexResource;
-	unit.colorBuffer = colorResource;
 	unit.numVertices = numVertices;
 	unit.isStar = isStar;
 	
 	// Adding body to body list
-	resources.push_back(unit);		
+	resources.push_back(unit);
 }
 
 void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2){
 	// Local vars
 	double3 *starVertices = 0;
 	double3 *bodyVertices = 0;
-	float3 *bodyColors = 0;
+	float *bodyColors = 0;
 	size_t num_bytes_starVertices;
 	size_t num_bytes_bodyVertices;
 	size_t num_bytes_bodyColors;
@@ -46,7 +46,7 @@ void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int b
 	// Getting the arrays
 	cudaGraphicsResourceGetMappedPointer((void**)&starVertices, &num_bytes_starVertices, resources[starIndex].vertexBuffer);
 	cudaGraphicsResourceGetMappedPointer((void**)&bodyVertices, &num_bytes_bodyVertices, resources[bodyIndex].vertexBuffer);
-	cudaGraphicsResourceGetMappedPointer((void**)&bodyColors, &num_bytes_bodyColors, resources[bodyIndex].colorBuffer);
+	cudaGraphicsResourceGetMappedPointer((void**)&bodyColors, &num_bytes_bodyColors, resources[bodyIndex].solarCoverageBuffer);
 	
 	int numBodyVertices = resources[bodyIndex].numVertices;
 	int numStarVertices = resources[starIndex].numVertices;
@@ -65,7 +65,7 @@ void prepareRaySimulation(void){
 		cudaGraphicsMapResources(1, &resources[i].vertexBuffer);	
 		
 		if(!u.isStar){
-			cudaGraphicsMapResources(1, &resources[i].colorBuffer);	
+			cudaGraphicsMapResources(1, &resources[i].solarCoverageBuffer);	
 		}
 	}
 }
@@ -79,13 +79,13 @@ void finalizeRaySimulation(void){
 		cudaGraphicsUnmapResources(1, &resources[i].vertexBuffer);	
 		
 		if(!u.isStar){
-			cudaGraphicsUnmapResources(1, &resources[i].colorBuffer);	
+			cudaGraphicsUnmapResources(1, &resources[i].solarCoverageBuffer);	
 		}
 	}
 }
 
 
-void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, double3 *bodyVertices, double3 *starVertices, float3 *bodyColors){
+void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int numStarVertices, double3 *bodyVertices, double3 *starVertices, float *bodyColors){
 	// Global thread index
 	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
 
@@ -112,7 +112,5 @@ void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, int nu
 	}
 	
 	// Setting vertex color
-	bodyColors[index].x = lightIntensity;
-	bodyColors[index].y = lightIntensity;
-	bodyColors[index].z = lightIntensity;
+	bodyColors[index] = lightIntensity;
 }

@@ -7,7 +7,7 @@
 
 typedef struct RayTracingUnit_t{
 	struct cudaGraphicsResource* vertexBuffer;
-	struct cudaGraphicsResource* colorBuffer;
+	struct cudaGraphicsResource* solarCoverageBuffer;
 	int numVertices;
 	bool isStar;
 } RayTracingUnit;
@@ -16,7 +16,7 @@ extern "C"{
 	/**
 	* Adding a body's vertex and color buffer to the ray traycing system
 	**/
-	void addBodyToRayTracer(GLuint vertexBuffer, GLuint colorBuffer, int numVertices, bool isStar, Config *config);
+	void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, int numVertices, bool isStar, Config *config);
 	
 	/**
 	* Simulates the rays for all the bodies and the stars

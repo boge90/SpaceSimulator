@@ -33,10 +33,11 @@ class Body: public Renderable{
 		int numVertices, numIndices;
 		bool wireFrame;
 		glm::vec3 rgb;
+		GLuint indexBuffer;
+		GLuint texCoordBuffer;
 		GLuint vertexBuffer;
 		GLuint colorBuffer;
-		GLuint texCoordBuffer;
-		GLuint indexBuffer;
+		GLuint solarCoverBuffer;
 		
 		// Texture
 		GLuint tex;
@@ -120,6 +121,16 @@ class Body: public Renderable{
 		* Returns the color buffer
 		**/
 		GLuint getColorBuffer(void);
+		
+		/**
+		* Returns the solar coverage buffer
+		**/
+		GLuint getSolarCoverageBuffer(void);
+		
+		/**
+		* Returns the solar coverage buffer
+		**/
+		GLuint getVertexSpeedBuffer(void);
 		
 		/**
 		* Returns the number of vertices for this body

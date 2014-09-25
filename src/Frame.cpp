@@ -90,6 +90,10 @@ void Frame::update(void){
 		fps = lastSecondFrameCount/(currTime - prevTime);
 		prevTime = currTime;
 		lastSecondFrameCount = 0;
+		
+		if((debugLevel & 0x80) == 128){
+			std::cout << "Frame.cpp\t\tFPS " << fps << "\n";
+		}
 	}
 }
 

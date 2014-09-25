@@ -10,24 +10,26 @@ Menu::Menu(GLFWwindow *window, Simulator *simulator, Config *config){
 	}
 
 	// Init
+	std::vector<Body*> *bodies = simulator->getBodies();
 	this->hud = new HUD(window, simulator, config);
 	this->currentActive = 0;
-	freeCameraControl = new FreeCameraControl(window, simulator->getFrame()->getWidth(), simulator->getFrame()->getHeight(), config);
-	std::vector<Body*> *bodies = simulator->getBodies();
-	bodyCameraControllers = new std::vector<BodyCameraControl*>();
+	this->cameraControllers = new std::vector<AbstractCamera*>();
 	
 	// Setting the number of controllers
-	bodyCameraControllers->reserve(bodies->size());
+	cameraControllers->reserve(bodies->size()+1);
 	
 	// Initializing body controllers
-	int size = bodies->size();
-	for(int i = 0; i<size; i++){
+	cameraControllers->push_back(new FreeCameraControl(window, simulator->getFrame()->getWidth(), simulator->getFrame()->getHeight(), config));
+	for(size_t i = 0; i<bodies->size(); i++){
 		BodyCameraControl *controller = new BodyCameraControl(window, simulator->getFrame(), (*bodies)[i], config);
-		bodyCameraControllers->push_back(controller);
+		cameraControllers->push_back(controller);
 	}
 	
 	// Setting initial active camera
-	activeCamera = freeCameraControl;
+	activeCamera = (*cameraControllers)[this->currentActive];
+	
+	// Setting active camera active
+	activeCamera->setActive(true);
 }
 
 Menu::~Menu(void){
@@ -35,15 +37,12 @@ Menu::~Menu(void){
 		std::cout << "Menu.cpp\t\tFinalizing\n";
 	}
 	
-	
-	int size = bodyCameraControllers->size();
-	for(int i = 0; i<size; i++){
-		delete (*bodyCameraControllers)[i];
+	for(size_t i = 0; i<cameraControllers->size(); i++){
+		delete (*cameraControllers)[i];
 	}
 	
 	delete hud;
-	delete freeCameraControl;
-	delete bodyCameraControllers;
+	delete cameraControllers;
 }
 
 void Menu::render(void){
@@ -54,19 +53,19 @@ AbstractCamera* Menu::getActivatedCamera(void){
 	return activeCamera;
 }
 
+std::vector<AbstractCamera*>* Menu::getCameras(void){
+	return cameraControllers;
+}
+
 void Menu::changeCamera(bool next){
-	if(next && currentActive < bodyCameraControllers->size()){currentActive++;}
+	// Deactivating current camera
+	activeCamera->setActive(false);
+
+	if(next && currentActive < cameraControllers->size()-1){currentActive++;}
 	else if(!next && currentActive > 0){currentActive--;}
 
-	if(currentActive == 0 && activeCamera != freeCameraControl){
-		std::cout << "Menu.cpp\t\tChanging to Free camera\n";
-		activeCamera = freeCameraControl;
-	}else if(currentActive <= bodyCameraControllers->size() && currentActive > 0 && activeCamera != (*bodyCameraControllers)[currentActive-1]){
-		std::cout << "Menu.cpp\t\tChanging to Body camera " << (currentActive-1) << "\n";
-		activeCamera = (*bodyCameraControllers)[currentActive-1];
-	}
-	
-	activeCamera->activated();
+	activeCamera = (*cameraControllers)[currentActive];	
+	activeCamera->setActive(true);
 }
 
 void Menu::menuClicked(int button, int action, int x, int y){
@@ -79,7 +78,7 @@ void Menu::toggleHUD(void){
 	// Reactivating camera after HUD is hidden, such that DELTA timing
 	// used in cameras are not WAY too high
 	if(!isHudVisible()){
-		activeCamera->activated();
+		activeCamera->setActive(true);
 	}
 }
 

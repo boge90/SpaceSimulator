@@ -6,7 +6,7 @@ Config::Config(int argc, char **args){
 	this->renderingDeviceNumber = 0;
 	this->dt = 10.0;
 	this->bodyVertexDepth = 4;
-	this->debugLevel = 0; // (), (Memory), (GUI), (Init and Finalize), (Init++ and Finalize++), (CUDA Launch), (Render object), (Calculations)
+	this->debugLevel = 0; // (Main loop), (Memory), (GUI), (Init and Finalize), (Init++ and Finalize++), (CUDA Launch), (Render object), (Calculations)
 	
 	// Reading program input parameters
 	for(int i=0; i<argc; i++){
@@ -40,4 +40,16 @@ size_t Config::getRenderingDeviceNumber(void){
 
 size_t Config::getBodyVertexDepth(void){
 	return bodyVertexDepth;
+}
+
+int* Config::getMpiSizePtr(void){
+	return &size;
+}
+
+int* Config::getMpiRankPtr(void){
+	return &rank;
+}
+
+bool Config::isMaster(void){
+	return rank == 0;
 }

@@ -59,8 +59,7 @@ Body::~Body(){
 
 void Body::init(){
 	// Loading shader
-	//shader = new Shader("src/shaders/bodyVertex.glsl", "src/shaders/bodyFragment.glsl");
-	shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl", config);
+	shader = new Shader("src/shaders/bodyVertex.glsl", "src/shaders/bodyFragment.glsl", config);
 	
 	// Calculates vertices and colors
 	std::vector<glm::dvec3> *vertices = new std::vector<glm::dvec3>();
@@ -113,24 +112,24 @@ void Body::init(){
 	glGenBuffers(1, &indexBuffer);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(GLuint), &(indices->front()), GL_STATIC_DRAW);
+    
 	glGenBuffers(1, &vertexBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
     glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(double), &(vertices->front()), GL_DYNAMIC_DRAW);
+    
 	glGenBuffers(1, &colorBuffer);
     glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
     glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(float), &(color->front()), GL_DYNAMIC_DRAW);
     
-	if((debugLevel & 0x40) == 64){
-		long mem = (numVertices*3*sizeof(double)) + numVertices*3*sizeof(float) + numIndices*sizeof(GLuint);
-		
-		if(mem/(1024*1024) > 0){ // MiB		
-			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem/(1024*1024)) << " MiB" << std::endl;
-		}else if(mem/1024 > 0){ // KiB
-			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem/(1024)) << " KiB" << std::endl;
-		}else{
-			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem) << " Bytes" << std::endl;
-		}
-	}
+    float *coverage = (float*) malloc(numVertices*sizeof(float));
+    if(star){
+    	for(int i=0; i<numVertices; i++){ // Need to set the values of stars, since they are not updated by the RayTracing
+    		coverage[i] = 1.f;
+    	}
+    }
+    glGenBuffers(1, &solarCoverBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, solarCoverBuffer);
+    glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(float), coverage, GL_DYNAMIC_DRAW);
     
     // Texture coordinate buffer
     glGenBuffers(1, &texCoordBuffer);
@@ -158,9 +157,22 @@ void Body::init(){
 	//glGenerateMipmap(GL_TEXTURE_2D);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp->getWidth(), bmp->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, bmp->getData());
     
+	if((debugLevel & 0x40) == 64){
+		long mem = (numVertices*3*sizeof(double)) + numVertices*3*sizeof(float) + numIndices*sizeof(GLuint) + (coords->size()*2*sizeof(float)) + (numVertices*sizeof(float));
+		
+		if(mem/(1024*1024) > 0){ // MiB		
+			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem/(1024*1024)) << " MiB" << std::endl;
+		}else if(mem/1024 > 0){ // KiB
+			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem/(1024)) << " KiB" << std::endl;
+		}else{
+			std::cout << "Body.cpp\t\tMemory usage for body " << bodyNum << " is " << (mem) << " Bytes" << std::endl;
+		}
+	}
+    
     // Freeing temporary memory
     free(vertices);
     free(color);
+    free(coverage);
     free(indices);
     free(coords);
     
@@ -224,10 +236,15 @@ void Body::render(const GLfloat *mvp){
 	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
 	
-	// Binding texture coordinate buffer
+	// Binding solar coverage VBO
 	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, solarCoverBuffer);
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(float), 0);
+	
+	// Binding texture coordinate buffer
+	glEnableVertexAttribArray(3);
 	glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, sizeof(float)*2, 0);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_TRUE, sizeof(float)*2, 0);
 	
 	// Indices
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
@@ -249,6 +266,7 @@ void Body::render(const GLfloat *mvp){
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -295,6 +313,10 @@ GLuint Body::getVertexBuffer(void){
 
 GLuint Body::getColorBuffer(void){
 	return colorBuffer;
+}
+
+GLuint Body::getSolarCoverageBuffer(void){
+	return solarCoverBuffer;
 }
 
 int Body::getNumVertices(void){

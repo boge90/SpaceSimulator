@@ -25,6 +25,12 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 		renderer->addRenderable((*bodies)[i]);
 	}
 	
+	// Adding cameras as renderable
+	std::vector<AbstractCamera*> *cameras = frame->getMenu()->getCameras();
+	for(size_t i=0; i<cameras->size(); i++){
+		renderer->addRenderable((*cameras)[i]);
+	}
+	
 	// Initializing sub renderers
 	bodyTracer = new BodyTracer(bodies, config);
 	renderer->addRenderable(bodyTracer);

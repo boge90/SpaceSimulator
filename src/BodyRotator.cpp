@@ -20,7 +20,7 @@ BodyRotator::BodyRotator(std::vector<Body*> *bodies, Config *config){
 	// Adding bodies to CUDA system
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *body = (*bodies)[i];
-		addBodyToRotationSystem(body->getVertexBuffer(), config);
+		addBodyToRotationSystem(body->getVertexBuffer(), body->getNumVertices(), config);
 	}
 }
 
@@ -36,7 +36,6 @@ BodyRotator::~BodyRotator(){
 void BodyRotator::simulateRotation(void){
 	double theta;
 	double phi;
-	int numVertices;
 	glm::dvec3 center;
 	
 	// Prepare the body rotation
@@ -45,7 +44,6 @@ void BodyRotator::simulateRotation(void){
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *body = (*bodies)[i];
 		
-		numVertices = body->getNumVertices();
 		center = body->getCenter();
 		theta = body->getRotationSpeed()*dt;
 		phi = body->getInclination();
@@ -58,7 +56,7 @@ void BodyRotator::simulateRotation(void){
 		glm::dmat4 m5 = glm::translate(glm::dmat4(1.0), center);		
 		glm::dmat4 mat = m5*m4*m3*m2*m1;
 		
-		rotateBody(i, numVertices, &mat[0][0], config);
+		rotateBody(i, &mat[0][0], config);
 	}
 	
 	// Ending the rotation

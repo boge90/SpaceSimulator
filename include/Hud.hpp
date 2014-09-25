@@ -32,6 +32,7 @@ class HUD: public ViewClickedAction{
 		int stride;
 		unsigned char *pixels;
 		
+		
 		// Misc
 		size_t debugLevel;
 		

@@ -1,7 +1,7 @@
 #include "../include/BodyCameraControl.hpp"
 #include <iostream>
 
-BodyCameraControl::BodyCameraControl(GLFWwindow *window, Frame *frame, Body *body, Config *config){
+BodyCameraControl::BodyCameraControl(GLFWwindow *window, Frame *frame, Body *body, Config *config): AbstractCamera(config){
 	this->debugLevel = config->getDebugLevel();
 	if((debugLevel & 0x10) == 16){		
 		std::cout << "BodyCameraControl.cpp\tInitializing for body " << body << "\n";
@@ -80,17 +80,18 @@ void BodyCameraControl::checkUserInput(void){
 	}
 	   
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
-	glm::dvec3 direction(cos(verticalAngle) * sin(horizontalAngle), sin(verticalAngle), cos(verticalAngle) * cos(horizontalAngle));
+	direction = glm::dvec3(cos(verticalAngle) * sin(horizontalAngle), sin(verticalAngle), cos(verticalAngle) * cos(horizontalAngle));
 	direction *= body->getRadius()*distance;
 	
 	// Right vector
 	glm::dvec3 right = glm::dvec3(sin(horizontalAngle - M_PI/2.0), 0, cos(horizontalAngle - M_PI/2.0));
-	   
-	// Up vector : perpendicular to both direction and right
-	glm::dvec3 up = glm::cross(right, direction);
 	
 	glm::dvec3 bodyCenter = body->getCenter();
-	view = glm::lookAt(bodyCenter+direction, bodyCenter, up);
+	position = bodyCenter+direction;
+	direction = -direction;
+	up = glm::cross(right, direction);
+	
+	view = glm::lookAt(position, position+direction, up);
 	
 	previousTime = currentTime;
 }

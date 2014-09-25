@@ -1,5 +1,5 @@
 # Compiler
-CXX := g++
+CXX := mpic++
 NVCC := nvcc
 
 # Source files
@@ -14,10 +14,10 @@ C_OBJ_FILES := $(addprefix obj/,$(notdir $(C_FILES:.cu=.o)))
 OBJ_FILES := $(CPP_OBJ_FILES) $(CU_OBJ_FILES) $(C_OBJ_FILES)
 
 # Flags
-COMMON_FLAGS := -arch=sm_35
-LD_FLAGS := -lGL -lGLU -lGLEW -lglfw3 -lX11 -lXxf86vm -lXrandr -lpthread -lXi -lAntTweakBar $(COMMON_FLAGS)
+CUDA_HOME := /usr/local/cuda
+LD_FLAGS := -lGL -lGLU -lGLEW -lglfw3 -lX11 -lXxf86vm -lXrandr -lpthread -lXi -L$(CUDA_HOME)/lib64/ -lcudart
 CC_FLAGS := -c -O3 -Wall -std=c++0x
-CU_FLAGS := -m64 -c $(COMMON_FLAGS)
+CU_FLAGS := -m64 -arch=sm_35 -c
 
 # Exe
 EXECUTABLE := space
@@ -25,12 +25,16 @@ EXECUTABLE := space
 # Rules
 all: $(EXECUTABLE)
 
+recompile:
+	make clean
+	make -j
+
 run:
 	make all
-	./$(EXECUTABLE)
+	mpirun -n 1 ./$(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJ_FILES)
-	$(NVCC) $^ -o $@ $(LD_FLAGS)
+	$(CXX) $^ -o $@ $(LD_FLAGS)
 
 obj/%.o: src/%.cpp
 	$(CXX) $(CC_FLAGS) -o $@ $<
