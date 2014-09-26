@@ -47,12 +47,8 @@ BMP* BmpService::loadImage(const char *path, Config *config){
 	// Reading image
     fseek(fp, offset, SEEK_SET);
     readNum = fread(data, sizeof(unsigned char), height*width*3, fp);
-    if(readNum != height*width){
+    if(readNum != height*width*3){
     	std::cout << "BmpService.cpp\t\tThere occured an error while reading image data\n";
-    }
-    
-    for(int i=0; i<width*height*3; i++){
-    	data[i] = i%255;
     }
 
 	// Closing file

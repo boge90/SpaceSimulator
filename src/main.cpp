@@ -15,7 +15,7 @@ int main(int argc, char **args){
 	// Reading input params
 	Config *config = new Config(argc, args);
 
-	// Initialize GPU(s)
+	// Initialize GPU(s) and MPI
 	bool mpiSuccessful = MpiHelper::init(argc, args, config);
 	bool cudaSuccessful = CudaHelper::init(config);
 	

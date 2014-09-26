@@ -2,6 +2,7 @@
 #define BODY_H
 
 #include <vector>
+#include <string>
 
 #include "../include/common.hpp"
 #include "../include/Renderable.hpp"
@@ -20,6 +21,7 @@ class Body: public Renderable{
 		double inclination;
 		double rotationSpeed;
 		bool star;
+		std::string texturePath;
 		
 		// Functions
 		void generateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth);
@@ -50,7 +52,7 @@ class Body: public Renderable{
 		/**
 		* Creates a body
 		**/
-		Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star, Config *config);
+		Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star, std::string texturePath, Config *config);
 		
 		/**
 		* Finalizes
@@ -156,6 +158,11 @@ class Body: public Renderable{
 		* Returns true if the body is a star
 		**/
 		bool isStar(void);
+		
+		/**
+		* Returns the relative path of the texture for this body
+		**/
+		std::string* getTexturePath(void);
 };
 
 #endif

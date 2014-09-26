@@ -88,8 +88,8 @@ void BodyCameraControl::checkUserInput(void){
 	
 	glm::dvec3 bodyCenter = body->getCenter();
 	position = bodyCenter+direction;
-	direction = -direction;
 	up = glm::cross(right, direction);
+	direction = -direction;
 	
 	view = glm::lookAt(position, position+direction, up);
 	

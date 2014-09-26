@@ -5,7 +5,7 @@
 
 int Body::bodyNumber = 0;
 
-Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star, Config *config){
+Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star, std::string texturePath, Config *config){
 	// Debug
 	this->config = config;
 	this->debugLevel = config->getDebugLevel();
@@ -36,7 +36,8 @@ Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius,
 	
 	this->wireFrame = false;
 	this->force = glm::dvec3(0.0, 0.0, 0.0);
-	this->bmp = BmpService::loadImage("texture/earthSmall.bmp", config);
+	this->texturePath = texturePath;
+	this->bmp = BmpService::loadImage(texturePath.c_str(), config);
 }
 
 Body::~Body(){
@@ -54,6 +55,8 @@ Body::~Body(){
 	glDeleteBuffers(1, &indexBuffer);
 	glDeleteBuffers(1, &colorBuffer);
 	glDeleteBuffers(1, &vertexBuffer);
+	glDeleteBuffers(1, &texCoordBuffer);
+	glDeleteBuffers(1, &solarCoverBuffer);
 	glDeleteTextures(1, &tex);
 }
 
@@ -141,21 +144,24 @@ void Body::init(){
     	vertex = center - vertex;
     	vertex = glm::normalize(vertex);
     	
-    	float u = 0.5 + ((atan2(vertex.z, vertex.x))/(2*3.1415));
-    	float v = 0.5 - (asin(vertex.y)/3.1415);
+    	float u = 0.5 + ((atan2(vertex.z, vertex.x))/(2*M_PI));
+    	float v = 0.5 - (asin(vertex.y)/M_PI);
+    	
+    	assert(u >= 0 && u <= 1);
+    	assert(v >= 0 && v <= 1);
     	
     	coords->push_back(glm::vec2(u, v));
     }
-    glBufferData(GL_ARRAY_BUFFER, coords->size()*2*sizeof(float), coords, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, coords->size()*2*sizeof(float), &(coords->front()), GL_DYNAMIC_DRAW);
     
     // Generating texture
-    glActiveTexture(GL_TEXTURE1 + bodyNum);
+    glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &tex);
     glBindTexture(GL_TEXTURE_2D, tex);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	//glGenerateMipmap(GL_TEXTURE_2D);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp->getWidth(), bmp->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, bmp->getData());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp->getWidth(), bmp->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, bmp->getData());
     
 	if((debugLevel & 0x40) == 64){
 		long mem = (numVertices*3*sizeof(double)) + numVertices*3*sizeof(float) + numIndices*sizeof(GLuint) + (coords->size()*2*sizeof(float)) + (numVertices*sizeof(float));
@@ -222,6 +228,9 @@ void Body::render(const GLfloat *mvp){
 	// Binding the Body shader
 	shader->bind();
 	
+	// Activating texture
+    glBindTexture(GL_TEXTURE_2D, tex);
+	
 	// Get a handle for our "MVP" uniform.
 	GLuint mvpMatrixId = glGetUniformLocation(shader->getID(), "MVP");
 	glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, mvp);
@@ -269,6 +278,12 @@ void Body::render(const GLfloat *mvp){
 	glDisableVertexAttribArray(3);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	
+	// Error check
+	int error = glGetError();
+	if(error != 0){
+		std::cout << "Body.cpp\t\tOpenGl error " << error << std::endl;
+	}
 }
 
 glm::dvec3 Body::getCenter(void){
@@ -343,4 +358,8 @@ double Body::getRotationSpeed(void){
 
 bool Body::isStar(void){
 	return star;
+}
+
+std::string* Body::getTexturePath(void){
+	return &texturePath;
 }

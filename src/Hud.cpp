@@ -2,6 +2,10 @@
 #include "../include/MainHudPage.hpp"
 #include "../include/BodyHudPage.hpp"
 
+/// TEST
+#include "../include/BMP.hpp"
+#include "../include/BmpService.hpp"
+
 #include <iostream>
 
 HUD::HUD(GLFWwindow *window, Simulator *simulator, Config *config){
@@ -47,7 +51,7 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator, Config *config){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	
-	// Buffering texture	
+	// Buffering texture
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 	
 	// Shader
@@ -96,21 +100,19 @@ void HUD::update(void){
 	// Draw active page
 	(*pages)[activePage]->draw(drawService);
 	
-	glActiveTexture(GL_TEXTURE0);
+	// Transferring the pixels
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 }
 
 void HUD::render(void){
-	if(visible){		
-		// Updating
+	if(visible){			
+		// Activating texture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, tex);
 		update();
 		
 		// Binding the Body shader
 		shader->bind();
-	
-		// Activating texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tex);
 	
 		// Get a handle for our "MVP" uniform.
 		glm::mat4 mvp = glm::lookAt(glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.f));

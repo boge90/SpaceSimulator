@@ -19,6 +19,7 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 		size_t pos;
 		std::string delimiter = ",";
 		std::string token;
+		std::string texturePath;
 		
 		while(std::getline(dataFile,line)){	
 			pos = line.find(delimiter);
@@ -94,7 +95,11 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 			// star var is representing a boolean
 			assert(star == 0 || star == 1);
 			
-			Body *body = new Body(glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), radius, mass, inclination, rotationSpeed, star, config);
+			pos = line.find(delimiter);
+			texturePath = line.substr(1, pos);
+		    line.erase(0, pos + delimiter.length());
+			
+			Body *body = new Body(glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), radius, mass, inclination, rotationSpeed, star, texturePath, config);
 			bodies->push_back(body);
 		}
 		
@@ -143,7 +148,8 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 		dataFile << mass << ", ";
 		dataFile << inclination << ", ";
 		dataFile << rotationSpeed << ", ";
-		dataFile << star << "\n";
+		dataFile << star << ",";
+		dataFile << " " << body->getTexturePath()->c_str() << "\n";
 		
 		// Free memory
 		delete body;
