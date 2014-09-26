@@ -61,7 +61,22 @@ class AbstractCamera: public Renderable{
 		/**
 		* Render camera data
 		**/
-		void render(const GLfloat *mvp);
+		void render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
+		
+		/**
+		*
+		**/
+		glm::dvec3 getPosition(void);
+		
+		/**
+		*
+		**/
+		glm::dvec3 getDirection(void);
+		
+		/**
+		*
+		**/
+		glm::dvec3 getUp(void);
 		
 };
 #endif

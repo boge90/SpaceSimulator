@@ -1,14 +1,19 @@
-#version 330
+#version 440 core
 
-layout (location = 0) in vec3 Position;
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec3 in_vertex;
+layout(location = 1) in vec2 in_texCoord;
 
-uniform mat4 gWVP;
+// Values that stay constant for the whole mesh.
+uniform mat4 MVP;
 
-out vec3 TexCoord0;
+// Texture
+out vec2 texCoord;
 
-void main()
-{
-    vec4 WVP_Pos = gWVP * vec4(Position, 1.0);
-    gl_Position = WVP_Pos.xyww;
-    TexCoord0 = Position;
+void main(){
+	// Output position of the vertex, in clip space : MVP * position
+	gl_Position = MVP * vec4(in_vertex, 1.0);
+	
+	// Calculating texture coordinates
+	texCoord = in_texCoord;
 }

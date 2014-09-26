@@ -19,12 +19,6 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	renderer = new Renderer(this, config);
 	frame = new Frame(1500, 900, "Space", renderer, this, config);
 	
-	// Setting bodies for rendering and initializes them
-	for(unsigned int i=0; i<bodies->size(); i++){
-		(*bodies)[i]->init();
-		renderer->addRenderable((*bodies)[i]);
-	}
-	
 	// Adding cameras as renderable
 	std::vector<AbstractCamera*> *cameras = frame->getMenu()->getCameras();
 	for(size_t i=0; i<cameras->size(); i++){
@@ -32,8 +26,16 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	}
 	
 	// Initializing sub renderers
+	skybox = new Skybox(config);
 	bodyTracer = new BodyTracer(bodies, config);
+	renderer->addRenderable(skybox);
 	renderer->addRenderable(bodyTracer);
+	
+	// Setting bodies for rendering and initializes them
+	for(unsigned int i=0; i<bodies->size(); i++){
+		(*bodies)[i]->init();
+		renderer->addRenderable((*bodies)[i]);
+	}
 	
 	// Initializing sub simulators
 	nbody = new Nbody(bodies, config);

@@ -4,6 +4,7 @@
 class Simulator;
 
 #include "../include/Frame.hpp"
+#include "../include/Skybox.hpp"
 #include "../include/Renderer.hpp"
 #include "../include/RayTracer.hpp"
 #include "../include/BodyTracer.hpp"
@@ -29,6 +30,7 @@ class Simulator{
 		Frame *frame;
 		
 		// Sub renderers
+		Skybox *skybox;
 		BodyTracer *bodyTracer;
 
 		// Sub simulators

@@ -42,7 +42,7 @@ class Renderer{
 		* Responsible for calling subsequent render functions for all
 		* object that should be rendered
 		**/
-		void render(const GLfloat *mvp);
+		void render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
 };
 
 #endif

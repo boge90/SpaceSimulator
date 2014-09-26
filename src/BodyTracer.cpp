@@ -33,7 +33,7 @@ BodyTracer::~BodyTracer(void){
 	delete shader;
 }
 
-void BodyTracer::render(const GLfloat *mvp){	
+void BodyTracer::render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){	
 	if(active){	
 		// Shader
 		shader->bind();

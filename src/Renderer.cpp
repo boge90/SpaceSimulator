@@ -30,12 +30,12 @@ void Renderer::addRenderable(Renderable *renderable){
 	renderables->push_back(renderable);
 }
 
-void Renderer::render(const GLfloat *mvp){
-	// Drawing bodies
+void Renderer::render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
+	// Drawing renderables
 	int size = renderables->size();
 	
 	for(int i=0; i<size; i++){	
 		Renderable *renderable = renderables->at(i);
-		renderable->render(mvp);
+		renderable->render(mvp, position, direction, up);
 	}
 }

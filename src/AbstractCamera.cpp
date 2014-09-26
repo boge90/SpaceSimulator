@@ -1,4 +1,5 @@
 #include "../include/AbstractCamera.hpp"
+#include <float.h>
 
 AbstractCamera::AbstractCamera(Config *config){
 	// Debug
@@ -29,12 +30,24 @@ glm::mat4 AbstractCamera::getMVP(void){
 	return projection * view * model;
 }
 
-void AbstractCamera::render(const GLfloat *mvp){
+void AbstractCamera::render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
 	if(active){	
-	
+		// TODO ?
 	}
 }
 
 void AbstractCamera::setActive(bool active){
 	this->active = active;
+}
+
+glm::dvec3 AbstractCamera::getPosition(void){
+	return position;
+}
+
+glm::dvec3 AbstractCamera::getDirection(void){
+	return direction;
+}
+
+glm::dvec3 AbstractCamera::getUp(void){
+	return up;
 }

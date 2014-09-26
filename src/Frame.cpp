@@ -35,10 +35,6 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 
-	// Depth testing
-	glDepthFunc(GL_LEQUAL);
-    glEnable(GL_DEPTH_TEST);
-
 	// GL
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	
@@ -73,7 +69,10 @@ void Frame::update(void){
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Rendering
-	renderer->render(&mvp[0][0]);
+	glm::dvec3 position = menu->getActivatedCamera()->getPosition();
+	glm::dvec3 direction = menu->getActivatedCamera()->getDirection();
+	glm::dvec3 up = menu->getActivatedCamera()->getUp();
+	renderer->render(&mvp[0][0], position, direction, up);
 	
 	// Draw menu if present
 	menu->render();

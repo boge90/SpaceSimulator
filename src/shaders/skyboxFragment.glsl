@@ -1,12 +1,15 @@
-#version 330
+#version 440 core
 
-in vec3 TexCoord0;
+// Interpolated values from the vertex shaders
+in vec2 texCoord;
 
-out vec4 FragColor;
+// Texture
+uniform sampler2D tex;
 
-uniform samplerCube gCubemapTexture;
+// Color
+out vec4 color;
 
-void main()
-{
-    FragColor = texture(gCubemapTexture, TexCoord0);
+void main(){
+	// Output color = color of the texture at the specified UV
+	color = texture2D(tex, texCoord);
 }

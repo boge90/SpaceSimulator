@@ -67,7 +67,7 @@ class Body: public Renderable{
 		/**
 		* Uses OpenGL to draw this body with the current shader
 		**/
-		void render(const GLfloat *mvp);
+		void render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
 		
 		/**
 		* Returns the center for this body

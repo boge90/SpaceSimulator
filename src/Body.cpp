@@ -224,7 +224,7 @@ void Body::generateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::
 	}
 }
 
-void Body::render(const GLfloat *mvp){
+void Body::render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
 	// Binding the Body shader
 	shader->bind();
 	
