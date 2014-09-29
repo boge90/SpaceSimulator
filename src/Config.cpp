@@ -7,6 +7,7 @@ Config::Config(int argc, char **args){
 	this->dt = 10.0;
 	this->bodyVertexDepth = 4;
 	this->debugLevel = 0; // (Main loop), (Memory), (GUI), (Init and Finalize), (Init++ and Finalize++), (CUDA Launch), (Render object), (Calculations)
+	this->fullscreen = false;
 	
 	// Reading program input parameters
 	for(int i=0; i<argc; i++){
@@ -18,6 +19,9 @@ Config::Config(int argc, char **args){
 		}
 		if(strcmp(args[i], "--bodyVertexDepth") == 0){
 			bodyVertexDepth = strtod(args[++i], NULL);
+		}
+		if(strcmp(args[i], "--fullscreen") == 0){
+			fullscreen = true;
 		}
 	}
 }
@@ -52,4 +56,8 @@ int* Config::getMpiRankPtr(void){
 
 bool Config::isMaster(void){
 	return rank == 0;
+}
+
+bool Config::isFullscreen(void){
+	return fullscreen;
 }

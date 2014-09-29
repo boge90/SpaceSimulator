@@ -51,7 +51,7 @@ class Skybox: public Renderable{
 		/**
 		* Renders the skybox
 		**/
-		void render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
+		void render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
 };
 
 #endif

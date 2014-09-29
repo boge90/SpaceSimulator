@@ -1,4 +1,5 @@
 #include "../include/Hud.hpp"
+#include "../include/CameraHudPage.hpp"
 #include "../include/MainHudPage.hpp"
 #include "../include/BodyHudPage.hpp"
 
@@ -35,11 +36,12 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator, Config *config){
 	
 	// Adding main HUD page
 	pages->push_back(new MainHudPage(10+50+10, 0, width-140, height-1, simulator, config));
+	pages->push_back(new CameraHudPage(10+50+10, 0, width-140, height-1, 2, simulator, config));
 	
 	// Adding Body HUD pages
 	std::vector<Body*> *bodies = simulator->getBodies();
 	for(size_t i=0; i<bodies->size(); i++){
-		pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, i+2, (*bodies)[i], config));
+		pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, i+3, (*bodies)[i], config));
 	}
 	
 	// Texture

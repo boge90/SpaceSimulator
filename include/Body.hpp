@@ -10,6 +10,8 @@
 #include "../include/Shader.hpp"
 #include "../include/Config.hpp"
 
+enum BodyType{PLANET, STAR, COMET};
+
 class Body: public Renderable{
 	private:
 		// Data
@@ -20,7 +22,8 @@ class Body: public Renderable{
 		double radius;
 		double inclination;
 		double rotationSpeed;
-		bool star;
+		double rotation;
+		BodyType bodyType;
 		std::string texturePath;
 		
 		// Functions
@@ -52,7 +55,7 @@ class Body: public Renderable{
 		/**
 		* Creates a body
 		**/
-		Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, bool star, std::string texturePath, Config *config);
+		Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config);
 		
 		/**
 		* Finalizes
@@ -67,7 +70,7 @@ class Body: public Renderable{
 		/**
 		* Uses OpenGL to draw this body with the current shader
 		**/
-		void render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
+		void render(glm::mat4 *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
 		
 		/**
 		* Returns the center for this body
@@ -98,6 +101,16 @@ class Body: public Renderable{
 		* Returns the radius for this body
 		**/
 		double getRadius(void);
+		
+		/**
+		* Sets the current rotation of the body in radians
+		**/
+		void setRotation(double rotation);
+		
+		/**
+		* Roturns the current rotation of the body in radians
+		**/
+		double getRotation(void);
 		
 		/**
 		* sets the center position for this body
@@ -158,6 +171,11 @@ class Body: public Renderable{
 		* Returns true if the body is a star
 		**/
 		bool isStar(void);
+		
+		/**
+		* Returns true if the body is a star
+		**/
+		BodyType getBodyType(void);
 		
 		/**
 		* Returns the relative path of the texture for this body

@@ -27,8 +27,6 @@ void FloatInputView::onInput(InputView *view, std::string *input){
 	// Parsing input value
 	double value = atof(input->c_str());
 	
-	std::cout << value << std::endl;
-	
 	// IFF the user specifies a invalid number, atoi returns '0' which is then
 	// added as the input value.
 	InputView::setInput(std::to_string(value));

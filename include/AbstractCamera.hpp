@@ -13,8 +13,8 @@
 class AbstractCamera: public Renderable{
 	protected:
 		// Camera
+		float fov;
 		glm::mat4 projection;
-		glm::mat4 model;
 		glm::mat4 view;
 
 		glm::dvec3 position;
@@ -44,9 +44,9 @@ class AbstractCamera: public Renderable{
 		virtual ~AbstractCamera(void) = 0;
 		
 		/**
-		* Returns the Model View Projection matrix
+		* Returns the View Projection matrix
 		**/
-		glm::mat4 getMVP(void);
+		glm::mat4 getVP(void);
 		
 		/**
 		* This is called from the Simulator
@@ -61,7 +61,7 @@ class AbstractCamera: public Renderable{
 		/**
 		* Render camera data
 		**/
-		void render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
+		void render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
 		
 		/**
 		*
@@ -78,5 +78,14 @@ class AbstractCamera: public Renderable{
 		**/
 		glm::dvec3 getUp(void);
 		
+		/**
+		*
+		**/
+		float getFieldOfView(void);
+		
+		/**
+		*
+		**/
+		void setFieldOfView(float fov);
 };
 #endif

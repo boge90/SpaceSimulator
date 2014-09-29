@@ -114,7 +114,7 @@ void FreeCameraControl::checkUserInput(void){
 		position -= temp * deltaTime * speed;
 	}
 	
-	view = glm::lookAt(position, position+direction, up);
+	view = glm::lookAt(glm::dvec3(0.0, 0.0, 0.0), direction, up);
 	
 	previousTime = currentTime;
 }

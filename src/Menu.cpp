@@ -11,7 +11,6 @@ Menu::Menu(GLFWwindow *window, Simulator *simulator, Config *config){
 
 	// Init
 	std::vector<Body*> *bodies = simulator->getBodies();
-	this->hud = new HUD(window, simulator, config);
 	this->currentActive = 0;
 	this->cameraControllers = new std::vector<AbstractCamera*>();
 	
@@ -30,6 +29,9 @@ Menu::Menu(GLFWwindow *window, Simulator *simulator, Config *config){
 	
 	// Setting active camera active
 	activeCamera->setActive(true);
+	
+	// Need to intialize HUD after the camera has been activated
+	this->hud = new HUD(window, simulator, config);
 }
 
 Menu::~Menu(void){

@@ -10,6 +10,9 @@ class Config{
 		size_t debugLevel;
 		size_t bodyVertexDepth;
 		
+		// Visualization
+		bool fullscreen;
+		
 		// MPI
 		int size;
 		int rank;
@@ -63,6 +66,11 @@ class Config{
 		* any visualization themself.
 		**/
 		bool isMaster(void);
+		
+		/**
+		* Returns true if the user has specified fullscreen mode
+		**/
+		bool isFullscreen(void);
 };
 
 #endif

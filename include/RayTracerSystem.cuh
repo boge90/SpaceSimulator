@@ -21,7 +21,7 @@ extern "C"{
 	/**
 	* Simulates the rays for all the bodies and the stars
 	**/
-	void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2);
+	void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, double *mat);
 	
 	/**
 	* Prepares the buffers, enabling them for the calculation

@@ -38,7 +38,7 @@ class BodyTracer: public Renderable{
 		/**
 		* Uses OpenGL to draw the tracks of the bodies
 		**/
-		void render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
+		void render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
 		
 		/**
 		* Enable / Disables the rendering

@@ -90,16 +90,16 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 			pos = line.find(delimiter);
 			token = line.substr(0, pos);
 		    line.erase(0, pos + delimiter.length());
-			int star = atoi(token.c_str());
+			int bodyType = atoi(token.c_str());
 			
-			// star var is representing a boolean
-			assert(star == 0 || star == 1);
+			// Only stars and planets have textures
+			if(bodyType < 2){			
+				pos = line.find(delimiter);
+				texturePath = line.substr(1, pos);
+				line.erase(0, pos + delimiter.length());
+			}
 			
-			pos = line.find(delimiter);
-			texturePath = line.substr(1, pos);
-		    line.erase(0, pos + delimiter.length());
-			
-			Body *body = new Body(glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), radius, mass, inclination, rotationSpeed, star, texturePath, config);
+			Body *body = new Body(glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), radius, mass, inclination, rotationSpeed, static_cast<BodyType>(bodyType), texturePath, config);
 			bodies->push_back(body);
 		}
 		
@@ -132,7 +132,7 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 		double mass = body->getMass();
 		double inclination = body->getInclination();
 		double rotationSpeed = body->getRotationSpeed();
-		bool star = body->isStar();
+		BodyType type = body->getBodyType();
 		
 		// Write body data
 		dataFile << position.x << ", ";
@@ -148,8 +148,13 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 		dataFile << mass << ", ";
 		dataFile << inclination << ", ";
 		dataFile << rotationSpeed << ", ";
-		dataFile << star << ",";
-		dataFile << " " << body->getTexturePath()->c_str() << "\n";
+	
+		dataFile << type;		
+		if(type < 2){			
+			dataFile << ", " << body->getTexturePath()->c_str() << "\n";
+		}else{
+			dataFile << "\n";
+		}
 		
 		// Free memory
 		delete body;

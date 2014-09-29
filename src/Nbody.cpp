@@ -1,5 +1,4 @@
 #include "../include/Nbody.hpp"
-#include "../include/NbodySystem.cuh"
 #include <iostream>
 
 Nbody::Nbody(std::vector<Body*> *bodies, Config *config){
@@ -13,16 +12,6 @@ Nbody::Nbody(std::vector<Body*> *bodies, Config *config){
 	this->dt = config->getDt();
 	this->bodies = bodies;
 	this->G = 6.7 * pow(10, -11);
-	
-	// CUDA System
-	initializeNbodySystem(config);
-	
-	// Adding vertex buffers to CUDA system
-	int size = bodies->size();
-	for(int i=0; i<size; i++){
-		GLuint buffer = (*bodies)[i]->getVertexBuffer();
-		addBodyVertexBuffer(buffer, config);
-	}
 }
 
 Nbody::~Nbody(void){
@@ -69,12 +58,6 @@ void Nbody::simulateGravity(void){
 		// Using current center and delta to generate master matrix
 		glm::dvec3 center = b1->getCenter();
 		glm::dvec3 delta = dt*b1->getVelocity();
-		
-		// Updating vertices based on delta vector
-		glm::dmat4 mat = glm::translate(glm::dmat4(1.0), delta);
-		
-		// Moving all vertices based on translation matrix for body 'i'
-		moveBody(i, b1->getNumVertices(), &mat[0][0]);
 		
 		// The below asserts will fail when TOO low DT is being used, causing center + delta to NOT change
 		assert(center.x != (center.x+delta.x) || delta.x == 0);

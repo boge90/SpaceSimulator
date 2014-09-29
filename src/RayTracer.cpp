@@ -39,13 +39,18 @@ void RayTracer::simulateRays(){
 		for(size_t j=0; j<bodies->size(); j++){
 			Body *body = (*bodies)[j];
 			
-			if(body->isStar() || i == j){continue;}	// Not simulate rays with other potential stars
+			if(body->isStar() || body->getBodyType() == 2 || i == j){continue;}	// Not simulate rays with other potential stars
 			
 			// Simulation data
 			glm::dvec3 c1 = star->getCenter();
 			glm::dvec3 c2 = body->getCenter();
 			
-			rayTracerSimulateRays(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z);
+			glm::dmat4 m1 = glm::translate(glm::dmat4(1.0), c2);
+			glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), (body->getInclination()*180.0)/M_PI, glm::dvec3(0.0, 0.0, 1.0));
+			glm::dmat4 m3 = glm::rotate(glm::dmat4(1.0), (body->getRotation()*180.0)/M_PI, glm::dvec3(0.0, 1.0, 0.0));
+			glm::dmat4 mat = m1*m2*m3;
+			
+			rayTracerSimulateRays(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, &mat[0][0]);
 		}
 	}
 	

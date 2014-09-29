@@ -30,7 +30,7 @@ void Renderer::addRenderable(Renderable *renderable){
 	renderables->push_back(renderable);
 }
 
-void Renderer::render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
+void Renderer::render(glm::mat4 *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
 	// Drawing renderables
 	int size = renderables->size();
 	

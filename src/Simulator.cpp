@@ -46,8 +46,10 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 Simulator::~Simulator(){
 	// Debug
 	if((debugLevel & 0x10) == 16){	
-		std::cout << "Simulator.cpp\t\tFinalizing after executing " << simulationSteps << " simulations steps (" << (simulationSteps*dt)/(3600.0) << " hours)\n";
+		std::cout << "Simulator.cpp\t\tFinalizing" << std::endl;
 	}
+	
+	std::cout << "Simulator.cpp\t\tExecuted " << simulationSteps << " simulations steps (" << (simulationSteps*dt)/(3600.0) << " hours)\n";
 	
 	// Free
 	delete frame;
@@ -56,6 +58,7 @@ Simulator::~Simulator(){
 	delete bodyRotator;
 	delete rayTracer;
 	delete bodyTracer;
+	delete skybox;
 }
 
 void Simulator::simulate(void){	
@@ -71,7 +74,7 @@ void Simulator::simulate(void){
 	}
 
 	// Check user input IFF menu is hidden
-	if(!(frame->getMenu()->isHudVisible())){	
+	if(!(frame->getMenu()->isHudVisible())){
 		frame->getMenu()->getActivatedCamera()->checkUserInput();
 	}
 	

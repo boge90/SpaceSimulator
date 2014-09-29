@@ -93,7 +93,7 @@ __global__ void simulateBodyRotation(double3 *vertices, int numVertices){
 	// Vertex
 	double3 vertex = vertices[i];
 
-	// Multiplying vertex and translation matrix, (Rotation around inclination axis and movement of whole body)
+	// Multiplying vertex and translation matrix
 	vertex.x = cuda_translation_matrix[0]*vertex.x + cuda_translation_matrix[4]*vertex.y + cuda_translation_matrix[8]*vertex.z + cuda_translation_matrix[12];
 	vertex.y = cuda_translation_matrix[1]*vertex.x + cuda_translation_matrix[5]*vertex.y + cuda_translation_matrix[9]*vertex.z + cuda_translation_matrix[13];
 	vertex.z = cuda_translation_matrix[2]*vertex.x + cuda_translation_matrix[6]*vertex.y + cuda_translation_matrix[10]*vertex.z + cuda_translation_matrix[14];

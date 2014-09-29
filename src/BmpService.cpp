@@ -59,7 +59,7 @@ BMP* BmpService::loadImage(const char *path, Config *config){
 }
 
 void BmpService::freeImage(BMP *bmp, Config *config){
-	memoryUsed -= sizeof(unsigned char)*bmp->getHeight()*bmp->getWidth();
+	memoryUsed -= sizeof(unsigned char)*bmp->getHeight()*bmp->getWidth()*3;
 	free(bmp->getData());
 
 	delete bmp;

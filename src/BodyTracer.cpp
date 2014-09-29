@@ -33,14 +33,16 @@ BodyTracer::~BodyTracer(void){
 	delete shader;
 }
 
-void BodyTracer::render(const GLfloat *mvp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){	
+void BodyTracer::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){	
 	if(active){	
 		// Shader
 		shader->bind();
+		
+		glm::mat4 mvp = (*vp) * glm::translate(glm::mat4(1), glm::vec3(-position));
 	
 		// Get a handle for our "MVP" uniform.
 		GLuint mvpMatrixId = glGetUniformLocation(shader->getID(), "MVP");
-		glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, mvp);
+		glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, &mvp[0][0]);
 	
 		// Binding vertex VBO
 		glEnableVertexAttribArray(0);

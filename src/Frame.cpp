@@ -11,8 +11,14 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 		std::cout << "Frame.cpp\t\tInitializing\n";
 	}
 	
+	// Fullscreen
+	GLFWmonitor *monitor = NULL;
+	if(config->isFullscreen()){
+		monitor = glfwGetPrimaryMonitor();
+	}
+	
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(width, height, title, NULL, NULL);
+	window = glfwCreateWindow(width, height, title, monitor, NULL);
 	glfwMakeContextCurrent(window);
 	
 	// This
@@ -63,7 +69,7 @@ void Frame::update(void){
 	lastSecondFrameCount++;
 
 	// Calculating MVP
-	glm::mat4 mvp = menu->getActivatedCamera()->getMVP();
+	glm::mat4 vp = menu->getActivatedCamera()->getVP();
 
 	// Reset transformations and Clear
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -72,7 +78,7 @@ void Frame::update(void){
 	glm::dvec3 position = menu->getActivatedCamera()->getPosition();
 	glm::dvec3 direction = menu->getActivatedCamera()->getDirection();
 	glm::dvec3 up = menu->getActivatedCamera()->getUp();
-	renderer->render(&mvp[0][0], position, direction, up);
+	renderer->render(&vp, position, direction, up);
 	
 	// Draw menu if present
 	menu->render();

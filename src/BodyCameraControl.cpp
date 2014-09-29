@@ -84,14 +84,14 @@ void BodyCameraControl::checkUserInput(void){
 	direction *= body->getRadius()*distance;
 	
 	// Right vector
-	glm::dvec3 right = glm::dvec3(sin(horizontalAngle - M_PI/2.0), 0, cos(horizontalAngle - M_PI/2.0));
+	glm::dvec3 right = glm::dvec3(sin(horizontalAngle + M_PI/2.0), 0, cos(horizontalAngle + M_PI/2.0));
 	
 	glm::dvec3 bodyCenter = body->getCenter();
 	position = bodyCenter+direction;
-	up = glm::cross(right, direction);
 	direction = -direction;
+	up = glm::cross(right, direction);
 	
-	view = glm::lookAt(position, position+direction, up);
+	view = glm::lookAt(glm::dvec3(0.0, 0.0, 0.0), direction, up);
 	
 	previousTime = currentTime;
 }
