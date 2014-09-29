@@ -13,15 +13,15 @@ class Frame;
 #include "../include/Shader.hpp"
 #include "../include/Renderer.hpp"
 #include "../include/Simulator.hpp"
-#include "../include/Menu.hpp"
 #include "../include/Config.hpp"
 #include "../include/KeyboardInput.hpp"
+#include "../include/Hud.hpp"
 
 class Frame{
 	private:
 		// GLFW
 		GLFWwindow *window;
-		Menu *menu;
+		HUD *hud;
 		
 		// Simulator
 		Simulator *simulator;
@@ -94,7 +94,7 @@ class Frame{
 		/**
 		* Returns the pointer to the Menu
 		**/
-		Menu* getMenu();
+		HUD* getHud();
 		
 		/**
 		* Returns the pointer to the simulator

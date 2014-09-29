@@ -25,6 +25,7 @@ class Body: public Renderable{
 		double rotation;
 		BodyType bodyType;
 		std::string texturePath;
+		std::string name;
 		
 		// Functions
 		void generateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth);
@@ -55,7 +56,7 @@ class Body: public Renderable{
 		/**
 		* Creates a body
 		**/
-		Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config);
+		Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double rotation, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config);
 		
 		/**
 		* Finalizes
@@ -181,6 +182,11 @@ class Body: public Renderable{
 		* Returns the relative path of the texture for this body
 		**/
 		std::string* getTexturePath(void);
+		
+		/**
+		* Returns the name of this body
+		**/
+		std::string* getName(void);
 };
 
 #endif

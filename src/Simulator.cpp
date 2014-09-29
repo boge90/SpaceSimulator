@@ -20,7 +20,7 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	frame = new Frame(1500, 900, "Space", renderer, this, config);
 	
 	// Adding cameras as renderable
-	std::vector<AbstractCamera*> *cameras = frame->getMenu()->getCameras();
+	std::vector<AbstractCamera*> *cameras = frame->getHud()->getCameras();
 	for(size_t i=0; i<cameras->size(); i++){
 		renderer->addRenderable((*cameras)[i]);
 	}
@@ -74,8 +74,8 @@ void Simulator::simulate(void){
 	}
 
 	// Check user input IFF menu is hidden
-	if(!(frame->getMenu()->isHudVisible())){
-		frame->getMenu()->getActivatedCamera()->checkUserInput();
+	if(!(frame->getHud()->isVisible())){
+		frame->getHud()->getActivatedCamera()->checkUserInput();
 	}
 	
 	// Update visualization

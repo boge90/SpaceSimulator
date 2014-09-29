@@ -5,7 +5,7 @@
 
 int Body::bodyNumber = 0;
 
-Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config){
+Body::Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double rotation, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config){
 	// Debug
 	this->config = config;
 	this->debugLevel = config->getDebugLevel();
@@ -14,6 +14,7 @@ Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius,
 	}
 	
 	if((debugLevel & 0x8) == 8){	
+		std::cout << "Body.cpp\t\t\tName     = " << name << "\n";
 		std::cout << "Body.cpp\t\t\tCenter   = " << center.x << ", " << center.y << ", " << center.z << "\n";
 		std::cout << "Body.cpp\t\t\tVelocity = " << velocity.x << ", " << velocity.y << ", " << velocity.z << "\n";
 		std::cout << "Body.cpp\t\t\tRadius   = " << radius << "\n";
@@ -24,7 +25,7 @@ Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius,
 	
 	// Init
 	this->bodyNum = bodyNumber++;
-	
+	this->name = name;
 	this->center = center;
 	this->velocity = velocity;
 	this->rgb = rgb;
@@ -34,7 +35,7 @@ Body::Body(glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double radius,
 	this->rotationSpeed = rotationSpeed;
 	this->bodyType = bodyType;
 	this->wireFrame = false;
-	this->rotation = 0.0;
+	this->rotation = rotation;
 	this->force = glm::dvec3(0.0, 0.0, 0.0);
 	
 	if(bodyType == STAR || bodyType == PLANET){
@@ -392,4 +393,8 @@ BodyType Body::getBodyType(void){
 
 std::string* Body::getTexturePath(void){
 	return &texturePath;
+}
+
+std::string* Body::getName(void){
+	return &name;
 }

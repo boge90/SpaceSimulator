@@ -3,13 +3,9 @@
 #include "../include/MainHudPage.hpp"
 #include "../include/BodyHudPage.hpp"
 
-/// TEST
-#include "../include/BMP.hpp"
-#include "../include/BmpService.hpp"
-
 #include <iostream>
 
-HUD::HUD(GLFWwindow *window, Simulator *simulator, Config *config){
+HUD::HUD(GLFWwindow *window, Simulator *simulator, Frame *frame, Config *config){
 	// Debug
 	this->debugLevel = config->getDebugLevel();
 	if((debugLevel & 0x10) == 16){	
@@ -23,6 +19,7 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator, Config *config){
 	this->stride = width*3;
 	this->pixels = (unsigned char*)malloc(width*height*3*sizeof(unsigned char));
 	this->drawService = new DrawService(width, height, pixels, config);
+	this->cameraHudPage = new CameraHudPage(10+50+10, 0, width-140, height-1, simulator, frame, config);
 	this->pages = new std::vector<HudPage*>();
 	this->activePage = 0;
 	
@@ -36,12 +33,14 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator, Config *config){
 	
 	// Adding main HUD page
 	pages->push_back(new MainHudPage(10+50+10, 0, width-140, height-1, simulator, config));
-	pages->push_back(new CameraHudPage(10+50+10, 0, width-140, height-1, 2, simulator, config));
+	pages->push_back(cameraHudPage);
 	
 	// Adding Body HUD pages
 	std::vector<Body*> *bodies = simulator->getBodies();
 	for(size_t i=0; i<bodies->size(); i++){
-		pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, i+3, (*bodies)[i], config));
+		std::string title = (*(*bodies)[i]->getName());
+	
+		pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, title, (*bodies)[i], config));
 	}
 	
 	// Texture
@@ -143,6 +142,12 @@ void HUD::render(void){
 
 void HUD::toggleVisibility(void){
 	this->visible = !visible;
+	
+	// Reactivating camera after HUD is hidden, such that DELTA timing
+	// used in cameras are not WAY too high
+	if(!visible){
+		cameraHudPage->getActivatedCamera()->setActive(true);
+	}
 }
 
 bool HUD::isVisible(void){
@@ -187,4 +192,12 @@ void HUD::onClick(View *view, int button, int action){
 	}
 	
 	drawService->fill(0, 0, 0);
+}
+
+AbstractCamera* HUD::getActivatedCamera(void){
+	return cameraHudPage->getActivatedCamera();
+}
+
+std::vector<AbstractCamera*>* HUD::getCameras(void){
+	return cameraHudPage->getCameras();
 }

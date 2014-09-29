@@ -30,9 +30,7 @@ void FreeCameraControl::setActive(bool active){
 	AbstractCamera::setActive(active);
 	
 	// Debug
-	if(active){	
-		std::cout << "FreeCameraControl.cpp\tActivated\n";
-	
+	if(active){		
 		// preventing glitch bug
 		previousTime = glfwGetTime();
 	}

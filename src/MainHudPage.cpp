@@ -2,7 +2,7 @@
 #include <iostream>
 #include "../include/FloatInputView.hpp"
 
-MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulator, Config *config): HudPage(x, y, width, height, 1, config){
+MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulator, Config *config): HudPage(x, y, width, height, "MAIN", config){
 	// Debug
 	if((debugLevel & 0x10) == 16){		
 		std::cout << "MainHudPage.cpp\t\tInitializing" << std::endl;

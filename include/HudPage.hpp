@@ -7,16 +7,13 @@
 
 class HudPage: public ListLayout{
 	private:
-		// Misc data
-		int number;
-		
 		// GUI
-		TextView *numberView;
+		TextView *titleView;
 	public:
 		/**
 		* Creates an empty HUD page object
 		**/
-		HudPage(int x, int y, int width, int height, int number, Config *config);
+		HudPage(int x, int y, int width, int height, std::string title, Config *config);
 		
 		/**
 		* Finalizes the HUD page object

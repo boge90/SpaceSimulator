@@ -20,8 +20,13 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 		std::string delimiter = ",";
 		std::string token;
 		std::string texturePath;
+		std::string name;
 		
 		while(std::getline(dataFile,line)){	
+			pos = line.find(delimiter);
+			name = line.substr(0, pos);
+		    line.erase(0, pos + delimiter.length());
+			
 			pos = line.find(delimiter);
 			token = line.substr(0, pos);
 		    line.erase(0, pos + delimiter.length());
@@ -70,6 +75,11 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 			pos = line.find(delimiter);
 			token = line.substr(0, pos);
 		    line.erase(0, pos + delimiter.length());
+			double rotation = atof(token.c_str());
+			
+			pos = line.find(delimiter);
+			token = line.substr(0, pos);
+		    line.erase(0, pos + delimiter.length());
 			double radius = atof(token.c_str());
 			
 			pos = line.find(delimiter);
@@ -99,7 +109,7 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 				line.erase(0, pos + delimiter.length());
 			}
 			
-			Body *body = new Body(glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), radius, mass, inclination, rotationSpeed, static_cast<BodyType>(bodyType), texturePath, config);
+			Body *body = new Body(name, glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), rotation, radius, mass, inclination, rotationSpeed, static_cast<BodyType>(bodyType), texturePath, config);
 			bodies->push_back(body);
 		}
 		
@@ -128,13 +138,10 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 		glm::dvec3 position = body->getCenter();
 		glm::dvec3 velocity = body->getVelocity();
 		glm::vec3 rgb = body->getRGB();
-		double radius = body->getRadius();
-		double mass = body->getMass();
-		double inclination = body->getInclination();
-		double rotationSpeed = body->getRotationSpeed();
 		BodyType type = body->getBodyType();
 		
 		// Write body data
+		dataFile << body->getName()->c_str() << ", ";
 		dataFile << position.x << ", ";
 		dataFile << position.y << ", ";
 		dataFile << position.z << ", ";
@@ -144,10 +151,11 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 		dataFile << rgb.x << ", ";
 		dataFile << rgb.y << ", ";
 		dataFile << rgb.z << ", ";
-		dataFile << radius << ", ";
-		dataFile << mass << ", ";
-		dataFile << inclination << ", ";
-		dataFile << rotationSpeed << ", ";
+		dataFile << body->getRotation() << ", ";
+		dataFile << body->getRadius() << ", ";
+		dataFile << body->getMass() << ", ";
+		dataFile << body->getInclination() << ", ";
+		dataFile << body->getRotationSpeed() << ", ";
 	
 		dataFile << type;		
 		if(type < 2){			

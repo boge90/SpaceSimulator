@@ -21,7 +21,7 @@ class BodyHudPage: public HudPage{
 		/**
 		*
 		**/
-		BodyHudPage(int x, int y, int width, int height, int number, Body *body, Config *config);
+		BodyHudPage(int x, int y, int width, int height, std::string title, Body *body, Config *config);
 		
 		/**
 		*

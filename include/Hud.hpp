@@ -13,11 +13,14 @@ class HUD;
 #include "../include/Simulator.hpp"
 #include "../include/Config.hpp"
 
+#include "../include/CameraHudPage.hpp"
+
 #include <vector>
 
 class HUD: public ViewClickedAction{
 	private:
 		// GUI
+		CameraHudPage *cameraHudPage;
 		View *left;
 		View *right;
 	
@@ -31,7 +34,6 @@ class HUD: public ViewClickedAction{
 		int height;
 		int stride;
 		unsigned char *pixels;
-		
 		
 		// Misc
 		size_t debugLevel;
@@ -58,7 +60,7 @@ class HUD: public ViewClickedAction{
 		/**
 		* Creates the HUD object
 		**/
-		HUD(GLFWwindow *window, Simulator *simulator, Config *config);
+		HUD(GLFWwindow *window, Simulator *simulator, Frame *frame, Config *config);
 		
 		/**
 		* Destroys the HUD object
@@ -94,6 +96,16 @@ class HUD: public ViewClickedAction{
 		* Called when the left or right button is clicked
 		**/
 		void onClick(View *view, int button, int action);
+        
+        /**
+        * Returns the camera activated
+        **/
+        AbstractCamera* getActivatedCamera(void);
+        
+        /**
+        * 
+        **/
+        std::vector<AbstractCamera*>* getCameras(void);
 };
 
 #endif

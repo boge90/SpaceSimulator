@@ -1,10 +1,10 @@
 #include "../include/BodyHudPage.hpp"
 #include <iostream>
 
-BodyHudPage::BodyHudPage(int x, int y, int width, int height, int number, Body *body, Config *config): HudPage(x, y, width, height, number, config){
+BodyHudPage::BodyHudPage(int x, int y, int width, int height, std::string title, Body *body, Config *config): HudPage(x, y, width, height, title, config){
 	// Debug
 	if((debugLevel & 0x10) == 16){		
-		std::cout << "BodyHudPage.cpp\t\tInitializing for body " << number << std::endl;
+		std::cout << "BodyHudPage.cpp\t\tInitializing for " << title << std::endl;
 	}
 	
 	// Init

@@ -18,7 +18,7 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	}
 	
 	// Open a window and create its OpenGL context
-	window = glfwCreateWindow(width, height, title, monitor, NULL);
+	this->window = glfwCreateWindow(width, height, title, monitor, NULL);
 	glfwMakeContextCurrent(window);
 	
 	// This
@@ -30,7 +30,7 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	this->frameWidth = width;
 	this->frameHeight = height;
 	this->prevTime = 0;
-	this->menu = new Menu(window, simulator, config);
+	this->hud = new HUD(window, simulator, this, config);
 	this->keyboardInput = KeyboardInput::getInstance();
 	
 	// Without this vertex array which is not even used, nothing is displayed
@@ -58,7 +58,7 @@ Frame::~Frame(void){
 
 	glDeleteBuffers(1, &VertexArrayID);
 
-	delete menu;
+	delete hud;
 
 	glfwTerminate();
 }
@@ -69,19 +69,19 @@ void Frame::update(void){
 	lastSecondFrameCount++;
 
 	// Calculating MVP
-	glm::mat4 vp = menu->getActivatedCamera()->getVP();
+	glm::mat4 vp = hud->getActivatedCamera()->getVP();
 
 	// Reset transformations and Clear
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// Rendering
-	glm::dvec3 position = menu->getActivatedCamera()->getPosition();
-	glm::dvec3 direction = menu->getActivatedCamera()->getDirection();
-	glm::dvec3 up = menu->getActivatedCamera()->getUp();
+	glm::dvec3 position = hud->getActivatedCamera()->getPosition();
+	glm::dvec3 direction = hud->getActivatedCamera()->getDirection();
+	glm::dvec3 up = hud->getActivatedCamera()->getUp();
 	renderer->render(&vp, position, direction, up);
 	
 	// Draw menu if present
-	menu->render();
+	hud->render();
 
 	// Swap buffers
 	glfwSwapBuffers(window);
@@ -126,11 +126,7 @@ void Frame::windowSizeChangeCallback(GLFWwindow* window, int width, int height){
 
 void Frame::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
 	if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS){
-		Frame::instance->menu->toggleHUD();
-	}else if(key == GLFW_KEY_UP && action == GLFW_PRESS){
-		Frame::instance->menu->changeCamera(true);
-	}else if(key == GLFW_KEY_DOWN && action == GLFW_PRESS){
-		Frame::instance->menu->changeCamera(false);
+		Frame::instance->hud->toggleVisibility();
 	}
 	
 	// Keyboard input
@@ -145,11 +141,11 @@ void Frame::mouseCallback(GLFWwindow *window, int button, int action, int mods){
 	glfwGetCursorPos(window, &xpos, &ypos);
 	
 	// Passing data to menu
-	Frame::instance->getMenu()->menuClicked(button, action, xpos, ypos);
+	Frame::instance->hud->hudClicked(button, action, xpos, ypos);
 }
 
-Menu* Frame::getMenu(){
-	return menu;
+HUD* Frame::getHud(){
+	return hud;
 }
 
 Simulator* Frame::getSimulator(void){
