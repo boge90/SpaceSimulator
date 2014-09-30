@@ -131,7 +131,9 @@ Skybox::~Skybox(){
 
 void Skybox::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){	
 	// Model matrix is identidy matrix, because the skybox should NOT move
-	glm::mat4 mvp = (*vp) * glm::mat4(1);
+	glm::mat4 m1 = glm::rotate(glm::mat4(1), 55.f, glm::vec3(0, 1, 0));
+	glm::mat4 m2 = glm::rotate(glm::mat4(1), 70.f, glm::vec3(0, 0, 1));
+	glm::mat4 mvp = (*vp) * m2 * m1;
 
 	// Binding the Body shader
 	shader->bind();

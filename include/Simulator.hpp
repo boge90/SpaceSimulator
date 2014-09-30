@@ -8,6 +8,7 @@ class Simulator;
 #include "../include/Renderer.hpp"
 #include "../include/RayTracer.hpp"
 #include "../include/BodyTracer.hpp"
+#include "../include/BodyLocator.hpp"
 #include "../include/BodyRotator.hpp"
 #include "../include/Nbody.hpp"
 #include "../include/Body.hpp"
@@ -32,6 +33,7 @@ class Simulator{
 		// Sub renderers
 		Skybox *skybox;
 		BodyTracer *bodyTracer;
+		BodyLocator *bodyLocator;
 
 		// Sub simulators
 		Nbody *nbody;
@@ -88,6 +90,11 @@ class Simulator{
 		* Returns the pointer to the BodyTracer renderer
 		**/
 		BodyTracer* getBodyTracer(void);
+		
+		/**
+		* Returns the pointer to the BodyLocator
+		**/
+		BodyLocator* getBodyLocator(void);
 		
 		/**
 		* Returns the pointer to the visualization frame

@@ -21,8 +21,10 @@ class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStat
 		CheckBox *cullBackfaceBox;
 		CheckBox *wireframeBox;
 		CheckBox *futureBodyPathBox;
-		Button *exitButton;
 		IntegerInputView *futureBodyInputView;
+		CheckBox *bodyLocatorBox;
+		IntegerInputView *bodyLocatorInputView;
+		Button *exitButton;
 		
 		// Pointer to the simulator
 		Simulator *simulator;

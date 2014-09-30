@@ -17,6 +17,8 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	this->wireframeBox = new CheckBox("WIREFRAME", false, config);
 	this->futureBodyPathBox = new CheckBox("FUTURE PATH", false, config);
 	this->futureBodyInputView = new IntegerInputView("FUTURE BODY PATH", config);
+	this->bodyLocatorBox = new CheckBox("BODY LOCATOR", false, config);
+	this->bodyLocatorInputView = new IntegerInputView("BODY LOCATOR NUMBER", config);
 	this->exitButton = new Button("EXIT", config);
 	
 	// Adding listeners
@@ -24,8 +26,10 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	cullBackfaceBox->addStateChangeAction(this);
 	wireframeBox->addStateChangeAction(this);
 	futureBodyPathBox->addStateChangeAction(this);
-	exitButton->addViewClickedAction(this);
 	futureBodyInputView->addIntegerInputAction(this);
+	bodyLocatorBox->addStateChangeAction(this);
+	bodyLocatorInputView->addIntegerInputAction(this);
+	exitButton->addViewClickedAction(this);
 	
 	// Add view
 	addChild(fpsView);
@@ -35,6 +39,8 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	addChild(wireframeBox);
 	addChild(futureBodyPathBox);
 	addChild(futureBodyInputView);
+	addChild(bodyLocatorBox);
+	addChild(bodyLocatorInputView);
 	addChild(exitButton);
 }
 
@@ -61,6 +67,8 @@ void MainHudPage::onStateChange(CheckBox *box, bool newState){
 		}
 	}else if(box == futureBodyPathBox){ // Toggle body path visualization
 		simulator->getBodyTracer()->setActive(newState);
+	}else if(box == bodyLocatorBox){ // Toggle body locator visualization
+		simulator->getBodyLocator()->setActive(newState);
 	}else if(box == pausedBox){ // Pause / Unpause the simulation
 		simulator->setPaused(newState);
 	}else if(box == cullBackfaceBox){
@@ -73,7 +81,11 @@ void MainHudPage::onStateChange(CheckBox *box, bool newState){
 }
 
 void MainHudPage::onIntegerInput(IntegerInputView *view, int value){
-	simulator->getBodyTracer()->calculateFuturePath(value);
+	if(view == futureBodyInputView){	
+		simulator->getBodyTracer()->calculateFuturePath(value);
+	}else if(view == bodyLocatorInputView){
+		simulator->getBodyLocator()->locateBody(value);
+	}
 }
 
 void MainHudPage::draw(DrawService *drawService){

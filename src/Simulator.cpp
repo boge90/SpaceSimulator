@@ -28,14 +28,16 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	// Initializing sub renderers
 	skybox = new Skybox(config);
 	bodyTracer = new BodyTracer(bodies, config);
+	bodyLocator = new BodyLocator(bodies, config);
+	
+	// Adding renderables
 	renderer->addRenderable(skybox);
 	renderer->addRenderable(bodyTracer);
-	
-	// Setting bodies for rendering and initializes them
 	for(unsigned int i=0; i<bodies->size(); i++){
 		(*bodies)[i]->init();
 		renderer->addRenderable((*bodies)[i]);
 	}
+	renderer->addRenderable(bodyLocator);
 	
 	// Initializing sub simulators
 	nbody = new Nbody(bodies, config);
@@ -59,6 +61,7 @@ Simulator::~Simulator(){
 	delete rayTracer;
 	delete bodyTracer;
 	delete skybox;
+	delete bodyLocator;
 }
 
 void Simulator::simulate(void){	
@@ -108,6 +111,10 @@ RayTracer* Simulator::getRayTracerSimulator(void){
 
 BodyTracer* Simulator::getBodyTracer(void){
 	return bodyTracer;
+}
+
+BodyLocator* Simulator::getBodyLocator(void){
+	return bodyLocator;
 }
 
 Frame* Simulator::getFrame(void){
