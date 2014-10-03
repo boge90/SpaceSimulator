@@ -43,6 +43,11 @@ class FreeCameraControl: public AbstractCamera{
 		* Is called when the camera is activated in the menu
 		**/
 		void setActive(bool active);
+		
+		/**
+		*
+		**/
+		std::string getCameraName(void);
 };
 
 #endif

@@ -1,5 +1,6 @@
 #include "../include/BodyTracer.hpp"
 #include <iostream>
+#include <string.h>
 
 BodyTracer::BodyTracer(std::vector<Body*> *bodies, Config *config){	
 	// DEBUG
@@ -94,11 +95,18 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 	std::vector<glm::vec3> colors;
 	
 	// Init arrays
+	double closest = DBL_MAX;
+	size_t timeStep = -1;
+	size_t earthIndex = 0;
 	for(size_t i=0; i<size; i++){
 		velocity[i] = (*bodies)[i]->getVelocity();
 		positions[i] = (*bodies)[i]->getCenter();
 		masses[i] = (*bodies)[i]->getMass();
 		forces[i] = glm::vec3(0, 0, 0);
+		
+		if(strcmp((*bodies)[i]->getName()->c_str(), "EARTH") == 0){
+			earthIndex = i;
+		}
 	}
 	startVertex = positions[bodyNum];
 
@@ -152,6 +160,12 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 				vertices.push_back(glm::vec3(center));
 				colors.push_back(glm::vec3(vel));
 				num++;
+				
+				glm::dvec3 earth = positions[earthIndex];
+				if(glm::length(earth - center) < closest){
+					closest = glm::length(earth - center);
+					timeStep = num;
+				}
 			}
 			
 			// Max speed
@@ -169,11 +183,13 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 			// Reset force for next iteration
 			forces[i] = glm::vec3(0, 0, 0);
 		}
-	}	
+	}
+	
 	
 	// DEBUG
 	std::cout << "BodyTracer.cpp\t\tCalculated " << vertices.size() << " vertices in " << glfwGetTime()-t0 << " seconds" << std::endl;
 	std::cout << "BodyTracer.cpp\t\tThe track represents the path for the next " << (num*dt)/(3600.0*24.0*365.242199) << " earth years" << std::endl;
+	std::cout << "BodyTracer.cpp\t\tClosest encounter are in " << (timeStep*dt)/(3600*24) << " days, and will then be " << (closest/1000) << " km from earth" << std::endl;
 	
 	// Vertex count used for rendering
 	numVertices = vertices.size();

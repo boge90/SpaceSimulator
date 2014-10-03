@@ -22,18 +22,11 @@ void ListLayout::addChild(View *view){
 	int padding = 10;
 	size_t childNumber = children->size();
 	
-	// Setting the position of the view
-	view->setX(x + padding);
-	
 	// Find Y coordinate
 	int childY = y + padding; // Top padding
 	for(size_t i=0; i<childNumber-1; i++){
 		childY += (*children)[i]->getHeight() + padding; // 10 is padding
 	}
 	
-	view->setY(childY);
-	
-	if(view->getWidth() < 0){
-		view->setWidth(width - 2*padding);
-	}
+	view->relocate(x + padding, childY, width - 2*padding, 30);
 }

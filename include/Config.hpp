@@ -10,6 +10,9 @@ class Config{
 		size_t debugLevel;
 		size_t bodyVertexDepth;
 		
+		// Result
+		bool discardResult;
+		
 		// Visualization
 		bool fullscreen;
 		
@@ -71,6 +74,11 @@ class Config{
 		* Returns true if the user has specified fullscreen mode
 		**/
 		bool isFullscreen(void);
+		
+		/**
+		*
+		**/
+		bool isDiscardResult(void);
 };
 
 #endif

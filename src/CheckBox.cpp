@@ -47,12 +47,8 @@ void CheckBox::draw(DrawService *drawService){
 	Button::draw(drawService);
 	
 	int _x = x+leftPadding;
-	size_t chars = text.size();
-	const char *string = text.c_str();
-	
-	for(size_t i=0; i<chars; i++){
-		_x += drawService->widthOf(string[i]) + charPadding;
-	}
+	_x += drawService->widthOf(text) + charPadding;
+
 	
 	drawService->drawRectangle(_x + leftPadding, y+topPadding, 9, 9, red, green, blue, false);
 	

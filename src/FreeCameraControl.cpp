@@ -116,3 +116,7 @@ void FreeCameraControl::checkUserInput(void){
 	
 	previousTime = currentTime;
 }
+
+std::string FreeCameraControl::getCameraName(void){
+	return "FREE CAMERA";
+}

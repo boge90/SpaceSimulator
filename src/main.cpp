@@ -43,7 +43,9 @@ int main(int argc, char **args){
 		}
 	
 		// Writing bodies to disk
-		BodyIO::write(simulator->getTime(), bodies, config);
+		if(!config->isDiscardResult()){		
+			BodyIO::write(simulator->getTime(), bodies, config);
+		}
 
 		// Cleaning up master memory
 		delete bodies;

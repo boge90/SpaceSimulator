@@ -94,3 +94,10 @@ void View::setHeight(int height){
 int View::getHeight(void){
 	return height;
 }
+
+void View::relocate(int x, int y, int width, int height){
+	this->x = x;
+	this->y = y;
+	this->width = width;
+	this->height = height;
+}

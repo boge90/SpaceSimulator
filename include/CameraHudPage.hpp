@@ -9,9 +9,9 @@ class CameraHudPage;
 #include "../include/TextView.hpp"
 #include "../include/FloatInputView.hpp"
 #include "../include/FloatInputAction.hpp"
-#include "../include/ViewClickedAction.hpp"
+#include "../include/SelectViewStateChangeAction.hpp"
 
-class CameraHudPage: public HudPage, FloatInputAction, ViewClickedAction{
+class CameraHudPage: public HudPage, FloatInputAction, SelectViewStateChangeAction<AbstractCamera*>{
 	private:
 		// Camera data
 		std::vector<AbstractCamera*> *cameraControllers;
@@ -20,7 +20,6 @@ class CameraHudPage: public HudPage, FloatInputAction, ViewClickedAction{
 			
 		// GUI
 		FloatInputView *fovView;
-		std::vector<Button*> *cameraButtons;
 	public:
 		/**
 		*
@@ -41,11 +40,6 @@ class CameraHudPage: public HudPage, FloatInputAction, ViewClickedAction{
 		*
 		**/
 		void onFloatInput(FloatInputView *view, double value);
-		
-		/**
-		*
-		**/
-		void onClick(View *view, int button, int action);
         
         /**
         * Returns the camera activated
@@ -56,6 +50,11 @@ class CameraHudPage: public HudPage, FloatInputAction, ViewClickedAction{
         * 
         **/
         std::vector<AbstractCamera*>* getCameras(void);
+        
+        /**
+        *
+        **/
+        void onStateChange(SelectView<AbstractCamera*> *view, AbstractCamera *t);
 };
 
 #endif

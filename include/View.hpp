@@ -112,6 +112,11 @@ class View{
 		* Returns the height of the view
 		**/
 		int getHeight(void);
+		
+		/**
+		*
+		**/
+		virtual void relocate(int x, int y, int width, int height);
 };
 
 #endif

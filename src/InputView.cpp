@@ -65,15 +65,13 @@ void InputView::draw(DrawService *drawService){
 	
 	// Finding starting position for input text
 	int _x = x + leftPadding;
-	const char *string = text.c_str();
-	for(size_t i=0; i<text.size(); i++){
-		_x += drawService->widthOf(string[i]) + charPadding;
-	}
+	_x += drawService->widthOf(text) + charPadding;
+
 	
 	_x += leftPadding;
 	
 	// Drawing input
-	string = input.c_str();
+	const char *string = input.c_str();
 	for(size_t i=0; i<input.size(); i++){
 		drawService->drawChar(_x, y+topPadding, string[i], 255, 255, 255, 1, false);
 		_x += drawService->widthOf(string[i]) + charPadding;

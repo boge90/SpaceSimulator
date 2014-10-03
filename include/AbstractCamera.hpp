@@ -87,5 +87,10 @@ class AbstractCamera: public Renderable{
 		*
 		**/
 		void setFieldOfView(float fov);
+		
+		/**
+		*
+		**/
+		virtual std::string getCameraName(void) = 0;
 };
 #endif

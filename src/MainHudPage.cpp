@@ -1,6 +1,7 @@
 #include "../include/MainHudPage.hpp"
-#include <iostream>
 #include "../include/FloatInputView.hpp"
+
+#include <iostream>
 
 MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulator, Config *config): HudPage(x, y, width, height, "MAIN", config){
 	// Debug

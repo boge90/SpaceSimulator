@@ -95,3 +95,9 @@ void BodyCameraControl::checkUserInput(void){
 	
 	previousTime = currentTime;
 }
+
+std::string BodyCameraControl::getCameraName(void){
+	std::string text = *body->getName();
+	text.append(" CAMERA");
+	return text;
+}

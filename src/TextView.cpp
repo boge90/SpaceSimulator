@@ -11,6 +11,7 @@ TextView::TextView(std::string text, Config *config): View(30, config){
 	this->leftPadding = 10;
 	this->topPadding = 5;
 	this->charPadding = 2;
+	this->repaintFlag = false;
 }
 
 TextView::~TextView(void){
@@ -21,6 +22,12 @@ TextView::~TextView(void){
 }
 
 void TextView::draw(DrawService *drawService){
+	if(repaintFlag){
+		drawService->fillArea(x+1, y+1, 255, 255, 255);
+		drawService->fillArea(x+1, y+1, 0, 0, 0);
+		repaintFlag = false;
+	}
+	
 	// Super
 	View::draw(drawService);
 	
@@ -52,4 +59,8 @@ void TextView::drawText(std::string text, DrawService *drawService, unsigned cha
 		drawService->drawChar(pos, y+topPadding, string[i], r, g, b, 1, false);
 		pos += drawService->widthOf(string[i]) + charPadding;
 	}
+}
+
+void TextView::repaint(void){
+	this->repaintFlag = true;
 }

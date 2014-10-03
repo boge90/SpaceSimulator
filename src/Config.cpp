@@ -8,6 +8,7 @@ Config::Config(int argc, char **args){
 	this->bodyVertexDepth = 4;
 	this->debugLevel = 0; // (Main loop), (Memory), (GUI), (Init and Finalize), (Init++ and Finalize++), (CUDA Launch), (Render object), (Calculations)
 	this->fullscreen = false;
+	this->discardResult = false;
 	
 	// Reading program input parameters
 	for(int i=0; i<argc; i++){
@@ -22,6 +23,9 @@ Config::Config(int argc, char **args){
 		}
 		if(strcmp(args[i], "--fullscreen") == 0){
 			fullscreen = true;
+		}
+		if(strcmp(args[i], "--discardResult") == 0){
+			discardResult = true;
 		}
 	}
 }
@@ -60,4 +64,8 @@ bool Config::isMaster(void){
 
 bool Config::isFullscreen(void){
 	return fullscreen;
+}
+
+bool Config::isDiscardResult(void){
+	return discardResult;
 }

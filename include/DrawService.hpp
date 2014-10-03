@@ -2,6 +2,7 @@
 #define DRAW_SERVICE_H
 
 #include "../include/Config.hpp"
+#include <string>
 
 class DrawService{
 	private:
@@ -27,7 +28,8 @@ class DrawService{
 		void drawLine(int xs, int ys, int xe, int ye, unsigned char r, unsigned char g, unsigned char b);
 		void setPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b);
 		
-		int widthOf(char c);
+		static int widthOf(char c);
+		static int widthOf(std::string string);
 		
 		unsigned char getRed(int x, int y);
 		unsigned char getGreen(int x, int y);

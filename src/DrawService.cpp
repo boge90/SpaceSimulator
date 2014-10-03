@@ -1049,6 +1049,14 @@ int DrawService::widthOf(char c){
 	return 5;
 }
 
+int DrawService::widthOf(std::string string){
+	int width = 0;
+	for(size_t i=0; i<string.size(); i++){
+		width += widthOf(string.c_str()[i]) + 2;
+	}
+	return width;
+}
+
 void DrawService::drawRectangle(int x, int y, int reqWidth, int reqHeight, unsigned char r, unsigned char g, unsigned char b, bool fill){
 	//Draw lines
 	drawLine(x, y, x+reqWidth, y, r, g, b);

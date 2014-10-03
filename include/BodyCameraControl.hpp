@@ -41,6 +41,11 @@ class BodyCameraControl: public AbstractCamera{
 		* Checks the user input and updates the camera
 		**/
 		void checkUserInput(void);
+		
+		/**
+		*
+		**/
+		std::string getCameraName(void);
 };
 
 #endif
