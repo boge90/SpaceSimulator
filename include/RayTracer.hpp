@@ -11,10 +11,28 @@ class RayTracer{
 	private:
 		// Data
 		std::vector<Body*> *bodies;
+		int level;
+		
+		// Level 0 data
+		bool illuminated;
 		
 		// Misc
 		size_t debugLevel;
 		
+		/**
+		*
+		**/
+		void simulateRaysLevelOff();
+		
+		/**
+		*
+		**/
+		void simulateRaysLevelOne();
+		
+		/**
+		*
+		**/
+		void simulateRaysLevelTwo();
 	public:
 		/**
 		* Constructs the RayTracer system
@@ -30,6 +48,11 @@ class RayTracer{
 		* Simulates the rays for the entire system
 		**/
 		void simulateRays(void);
+		
+		/**
+		*
+		**/
+		void setLevel(int level);
 };
 
 #endif

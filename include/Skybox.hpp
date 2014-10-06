@@ -22,17 +22,11 @@ class Skybox: public Renderable{
 		
 		// Side1
 		GLuint tex1;
-		BMP *bmp1;
 		GLuint tex2;
-		BMP *bmp2;
 		GLuint tex3;
-		BMP *bmp3;
 		GLuint tex4;
-		BMP *bmp4;
 		GLuint tex5;
-		BMP *bmp5;
 		GLuint tex6;
-		BMP *bmp6;
 		
 		// Misc
 		Config *config;

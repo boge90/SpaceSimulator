@@ -9,6 +9,7 @@ Config::Config(int argc, char **args){
 	this->debugLevel = 0; // (Main loop), (Memory), (GUI), (Init and Finalize), (Init++ and Finalize++), (CUDA Launch), (Render object), (Calculations)
 	this->fullscreen = false;
 	this->discardResult = false;
+	this->flipCheck = false;
 	
 	// Reading program input parameters
 	for(int i=0; i<argc; i++){
@@ -26,6 +27,9 @@ Config::Config(int argc, char **args){
 		}
 		if(strcmp(args[i], "--discardResult") == 0){
 			discardResult = true;
+		}
+		if(strcmp(args[i], "--flipCheck") == 0){
+			flipCheck = true;
 		}
 	}
 }
@@ -68,4 +72,8 @@ bool Config::isFullscreen(void){
 
 bool Config::isDiscardResult(void){
 	return discardResult;
+}
+
+bool Config::isFlipCheck(void){
+	return flipCheck;
 }

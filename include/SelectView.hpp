@@ -1,7 +1,9 @@
 #ifndef SELECT_VIEW_H
 #define SELECT_VIEW_H
 
+template <class T> class SelectView;
 
+#include "../include/common.hpp"
 #include "../include/Layout.hpp"
 #include "../include/TextView.hpp"
 #include "../include/Button.hpp"

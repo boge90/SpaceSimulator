@@ -11,6 +11,7 @@ BodyCameraControl::BodyCameraControl(GLFWwindow *window, Frame *frame, Body *bod
 	this->window = window;
 	this->frame = frame;
 	
+	this->flipCheck = config->isFlipCheck();
 	this->horizontalAngle = 0.f;
 	this->verticalAngle = 0.f;
 	this->mouseSpeed = 0.05f;
@@ -69,10 +70,12 @@ void BodyCameraControl::checkUserInput(void){
 		verticalAngle -= mouseSpeed * deltaTime * double(frameHeight/2.0 - ypos);
 
 		// Flip upside down check
-		if(verticalAngle > M_PI/2.0){
-			verticalAngle = M_PI/2.0;
-		}else if(verticalAngle < -M_PI/2.0){
-			verticalAngle = -M_PI/2.0;
+		if(flipCheck){		
+			if(verticalAngle > M_PI/2.0){
+				verticalAngle = M_PI/2.0;
+			}else if(verticalAngle < -M_PI/2.0){
+				verticalAngle = -M_PI/2.0;
+			}
 		}
 	}else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE){
 		// Showing mouse cursor again after left mouse button is released

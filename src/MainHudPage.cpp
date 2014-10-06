@@ -1,5 +1,4 @@
 #include "../include/MainHudPage.hpp"
-#include "../include/FloatInputView.hpp"
 
 #include <iostream>
 
@@ -20,7 +19,13 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	this->futureBodyInputView = new IntegerInputView("FUTURE BODY PATH", config);
 	this->bodyLocatorBox = new CheckBox("BODY LOCATOR", false, config);
 	this->bodyLocatorInputView = new IntegerInputView("BODY LOCATOR NUMBER", config);
+	this->rayTracingLevelView = new SelectView<int>("RAY TRACING LEVEL", config);
 	this->exitButton = new Button("EXIT", config);
+	
+	// SelectView options
+	rayTracingLevelView->addItem("OFF", 0);
+	rayTracingLevelView->addItem("1", 1);
+	rayTracingLevelView->addItem("2", 2);
 	
 	// Adding listeners
 	pausedBox->addStateChangeAction(this);
@@ -30,6 +35,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	futureBodyInputView->addIntegerInputAction(this);
 	bodyLocatorBox->addStateChangeAction(this);
 	bodyLocatorInputView->addIntegerInputAction(this);
+	rayTracingLevelView->addSelectViewStateChangeAction(this);
 	exitButton->addViewClickedAction(this);
 	
 	// Add view
@@ -42,6 +48,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	addChild(futureBodyInputView);
 	addChild(bodyLocatorBox);
 	addChild(bodyLocatorInputView);
+	addChild(rayTracingLevelView);
 	addChild(exitButton);
 }
 
@@ -79,6 +86,10 @@ void MainHudPage::onStateChange(CheckBox *box, bool newState){
 			glDisable(GL_CULL_FACE);
 		}
 	}
+}
+
+void MainHudPage::onStateChange(SelectView<int> *view, int i){
+	simulator->getRayTracerSimulator()->setLevel(i);
 }
 
 void MainHudPage::onIntegerInput(IntegerInputView *view, int value){

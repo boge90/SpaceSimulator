@@ -6,11 +6,10 @@
 
 #include "../include/common.hpp"
 #include "../include/Config.hpp"
-#include "../include/Renderable.hpp"
 #include "../include/Shader.hpp"
 
 // Function prototypes
-class AbstractCamera: public Renderable{
+class AbstractCamera{
 	protected:
 		// Camera
 		float fov;
@@ -23,15 +22,6 @@ class AbstractCamera: public Renderable{
 		
 		size_t debugLevel;
 		bool active;
-		
-		// Camera visualization
-		Shader *shader;
-		GLuint vertexBuffer;
-		GLuint colorBuffer;
-		
-		// Local buffer
-		float *vertices;
-		float *colors;
 	public:
 		/**
 		* Creates the camera and initializes it in vec3(0, 0, 0)
@@ -57,11 +47,6 @@ class AbstractCamera: public Renderable{
 		* Called when the camera is actived
 		**/
 		virtual void setActive(bool active);
-		
-		/**
-		* Render camera data
-		**/
-		void render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
 		
 		/**
 		*

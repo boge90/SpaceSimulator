@@ -34,12 +34,12 @@ CameraHudPage::CameraHudPage(int x, int y, int width, int height, Simulator *sim
 	activeCamera->setActive(true);
 	
 	// Select view
-	SelectView<AbstractCamera*> *view = new SelectView<AbstractCamera*>("CAMERA", config);
+	cameraSelectView = new SelectView<AbstractCamera*>("CAMERA", config);
 	for(size_t i=0; i<cameraControllers->size(); i++){	
 		AbstractCamera *camera = (*cameraControllers)[i];
-		view->addItem(camera->getCameraName(), camera);
+		cameraSelectView->addItem(camera->getCameraName(), camera);
 	}
-	view->addSelectViewStateChangeAction(this);
+	cameraSelectView->addSelectViewStateChangeAction(this);
 	
 	
 	// Listeners
@@ -52,7 +52,7 @@ CameraHudPage::CameraHudPage(int x, int y, int width, int height, Simulator *sim
 	fovView->setInput(text);
 	
 	// This
-	addChild(view);
+	addChild(cameraSelectView);
 	addChild(fovView);
 }
 

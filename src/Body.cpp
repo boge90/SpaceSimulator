@@ -37,11 +37,7 @@ Body::Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 r
 	this->wireFrame = false;
 	this->rotation = rotation;
 	this->force = glm::dvec3(0.0, 0.0, 0.0);
-	
-	if(bodyType == STAR || bodyType == PLANET){
-		this->texturePath = texturePath;
-		this->bmp = BmpService::loadImage(texturePath.c_str(), config);	
-	}
+	this->texturePath = texturePath;
 }
 
 Body::~Body(){
@@ -54,7 +50,6 @@ Body::~Body(){
 	
 	// Freeing texture image memory
 	if(bodyType == STAR || bodyType == PLANET){	
-		BmpService::freeImage(bmp, config);
 		glDeleteTextures(1, &tex);
 		glDeleteBuffers(1, &texCoordBuffer);
 	}
@@ -159,6 +154,9 @@ void Body::init(){
 		}
 		glBufferData(GL_ARRAY_BUFFER, coords->size()*2*sizeof(float), &(coords->front()), GL_DYNAMIC_DRAW);
 		
+		// Loading texture	
+		BMP *bmp = BmpService::loadImage(texturePath.c_str(), config);	
+		
 		// Generating texture
 		glActiveTexture(GL_TEXTURE0);
 		glGenTextures(1, &tex);
@@ -166,7 +164,8 @@ void Body::init(){
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp->getWidth(), bmp->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, bmp->getData());
-		glGenerateMipmap(GL_TEXTURE_2D);
+		BmpService::freeImage(bmp, config);
+		//glGenerateMipmap(GL_TEXTURE_2D);
 		
 		if((debugLevel & 0x40) == 64){
 			long mem = (numVertices*3*sizeof(double)) + numVertices*3*sizeof(float) + numIndices*sizeof(GLuint) + (coords->size()*2*sizeof(float)) + (numVertices*sizeof(float));

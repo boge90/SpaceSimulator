@@ -10,6 +10,9 @@ class Config{
 		size_t debugLevel;
 		size_t bodyVertexDepth;
 		
+		// Camera
+		bool flipCheck;
+		
 		// Result
 		bool discardResult;
 		
@@ -79,6 +82,11 @@ class Config{
 		*
 		**/
 		bool isDiscardResult(void);
+		
+		/**
+		*
+		**/
+		bool isFlipCheck(void);
 };
 
 #endif

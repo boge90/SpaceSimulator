@@ -19,6 +19,7 @@ class CameraHudPage: public HudPage, FloatInputAction, SelectViewStateChangeActi
 		unsigned int currentActive;
 			
 		// GUI
+		SelectView<AbstractCamera*> *cameraSelectView;
 		FloatInputView *fovView;
 	public:
 		/**

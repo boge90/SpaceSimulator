@@ -31,7 +31,7 @@ Skybox::Skybox(Config *config){
     glBindTexture(GL_TEXTURE_2D, tex1);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    bmp1 = BmpService::loadImage("texture/GalaxyTex_PositiveZ.bmp", config);
+    BMP *bmp1 = BmpService::loadImage("texture/GalaxyTex_PositiveZ.bmp", config);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp1->getWidth(), bmp1->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, bmp1->getData());
 	
 	// Side 2 (left)
@@ -42,7 +42,7 @@ Skybox::Skybox(Config *config){
     glBindTexture(GL_TEXTURE_2D, tex2);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    bmp2 = BmpService::loadImage("texture/GalaxyTex_NegativeX.bmp", config);
+    BMP *bmp2 = BmpService::loadImage("texture/GalaxyTex_NegativeX.bmp", config);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp1->getWidth(), bmp1->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, bmp2->getData());
 	
 	// Side 3 (right)
@@ -53,7 +53,7 @@ Skybox::Skybox(Config *config){
     glBindTexture(GL_TEXTURE_2D, tex3);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    bmp3 = BmpService::loadImage("texture/GalaxyTex_PositiveX.bmp", config);
+    BMP *bmp3 = BmpService::loadImage("texture/GalaxyTex_PositiveX.bmp", config);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp1->getWidth(), bmp1->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, bmp3->getData());
 	
 	// Side 4 (top)
@@ -64,7 +64,7 @@ Skybox::Skybox(Config *config){
     glBindTexture(GL_TEXTURE_2D, tex4);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    bmp4 = BmpService::loadImage("texture/GalaxyTex_PositiveY.bmp", config);
+    BMP *bmp4 = BmpService::loadImage("texture/GalaxyTex_PositiveY.bmp", config);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp1->getWidth(), bmp1->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, bmp4->getData());
 	
 	// Side 5 (bottom)
@@ -75,7 +75,7 @@ Skybox::Skybox(Config *config){
     glBindTexture(GL_TEXTURE_2D, tex5);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    bmp5 = BmpService::loadImage("texture/GalaxyTex_NegativeY.bmp", config);
+    BMP *bmp5 = BmpService::loadImage("texture/GalaxyTex_NegativeY.bmp", config);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp1->getWidth(), bmp1->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, bmp5->getData());
 	
 	// Side 5 (back)
@@ -86,7 +86,7 @@ Skybox::Skybox(Config *config){
     glBindTexture(GL_TEXTURE_2D, tex6);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    bmp6 = BmpService::loadImage("texture/GalaxyTex_NegativeZ.bmp", config);
+    BMP *bmp6 = BmpService::loadImage("texture/GalaxyTex_NegativeZ.bmp", config);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bmp1->getWidth(), bmp1->getHeight(), 0, GL_BGR, GL_UNSIGNED_BYTE, bmp6->getData());
     
     // Texture coordinates
@@ -97,6 +97,14 @@ Skybox::Skybox(Config *config){
 	
 	// Shader
 	shader = new Shader("src/shaders/skyboxVertex.glsl", "src/shaders/skyboxFragment.glsl", config);
+	
+	// Freeing host memory
+	BmpService::freeImage(bmp1, config);
+	BmpService::freeImage(bmp2, config);
+	BmpService::freeImage(bmp3, config);
+	BmpService::freeImage(bmp4, config);
+	BmpService::freeImage(bmp5, config);
+	BmpService::freeImage(bmp6, config);
 }
 
 Skybox::~Skybox(){
@@ -105,13 +113,6 @@ Skybox::~Skybox(){
 	}
 	
 	delete shader;
-	
-	BmpService::freeImage(bmp1, config);
-	BmpService::freeImage(bmp2, config);
-	BmpService::freeImage(bmp3, config);
-	BmpService::freeImage(bmp4, config);
-	BmpService::freeImage(bmp5, config);
-	BmpService::freeImage(bmp6, config);
 	
 	glDeleteBuffers(1, &vertexBuffer1);
 	glDeleteBuffers(1, &vertexBuffer2);

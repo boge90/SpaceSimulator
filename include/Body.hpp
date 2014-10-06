@@ -47,7 +47,6 @@ class Body: public Renderable{
 		
 		// Texture
 		GLuint tex;
-		BMP *bmp;
 		
 		// Misc
 		Config *config;

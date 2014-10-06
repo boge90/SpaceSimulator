@@ -12,17 +12,13 @@ BodyHudPage::BodyHudPage(int x, int y, int width, int height, std::string title,
 	this->positionViewX = new TextView("", config);
 	this->positionViewY = new TextView("", config);
 	this->positionViewZ = new TextView("", config);
-	this->velocityViewX = new TextView("", config);
-	this->velocityViewY = new TextView("", config);
-	this->velocityViewZ = new TextView("", config);
+	this->velocityView = new TextView("", config);
 	
 	// Adding child
 	addChild(positionViewX);
 	addChild(positionViewY);
 	addChild(positionViewZ);
-	addChild(velocityViewX);
-	addChild(velocityViewY);
-	addChild(velocityViewZ);
+	addChild(velocityView);
 }
 
 BodyHudPage::~BodyHudPage(){
@@ -47,18 +43,11 @@ void BodyHudPage::draw(DrawService *drawService){
 	positionViewZ->setText(newText);
 	
 	// Updating velocity
-	glm::dvec3 velocity = body->getVelocity();
-	newText = "VELOCITY X ";
-	newText.append(std::to_string(velocity.x));
-	velocityViewX->setText(newText);
-	
-	newText = "VELOCITY Y ";
-	newText.append(std::to_string(velocity.y));
-	velocityViewY->setText(newText);
-	
-	newText = "VELOCITY Z ";
-	newText.append(std::to_string(velocity.z));
-	velocityViewZ->setText(newText);
+	glm::dvec3 v = body->getVelocity();
+	double vel = sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+	newText = "VELOCITY ";
+	newText.append(std::to_string(vel));
+	velocityView->setText(newText);
 
 	// Super
 	HudPage::draw(drawService);

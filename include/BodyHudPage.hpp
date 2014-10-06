@@ -14,9 +14,7 @@ class BodyHudPage: public HudPage{
 		TextView *positionViewX;
 		TextView *positionViewY;
 		TextView *positionViewZ;
-		TextView *velocityViewX;
-		TextView *velocityViewY;
-		TextView *velocityViewZ;
+		TextView *velocityView;
 	public:
 		/**
 		*

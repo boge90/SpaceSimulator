@@ -19,6 +19,7 @@ class BodyCameraControl: public AbstractCamera{
 		
 		// Misc
 		size_t debugLevel;
+		bool flipCheck;
 		
 		//Camera data
 		double distance;
@@ -43,7 +44,7 @@ class BodyCameraControl: public AbstractCamera{
 		void checkUserInput(void);
 		
 		/**
-		*
+		* Returns the camera name displayed in the HUD
 		**/
 		std::string getCameraName(void);
 };

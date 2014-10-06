@@ -13,6 +13,7 @@ static std::vector<RayTracingUnit> resources;
 
 // CUDA function prototypes
 void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *solarCoverageBuffer);
+void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer);
 
 void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, int numVertices, bool isStar, Config *config){
 	// Debug
@@ -59,6 +60,25 @@ void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int b
 	simulateRays<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numBodyVertices, bodyVertices, solarCoverage);
 }
 
+void rayTracerIllunimate(int index){
+	// Local vars
+	float *solarCoverage = 0;
+	size_t num_bytes_solarCoverage;
+	
+	// Do not perform anything for stars
+	if(resources[index].isStar == 0){	
+		// Getting the arrays
+		cudaGraphicsResourceGetMappedPointer((void**)&solarCoverage, &num_bytes_solarCoverage, resources[index].solarCoverageBuffer);
+	
+		int numBodyVertices = resources[index].numVertices;
+	
+		dim3 grid((numBodyVertices/512) + 1);
+		dim3 block(512);
+	
+		illuminate<<<grid, block>>>(numBodyVertices, solarCoverage);
+	}
+}
+
 void prepareRaySimulation(void){
 	for(size_t i=0; i<resources.size(); i++){
 		RayTracingUnit u = resources[i];
@@ -72,7 +92,6 @@ void prepareRaySimulation(void){
 	}
 }
 
-
 void finalizeRaySimulation(void){
 	for(size_t i=0; i<resources.size(); i++){
 		RayTracingUnit u = resources[i];
@@ -85,7 +104,6 @@ void finalizeRaySimulation(void){
 		}
 	}
 }
-
 
 void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *solarCoverageBuffer){
 	// Global thread index
@@ -114,4 +132,15 @@ void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, double
 	
 	// Setting vertex color
 	solarCoverageBuffer[index] = lightIntensity;
+}
+
+void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer){
+	// Global thread index
+	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
+	
+	// Will spawn some extra threads which must be terminated
+	if(index >= numBodyVertices){return;}
+	
+	// Setting vertex color
+	solarCoverageBuffer[index] = 1.f;
 }

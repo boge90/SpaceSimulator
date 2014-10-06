@@ -68,16 +68,16 @@ void Frame::update(void){
 	totalFrameCount++;
 	lastSecondFrameCount++;
 
-	// Calculating MVP
-	glm::mat4 vp = hud->getActivatedCamera()->getVP();
-
 	// Reset transformations and Clear
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Rendering
+	// Getting view and projection matrix, and camera attributes
+	glm::mat4 vp = hud->getActivatedCamera()->getVP();
 	glm::dvec3 position = hud->getActivatedCamera()->getPosition();
 	glm::dvec3 direction = hud->getActivatedCamera()->getDirection();
 	glm::dvec3 up = hud->getActivatedCamera()->getUp();
+		
+	// Rendering
 	renderer->render(&vp, position, direction, up);
 	
 	// Draw menu if present

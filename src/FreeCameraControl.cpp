@@ -12,7 +12,6 @@ FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int fra
 	this->frameWidth = frameWidth;
 	this->frameHeight = frameHeight;
 	this->previousTime = 0;
-	
 	this->horizontalAngle = 0;
 	this->verticalAngle = 0;
 	this->speed = 30000;
@@ -76,6 +75,7 @@ void FreeCameraControl::checkUserInput(void){
 	   
 	// Up vector : perpendicular to both direction and right
 	up = glm::cross(right, direction);
+	
 	
 	// Increasing speed
 	if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS){

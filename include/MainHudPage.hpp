@@ -7,12 +7,14 @@
 #include "../include/InputView.hpp"
 #include "../include/IntegerInputView.hpp"
 #include "../include/CheckBoxStateChangeAction.hpp"
+#include "../include/SelectViewStateChangeAction.hpp"
 #include "../include/IntegerInputView.hpp"
+#include "../include/SelectView.hpp"
 #include "../include/IntegerInputAction.hpp"
 #include "../include/Simulator.hpp"
 #include "../include/Config.hpp"
 
-class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStateChangeAction, public IntegerInputAction{
+class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStateChangeAction, public IntegerInputAction, public SelectViewStateChangeAction<int>{
 	private:
 		// GUI elements
 		TextView *fpsView;
@@ -24,6 +26,7 @@ class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStat
 		IntegerInputView *futureBodyInputView;
 		CheckBox *bodyLocatorBox;
 		IntegerInputView *bodyLocatorInputView;
+		SelectView<int> *rayTracingLevelView;
 		Button *exitButton;
 		
 		// Pointer to the simulator
@@ -48,6 +51,11 @@ class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStat
 		* CheckBox state change listener
 		**/
 		void onStateChange(CheckBox *box, bool newState);
+		
+		/**
+		*
+		**/
+		void onStateChange(SelectView<int> *view, int i);
 		
 		/**
 		* Called when the associated IntergerInputView retrieves input

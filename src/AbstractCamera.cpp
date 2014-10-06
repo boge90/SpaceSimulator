@@ -10,9 +10,7 @@ AbstractCamera::AbstractCamera(Config *config){
 	
 	// Init
 	this->fov = 70.f;
-	this->active = false;
 	this->position = glm::dvec3(0, 0, 0);
-	this->shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl", config);
 	
 	// MVP
 	projection = glm::perspective(fov, 4.0f / 3.0f, 0.001f, 1000000000000.f);
@@ -22,22 +20,10 @@ AbstractCamera::~AbstractCamera(){
 	if((debugLevel & 0x10) == 16){
 		std::cout << "AbstractCamera.cpp\tFinalizing\n";
 	}
-	
-	delete shader;
 }
 
 glm::mat4 AbstractCamera::getVP(void){
 	return projection * view;
-}
-
-void AbstractCamera::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
-	if(active){	
-		// TODO ?
-	}
-}
-
-void AbstractCamera::setActive(bool active){
-	this->active = active;
 }
 
 glm::dvec3 AbstractCamera::getPosition(void){
@@ -59,4 +45,8 @@ float AbstractCamera::getFieldOfView(void){
 void AbstractCamera::setFieldOfView(float fov){
 	this->fov = fov;
 	projection = glm::perspective(fov, 4.0f / 3.0f, 0.001f, 1000000000000.f);
+}
+
+void AbstractCamera::setActive(bool active){
+	this->active = active;
 }
