@@ -14,7 +14,7 @@ static std::vector<RayTracingUnit> resources;
 
 // CUDA function prototypes
 void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage);
-void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, double3 *sourceVertices, float *sourceCoverage);
+void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, double3 *sourceVertices, float *sourceCoverage, float intensity);
 void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer);
 void __global__ unilluminate(int numBodyVertices, float *solarCoverageBuffer);
 
@@ -63,7 +63,7 @@ void rayTracerSimulateRaysOne(int starIndex, double x1, double y1, double z1, in
 	simulateRaysOne<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numBodyVertices, bodyVertices, solarCoverage);
 }
 
-void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, double *bodyMat, double *sourceMat){
+void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, double *bodyMat, double *sourceMat, float intensity){
 	// Local vars
 	double3 *sourceVertices = 0;
 	double3 *bodyVertices = 0;
@@ -91,10 +91,10 @@ void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, 
 	dim3 grid((numBodyVertices/512) + 1);
 	dim3 block(512);
 	
-	if(resources[sourceIndex].isStar){
+	if(resources[sourceIndex].isStar){ // Star light does not need the accuracy of level TWO
 		simulateRaysOne<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numBodyVertices, bodyVertices, bodyCoverage);
 	}else{	
-		simulateRaysTwo<<<grid, block>>>(make_double3(x2, y2, z2), numBodyVertices, bodyVertices, bodyCoverage, make_double3(x1, y1, z1), numSourceVertices, sourceVertices, sourceCoverage);
+		simulateRaysTwo<<<grid, block>>>(make_double3(x2, y2, z2), numBodyVertices, bodyVertices, bodyCoverage, make_double3(x1, y1, z1), numSourceVertices, sourceVertices, sourceCoverage, intensity);
 	}
 }
 
@@ -179,22 +179,22 @@ void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, dou
 	bodyCoverage[index] = lightIntensity;
 }
 
-void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, double3 *sourceVertices, float *sourceCoverage){
+void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, double3 *sourceVertices, float *sourceCoverage, float intensity){
 	// Global thread index
 	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
 	
 	// Will spawn some extra threads which must be terminated
 	if(index >= numBodyVertices){return;}
 
+	// Body intensity	
+	float lightIntensity = bodyCoverage[index];
+	if(lightIntensity == 1.f){return;}
+
 	// Vector FROM source TO body
 	double3 dirVec;
 	dirVec.x = bc.x - sc.x;
 	dirVec.y = bc.y - sc.y;
 	dirVec.z = bc.z - sc.z;
-
-	// Body intensity	
-	float lightIntensity = bodyCoverage[index];
-	if(lightIntensity == 1.f){return;}
 	
 	// Vertex data
 	double3 bodyNormal = bodyVertices[index];
@@ -211,7 +211,7 @@ void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVe
 	for(int i=0; i<numSourceVertices; i++){
 		// Get source coverage
 		float sourceCov = sourceCoverage[i];
-		if(sourceCov <= 0.1f){continue;}
+		if(sourceCov <= 0.2f){continue;}
 		
 		// Vertex and direction
 		double3 sourceNormal = sourceVertices[i];
@@ -238,7 +238,7 @@ void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVe
 		
 		if(planEq > 0){
 			count++;
-			lightIntensity = 0.1f;
+			lightIntensity = intensity;
 		}
 	}
 	

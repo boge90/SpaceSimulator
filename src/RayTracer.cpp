@@ -112,7 +112,16 @@ void RayTracer::simulateRaysLevelTwo(){
 			glm::dmat4 mm3 = glm::rotate(glm::dmat4(1.0), (source->getRotation()*180.0)/M_PI, glm::dvec3(0.0, 1.0, 0.0));
 			glm::dmat4 mat2 = mm1*mm2*mm3;
 			
-			rayTracerSimulateRaysTwo(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, &mat1[0][0], &mat2[0][0]);
+			if(source->isStar()){			
+				rayTracerSimulateRaysTwo(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, &mat1[0][0], &mat2[0][0], 1.f);
+			}else{
+				double dist = glm::length(c2 - c1);
+				float intensity = (4.f*powf(10, 7)) / dist;
+				
+				if(intensity > 0.01){ // Only simulate Body -> body light when they are close
+					rayTracerSimulateRaysTwo(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, &mat1[0][0], &mat2[0][0], intensity);
+				}
+			}
 		}
 	}
 
