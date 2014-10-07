@@ -6,14 +6,17 @@
 #include <cuda_gl_interop.h>
 
 // CUDA Memory
-__constant__ double cuda_translation_matrix[16];
+__constant__ double cuda_body_matrix[16];
+__constant__ double cuda_source_matrix[16];
 
 // CUDA resources
 static std::vector<RayTracingUnit> resources; 
 
 // CUDA function prototypes
-void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *solarCoverageBuffer);
+void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage);
+void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, double3 *sourceVertices, float *sourceCoverage);
 void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer);
+void __global__ unilluminate(int numBodyVertices, float *solarCoverageBuffer);
 
 void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, int numVertices, bool isStar, Config *config){
 	// Debug
@@ -38,7 +41,7 @@ void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, int num
 	resources.push_back(unit);
 }
 
-void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, double *mat){
+void rayTracerSimulateRaysOne(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, double *mat){
 	// Local vars
 	double3 *bodyVertices = 0;
 	float *solarCoverage = 0;
@@ -46,7 +49,7 @@ void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int b
 	size_t num_bytes_solarCoverage;
 	
 	// Transferring the translation matrix
-	cudaMemcpyToSymbol(cuda_translation_matrix, mat, 4*4*sizeof(double), 0, cudaMemcpyHostToDevice);
+	cudaMemcpyToSymbol(cuda_body_matrix, mat, 4*4*sizeof(double), 0, cudaMemcpyHostToDevice);
 	
 	// Getting the arrays
 	cudaGraphicsResourceGetMappedPointer((void**)&bodyVertices, &num_bytes_bodyVertices, resources[bodyIndex].vertexBuffer);
@@ -57,7 +60,42 @@ void rayTracerSimulateRays(int starIndex, double x1, double y1, double z1, int b
 	dim3 grid((numBodyVertices/512) + 1);
 	dim3 block(512);
 	
-	simulateRays<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numBodyVertices, bodyVertices, solarCoverage);
+	simulateRaysOne<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numBodyVertices, bodyVertices, solarCoverage);
+}
+
+void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, double *bodyMat, double *sourceMat){
+	// Local vars
+	double3 *sourceVertices = 0;
+	double3 *bodyVertices = 0;
+	float *sourceCoverage = 0;
+	float *bodyCoverage = 0;
+	size_t num_bytes_sourceVertices;
+	size_t num_bytes_bodyVertices;
+	size_t num_bytes_sourceCoverage;
+	size_t num_bytes_bodyCoverage;
+	
+	// Transferring the translation matrix
+	cudaMemcpyToSymbol(cuda_body_matrix, bodyMat, 4*4*sizeof(double), 0, cudaMemcpyHostToDevice);
+	cudaMemcpyToSymbol(cuda_source_matrix, sourceMat, 4*4*sizeof(double), 0, cudaMemcpyHostToDevice);
+	
+	// Getting the arrays
+	cudaGraphicsResourceGetMappedPointer((void**)&sourceVertices, &num_bytes_sourceVertices, resources[sourceIndex].vertexBuffer);
+	cudaGraphicsResourceGetMappedPointer((void**)&sourceCoverage, &num_bytes_sourceCoverage, resources[sourceIndex].solarCoverageBuffer);
+	
+	cudaGraphicsResourceGetMappedPointer((void**)&bodyVertices, &num_bytes_bodyVertices, resources[bodyIndex].vertexBuffer);
+	cudaGraphicsResourceGetMappedPointer((void**)&bodyCoverage, &num_bytes_bodyCoverage, resources[bodyIndex].solarCoverageBuffer);
+	
+	int numBodyVertices = resources[bodyIndex].numVertices;
+	int numSourceVertices = resources[sourceIndex].numVertices;
+	
+	dim3 grid((numBodyVertices/512) + 1);
+	dim3 block(512);
+	
+	if(resources[sourceIndex].isStar){
+		simulateRaysOne<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numBodyVertices, bodyVertices, bodyCoverage);
+	}else{	
+		simulateRaysTwo<<<grid, block>>>(make_double3(x2, y2, z2), numBodyVertices, bodyVertices, bodyCoverage, make_double3(x1, y1, z1), numSourceVertices, sourceVertices, sourceCoverage);
+	}
 }
 
 void rayTracerIllunimate(int index){
@@ -65,18 +103,31 @@ void rayTracerIllunimate(int index){
 	float *solarCoverage = 0;
 	size_t num_bytes_solarCoverage;
 	
-	// Do not perform anything for stars
-	if(resources[index].isStar == 0){	
-		// Getting the arrays
-		cudaGraphicsResourceGetMappedPointer((void**)&solarCoverage, &num_bytes_solarCoverage, resources[index].solarCoverageBuffer);
+	// Getting the arrays
+	cudaGraphicsResourceGetMappedPointer((void**)&solarCoverage, &num_bytes_solarCoverage, resources[index].solarCoverageBuffer);
+
+	int numBodyVertices = resources[index].numVertices;
+
+	dim3 grid((numBodyVertices/512) + 1);
+	dim3 block(512);
+
+	illuminate<<<grid, block>>>(numBodyVertices, solarCoverage);
+}
+
+void rayTracerUnillunimate(int index){
+	// Local vars
+	float *solarCoverage = 0;
+	size_t num_bytes_solarCoverage;
 	
-		int numBodyVertices = resources[index].numVertices;
-	
-		dim3 grid((numBodyVertices/512) + 1);
-		dim3 block(512);
-	
-		illuminate<<<grid, block>>>(numBodyVertices, solarCoverage);
-	}
+	// Getting the arrays
+	cudaGraphicsResourceGetMappedPointer((void**)&solarCoverage, &num_bytes_solarCoverage, resources[index].solarCoverageBuffer);
+
+	int numBodyVertices = resources[index].numVertices;
+
+	dim3 grid((numBodyVertices/512) + 1);
+	dim3 block(512);
+
+	unilluminate<<<grid, block>>>(numBodyVertices, solarCoverage);
 }
 
 void prepareRaySimulation(void){
@@ -85,10 +136,7 @@ void prepareRaySimulation(void){
 		
 		// Mapping vertex buffer
 		cudaGraphicsMapResources(1, &resources[i].vertexBuffer);	
-		
-		if(!u.isStar){
-			cudaGraphicsMapResources(1, &resources[i].solarCoverageBuffer);	
-		}
+		cudaGraphicsMapResources(1, &resources[i].solarCoverageBuffer);	
 	}
 }
 
@@ -98,14 +146,11 @@ void finalizeRaySimulation(void){
 		
 		// Mapping vertex buffer
 		cudaGraphicsUnmapResources(1, &resources[i].vertexBuffer);	
-		
-		if(!u.isStar){
-			cudaGraphicsUnmapResources(1, &resources[i].solarCoverageBuffer);	
-		}
+		cudaGraphicsUnmapResources(1, &resources[i].solarCoverageBuffer);	
 	}
 }
 
-void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *solarCoverageBuffer){
+void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage){
 	// Global thread index
 	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
 	
@@ -116,9 +161,9 @@ void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, double
 	float lightIntensity = 0.f;
 	double3 bodyNormal = bodyVertices[index];
 	
-	double vx = cuda_translation_matrix[0]*bodyNormal.x + cuda_translation_matrix[4]*bodyNormal.y + cuda_translation_matrix[8]*bodyNormal.z + cuda_translation_matrix[12];
-	double vy = cuda_translation_matrix[1]*bodyNormal.x + cuda_translation_matrix[5]*bodyNormal.y + cuda_translation_matrix[9]*bodyNormal.z + cuda_translation_matrix[13];
-	double vz = cuda_translation_matrix[2]*bodyNormal.x + cuda_translation_matrix[6]*bodyNormal.y + cuda_translation_matrix[10]*bodyNormal.z + cuda_translation_matrix[14];
+	double vx = cuda_body_matrix[0]*bodyNormal.x + cuda_body_matrix[4]*bodyNormal.y + cuda_body_matrix[8]*bodyNormal.z + cuda_body_matrix[12];
+	double vy = cuda_body_matrix[1]*bodyNormal.x + cuda_body_matrix[5]*bodyNormal.y + cuda_body_matrix[9]*bodyNormal.z + cuda_body_matrix[13];
+	double vz = cuda_body_matrix[2]*bodyNormal.x + cuda_body_matrix[6]*bodyNormal.y + cuda_body_matrix[10]*bodyNormal.z + cuda_body_matrix[14];
 	
 	bodyNormal.x = vx-bc.x;
 	bodyNormal.y = vy-bc.y;
@@ -131,7 +176,78 @@ void __global__ simulateRays(double3 bc, double3 sc, int numBodyVertices, double
 	}
 	
 	// Setting vertex color
-	solarCoverageBuffer[index] = lightIntensity;
+	bodyCoverage[index] = lightIntensity;
+}
+
+void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, double3 *sourceVertices, float *sourceCoverage){
+	// Global thread index
+	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
+	
+	// Will spawn some extra threads which must be terminated
+	if(index >= numBodyVertices){return;}
+
+	// Vector FROM source TO body
+	double3 dirVec;
+	dirVec.x = bc.x - sc.x;
+	dirVec.y = bc.y - sc.y;
+	dirVec.z = bc.z - sc.z;
+
+	// Body intensity	
+	float lightIntensity = bodyCoverage[index];
+	if(lightIntensity == 1.f){return;}
+	
+	// Vertex data
+	double3 bodyNormal = bodyVertices[index];
+	double3 bodyVertex;
+	
+	bodyVertex.x = cuda_body_matrix[0]*bodyNormal.x + cuda_body_matrix[4]*bodyNormal.y + cuda_body_matrix[8]*bodyNormal.z + cuda_body_matrix[12];
+	bodyVertex.y = cuda_body_matrix[1]*bodyNormal.x + cuda_body_matrix[5]*bodyNormal.y + cuda_body_matrix[9]*bodyNormal.z + cuda_body_matrix[13];
+	bodyVertex.z = cuda_body_matrix[2]*bodyNormal.x + cuda_body_matrix[6]*bodyNormal.y + cuda_body_matrix[10]*bodyNormal.z + cuda_body_matrix[14];
+	bodyNormal.x = bodyVertex.x-bc.x;
+	bodyNormal.y = bodyVertex.y-bc.y;
+	bodyNormal.z = bodyVertex.z-bc.z;
+	
+	int count = 0;
+	for(int i=0; i<numSourceVertices; i++){
+		// Get source coverage
+		float sourceCov = sourceCoverage[i];
+		if(sourceCov <= 0.1f){continue;}
+		
+		// Vertex and direction
+		double3 sourceNormal = sourceVertices[i];
+		double3 sourceVertex;
+		
+		// Source vertex and normal
+		sourceVertex.x = cuda_source_matrix[0]*sourceNormal.x + cuda_source_matrix[4]*sourceNormal.y + cuda_source_matrix[8]*sourceNormal.z + cuda_source_matrix[12];
+		sourceVertex.y = cuda_source_matrix[1]*sourceNormal.x + cuda_source_matrix[5]*sourceNormal.y + cuda_source_matrix[9]*sourceNormal.z + cuda_source_matrix[13];
+		sourceVertex.z = cuda_source_matrix[2]*sourceNormal.x + cuda_source_matrix[6]*sourceNormal.y + cuda_source_matrix[10]*sourceNormal.z + cuda_source_matrix[14];
+	
+		sourceNormal.x = sourceVertex.x-sc.x;
+		sourceNormal.y = sourceVertex.y-sc.y;
+		sourceNormal.z = sourceVertex.z-sc.z;
+		
+		// Source normal must point toward the body (Dot product)
+		double norLength = sqrt(sourceNormal.x*sourceNormal.x + sourceNormal.y*sourceNormal.y + sourceNormal.z*sourceNormal.z);
+		double dirLength = sqrt(dirVec.x*dirVec.x + dirVec.y*dirVec.y + dirVec.z*dirVec.z);
+		double dot = sourceNormal.x*dirVec.x + sourceNormal.y*dirVec.y + sourceNormal.z*dirVec.z;
+		dot = dot/(norLength*dirLength);
+		if(dot <= 0.0){continue;}
+	
+		// Plane Equation
+		double planEq = bodyNormal.x * (sourceVertex.x - bodyVertex.x) + bodyNormal.y * (sourceVertex.y - bodyVertex.y) + bodyNormal.z * (sourceVertex.z - bodyVertex.z);
+		
+		if(planEq > 0){
+			count++;
+			lightIntensity = 0.1f;
+		}
+	}
+	
+	// Setting vertex color
+	if(count == 0){
+		bodyCoverage[index] = 0.f;
+	}else{	
+		bodyCoverage[index] = lightIntensity;
+	}
 }
 
 void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer){
@@ -143,4 +259,15 @@ void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer){
 	
 	// Setting vertex color
 	solarCoverageBuffer[index] = 1.f;
+}
+
+void __global__ unilluminate(int numBodyVertices, float *solarCoverageBuffer){
+	// Global thread index
+	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
+	
+	// Will spawn some extra threads which must be terminated
+	if(index >= numBodyVertices){return;}
+	
+	// Setting vertex color
+	solarCoverageBuffer[index] = 0.f;
 }
