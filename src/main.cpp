@@ -26,7 +26,10 @@ int main(int argc, char **args){
 	
 	if(config->isMaster()){	
 		GLFWwindow *window = OpenGlHelper::init(config);
-	
+		
+		// Exit if no window could be created
+		if(window == NULL){exit(EXIT_FAILURE);}
+		
 		// Reading bodies from disk
 		double time;
 		std::vector<Body*> *bodies = new std::vector<Body*>();

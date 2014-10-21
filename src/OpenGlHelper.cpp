@@ -17,16 +17,16 @@ GLFWwindow* OpenGlHelper::init(Config *config){
 	
 	// OpenGL hints
 	glfwWindowHint(GLFW_SAMPLES, 4); 								// 4x antialiasing
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3); 					// We want OpenGL 3.3
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); 					// We want OpenGL 4.4
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE); 	//We don't want the old OpenGL
 	
 	GLFWwindow *window = glfwCreateWindow(1, 1, "Init", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	
 	// Initialize GLEW
-    glewExperimental = GL_TRUE;
-    GLenum err = glewInit();
+	glewExperimental = GL_TRUE;
+	GLenum err = glewInit();
     if (GLEW_OK != err){
         std::cout << "OpenGlHelper.cpp\tError: " << glewGetErrorString(err) << "\n";
         return NULL;
@@ -38,6 +38,8 @@ GLFWwindow* OpenGlHelper::init(Config *config){
     if(error != 0){    
 		std::cout << "OpenGlHelper.cpp\tGLEW Init (Error = " << glewGetErrorString(error) << ")\n";
     }
+    
+	std::cout << "OpenGlHelper.cpp\tGLSL " << glGetString(GL_SHADING_LANGUAGE_VERSION_ARB) << std::endl;
 	
 	return window;
 }
