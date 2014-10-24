@@ -13,7 +13,7 @@ AbstractCamera::AbstractCamera(Config *config){
 	this->position = glm::dvec3(0, 0, 0);
 	
 	// MVP
-	projection = glm::perspective(fov, 4.0f / 3.0f, 0.001f, 1000000000000.f);
+	projection = glm::perspective(fov, 5.0f / 3.0f, 0.001f, 1000000000000.f);
 }
 
 AbstractCamera::~AbstractCamera(){
@@ -44,7 +44,7 @@ float AbstractCamera::getFieldOfView(void){
 
 void AbstractCamera::setFieldOfView(float fov){
 	this->fov = fov;
-	projection = glm::perspective(fov, 4.0f / 3.0f, 0.001f, 1000000000000.f);
+	projection = glm::perspective(fov, 5.0f / 3.0f, 0.001f, 1000000000000.f);
 }
 
 void AbstractCamera::setActive(bool active){

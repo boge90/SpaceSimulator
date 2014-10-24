@@ -1,7 +1,7 @@
 #include "../include/FreeCameraControl.hpp"
 #include <iostream>
 
-FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int frameHeight, Config *config): AbstractCamera(config){
+FreeCameraControl::FreeCameraControl(GLFWwindow *window, Frame *frame, Config *config): AbstractCamera(config){
 	this->debugLevel = config->getDebugLevel();
 	if((debugLevel & 0x10) == 16){		
 		std::cout << "FreeCameraControl.cpp\tInitializing\n";
@@ -9,8 +9,7 @@ FreeCameraControl::FreeCameraControl(GLFWwindow *window, int frameWidth, int fra
 
 	// Initial frame values
 	this->window = window;
-	this->frameWidth = frameWidth;
-	this->frameHeight = frameHeight;
+	this->frame = frame;
 	this->previousTime = 0;
 	this->horizontalAngle = 0;
 	this->verticalAngle = 0;
@@ -50,6 +49,8 @@ void FreeCameraControl::checkUserInput(void){
 		glfwGetCursorPos(window, &xpos, &ypos);
 
 		// Reset mouse position for next frame
+		int frameWidth = frame->getWidth();
+		int frameHeight = frame->getHeight();
 		glfwSetCursorPos(window, frameWidth/2, frameHeight/2);
 
 		// Compute new orientation

@@ -231,6 +231,11 @@ void Body::generateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::
 }
 
 void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
+	// Size check
+	if(2*asin(radius/glm::length(center - position)) < 0.25*M_PI/180.0){
+		return;
+	}
+
 	// Binding the Body shader
 	shader->bind();
 	
@@ -241,8 +246,8 @@ void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm:
 	
 	// Translating and rotating body
 	glm::mat4 mvp = (*vp) * glm::translate(glm::mat4(1), glm::vec3(center - position));
-	mvp = mvp * glm::rotate(glm::mat4(1.f), float(inclination*180/M_PI), glm::vec3(0, 0, 1));
-	mvp = mvp * glm::rotate(glm::mat4(1.f), float(rotation*180/M_PI), glm::vec3(0, 1, 0));
+	mvp = mvp * glm::rotate(glm::mat4(1.f), float(inclination), glm::vec3(0, 0, 1));
+	mvp = mvp * glm::rotate(glm::mat4(1.f), float(rotation), glm::vec3(0, 1, 0));
 	
 	// Get a handle for our "MVP" uniform.
 	GLuint mvpMatrixId = glGetUniformLocation(shader->getID(), "MVP");

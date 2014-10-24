@@ -17,7 +17,7 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	
 	// Initializing visualization system
 	renderer = new Renderer(this, config);
-	frame = new Frame(1500, 900, "Space", renderer, this, config);
+	frame = new Frame(1800, 1000, "Space", renderer, this, config);
 	
 	// Initializing sub renderers
 	skybox = new Skybox(config);

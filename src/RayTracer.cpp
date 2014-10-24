@@ -69,8 +69,8 @@ void RayTracer::simulateRaysLevelOne(){
 			glm::dvec3 c2 = body->getCenter();
 		
 			glm::dmat4 m1 = glm::translate(glm::dmat4(1.0), c2);
-			glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), (body->getInclination()*180.0)/M_PI, glm::dvec3(0.0, 0.0, 1.0));
-			glm::dmat4 m3 = glm::rotate(glm::dmat4(1.0), (body->getRotation()*180.0)/M_PI, glm::dvec3(0.0, 1.0, 0.0));
+			glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), (body->getInclination()), glm::dvec3(0.0, 0.0, 1.0));
+			glm::dmat4 m3 = glm::rotate(glm::dmat4(1.0), (body->getRotation()), glm::dvec3(0.0, 1.0, 0.0));
 			glm::dmat4 mat = m1*m2*m3;
 		
 			rayTracerSimulateRaysOne(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, &mat[0][0]);
@@ -102,14 +102,14 @@ void RayTracer::simulateRaysLevelTwo(){
 		
 			// Body translation matrix
 			glm::dmat4 m1 = glm::translate(glm::dmat4(1.0), c2);
-			glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), (body->getInclination()*180.0)/M_PI, glm::dvec3(0.0, 0.0, 1.0));
-			glm::dmat4 m3 = glm::rotate(glm::dmat4(1.0), (body->getRotation()*180.0)/M_PI, glm::dvec3(0.0, 1.0, 0.0));
+			glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), (body->getInclination()), glm::dvec3(0.0, 0.0, 1.0));
+			glm::dmat4 m3 = glm::rotate(glm::dmat4(1.0), (body->getRotation()), glm::dvec3(0.0, 1.0, 0.0));
 			glm::dmat4 mat1 = m1*m2*m3;
 		
 			// Source translation matrix
 			glm::dmat4 mm1 = glm::translate(glm::dmat4(1.0), c1);
-			glm::dmat4 mm2 = glm::rotate(glm::dmat4(1.0), (source->getInclination()*180.0)/M_PI, glm::dvec3(0.0, 0.0, 1.0));
-			glm::dmat4 mm3 = glm::rotate(glm::dmat4(1.0), (source->getRotation()*180.0)/M_PI, glm::dvec3(0.0, 1.0, 0.0));
+			glm::dmat4 mm2 = glm::rotate(glm::dmat4(1.0), (source->getInclination()), glm::dvec3(0.0, 0.0, 1.0));
+			glm::dmat4 mm3 = glm::rotate(glm::dmat4(1.0), (source->getRotation()), glm::dvec3(0.0, 1.0, 0.0));
 			glm::dmat4 mat2 = mm1*mm2*mm3;
 			
 			if(source->isStar()){			

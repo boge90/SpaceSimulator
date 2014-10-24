@@ -14,6 +14,7 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator, Frame *frame, Config *config)
 	
 	// Init
 	glfwGetWindowSize(window, &width, &height);
+	
 	this->window = window;
 	this->visible = false;
 	this->stride = width*3;

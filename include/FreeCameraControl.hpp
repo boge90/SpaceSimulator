@@ -2,6 +2,7 @@
 #define FREE_CAMERA_CONTROL_H
 
 #include "../include/common.hpp"
+#include "../include/Frame.hpp"
 #include "../include/Config.hpp"
 #include "../include/AbstractCamera.hpp"
 
@@ -14,20 +15,17 @@ class FreeCameraControl: public AbstractCamera{
 		double mouseSpeed;
 		double previousTime;
 		
-		// Window data
-		int frameWidth;
-		int frameHeight;
-		
 		// Misc
 		size_t debugLevel;
 		
 		//GLFW
 		GLFWwindow *window;
+		Frame *frame;
 	public:
 		/**
 		* Constructs the camera object
 		**/
-		FreeCameraControl(GLFWwindow *window, int frameWidth, int frameHeight, Config *config);
+		FreeCameraControl(GLFWwindow *window, Frame *frame, Config *config);
 		
 		/**
 		* Finalizes the camera object

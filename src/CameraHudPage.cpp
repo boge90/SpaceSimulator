@@ -1,7 +1,8 @@
 #include "../include/CameraHudPage.hpp"
-#include "../include/BodyCameraControl.hpp"
-#include "../include/FreeCameraControl.hpp"
 
+#include "../include/BodyCameraControl.hpp"
+#include "../include/OrbitCameraControl.hpp"
+#include "../include/FreeCameraControl.hpp"
 #include "../include/SelectView.hpp"
 
 #include <iostream>
@@ -15,34 +16,43 @@ CameraHudPage::CameraHudPage(int x, int y, int width, int height, Simulator *sim
 	// Init
 	this->fovView = new FloatInputView("FIELD OF VIEW ", config);
 	
+	// GUI
+	this->freeCameraButton = new Button("FREE CAMERA", config);
+	this->bodyCameraSelectView = new SelectView<AbstractCamera*>("BODY CAMERA", config);
+	this->orbitCameraSelectView = new SelectView<AbstractCamera*>("ORBIT CAMERA", config);
+	
 	// Cameras
 	std::vector<Body*> *bodies = simulator->getBodies();
 	this->currentActive = 0;
 	this->cameraControllers = new std::vector<AbstractCamera*>();
 	
 	// Reserving size for camera pointers
-	cameraControllers->reserve(bodies->size()+1);
+	cameraControllers->reserve((bodies->size()*2)+1);
 	
 	// Free camera
-	cameraControllers->push_back(new FreeCameraControl(frame->getWindow(), frame->getWidth(), frame->getHeight(), config));
+	cameraControllers->push_back(new FreeCameraControl(frame->getWindow(), frame, config));
+	
+	// Body cameras
 	for(size_t i = 0; i<bodies->size(); i++){
-		// Creating camera
-		BodyCameraControl *controller = new BodyCameraControl(frame->getWindow(), frame, (*bodies)[i], config);
-		cameraControllers->push_back(controller);
+		// Creating body camera
+		BodyCameraControl *bodyCamera = new BodyCameraControl(frame->getWindow(), frame, (*bodies)[i], config);
+		cameraControllers->push_back(bodyCamera);
+		bodyCameraSelectView->addItem(bodyCamera->getCameraName(), bodyCamera);
+		
+		// Creating orbit camera
+		OrbitCameraControl *orbitCamera = new OrbitCameraControl(frame->getWindow(), frame, (*bodies)[i], config);
+		cameraControllers->push_back(orbitCamera);
+		orbitCameraSelectView->addItem(orbitCamera->getCameraName(), orbitCamera);
 	}
+	
+	// Setting active camera
 	activeCamera = (*cameraControllers)[this->currentActive];
 	activeCamera->setActive(true);
 	
-	// Select view
-	cameraSelectView = new SelectView<AbstractCamera*>("CAMERA", config);
-	for(size_t i=0; i<cameraControllers->size(); i++){	
-		AbstractCamera *camera = (*cameraControllers)[i];
-		cameraSelectView->addItem(camera->getCameraName(), camera);
-	}
-	cameraSelectView->addSelectViewStateChangeAction(this);
-	
-	
-	// Listeners
+	// GUI listeners
+	freeCameraButton->addViewClickedAction(this);
+	bodyCameraSelectView->addSelectViewStateChangeAction(this);
+	orbitCameraSelectView->addSelectViewStateChangeAction(this);
 	fovView->addFloatInputAction(this);
 	
 	// Setting value of FOV view
@@ -52,7 +62,9 @@ CameraHudPage::CameraHudPage(int x, int y, int width, int height, Simulator *sim
 	fovView->setInput(text);
 	
 	// This
-	addChild(cameraSelectView);
+	addChild(freeCameraButton);
+	addChild(bodyCameraSelectView);
+	addChild(orbitCameraSelectView);
 	addChild(fovView);
 }
 
@@ -87,4 +99,8 @@ std::vector<AbstractCamera*>* CameraHudPage::getCameras(void){
 
 void CameraHudPage::onStateChange(SelectView<AbstractCamera*> *view, AbstractCamera *t){
 	activeCamera = t;
+}
+
+void CameraHudPage::onClick(View *view, int button, int action){
+	activeCamera = (*cameraControllers)[0]; // Free camera controller
 }

@@ -65,7 +65,7 @@ class HUD: public ViewClickedAction{
 		/**
 		* Destroys the HUD object
 		**/
-		~HUD();
+		virtual ~HUD();
 		
 		/**
 		* Calls the update function for all views, which may have their data modified
