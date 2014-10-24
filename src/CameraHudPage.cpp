@@ -23,7 +23,7 @@ CameraHudPage::CameraHudPage(int x, int y, int width, int height, Simulator *sim
 	
 	// Cameras
 	std::vector<Body*> *bodies = simulator->getBodies();
-	this->currentActive = 0;
+	this->currentActive = 8; // TODO: Change to 0
 	this->cameraControllers = new std::vector<AbstractCamera*>();
 	
 	// Reserving size for camera pointers

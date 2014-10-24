@@ -19,6 +19,7 @@ OrbitCameraControl::OrbitCameraControl(GLFWwindow *window, Frame *frame, Body *b
 	this->speed = 500000;
 	this->mouseSpeed = 0.05;
 	this->previousTime = 0;
+	this->dt = config->getDt();
 }
 
 OrbitCameraControl::~OrbitCameraControl(void){
@@ -60,13 +61,21 @@ void OrbitCameraControl::checkUserInput(void){
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
-	// Local coodinate system
+	// Up vector
 	up = glm::dvec3(cos(latitude) * sin(longitude), sin(latitude), cos(latitude) * cos(longitude));
 	
+	// Transformed UP
+	glm::dvec4 tempUp = glm::dvec4(up, 0.0);
+	tempUp = glm::rotate(glm::dmat4(1.0), body->getInclination(), glm::dvec3(0.0, 0.0, 1.0)) * glm::rotate(glm::dmat4(1.0), body->getRotation(), glm::dvec3(0.0, 1.0, 0.0)) * tempUp;
+	up = glm::dvec3(tempUp);
+	
 	// View direction
+	double lon = (M_PI/2.0) - atan(tempUp.z / tempUp.x);
+	double lat = (M_PI/2.0) - acos(tempUp.y / glm::length(tempUp));
+	if(tempUp.x < 0){lon += M_PI;}
 	glm::dvec4 tempDirection = glm::dvec4(cos(vertical) * sin(horizontal), sin(vertical), cos(vertical) * cos(horizontal), 0.0);
-	glm::dmat4 m1 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-latitude), glm::dvec3(0.0, 0.0, 1.0));
-	glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-longitude), glm::dvec3(0.0, 1.0, 0.0));
+	glm::dmat4 m1 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-lat), glm::dvec3(0.0, 0.0, 1.0));
+	glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-lon), glm::dvec3(0.0, 1.0, 0.0));
 
 	// Rotating to earth position
 	tempDirection = m1*tempDirection;
@@ -78,24 +87,105 @@ void OrbitCameraControl::checkUserInput(void){
 	
 	// Move forward	
 	if(glfwGetKey(window, 'W') == GLFW_PRESS){
-		position += glm::normalize(direction) * speed * deltaTime;
+		glm::dvec4 tempDirection = glm::dvec4(cos(vertical) * sin(horizontal), sin(vertical), cos(vertical) * cos(horizontal), 0.0);
+		glm::dmat4 m1 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-latitude), glm::dvec3(0.0, 0.0, 1.0));
+		glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-longitude), glm::dvec3(0.0, 1.0, 0.0));
 		
-		glm::dvec3 temp = position - body->getCenter();
+		tempDirection = m1*tempDirection;
+		tempDirection = m2*tempDirection;
+		glm::dvec3 dir = glm::dvec3(tempDirection);
+		
+		// Local pos
+		glm::dvec3 tempup = glm::dvec3(cos(latitude) * sin(longitude), sin(latitude), cos(latitude) * cos(longitude));
+		
+		glm::dvec3 tempPosition = body->getCenter() + tempup*body->getRadius()*height;
+		tempPosition += glm::normalize(dir) * speed * deltaTime;
+		
+		glm::dvec3 temp = tempPosition - body->getCenter();
 		
 		longitude = (M_PI/2.0) - atan(temp.z / temp.x);
 		latitude = (M_PI/2.0) - acos(temp.y / glm::length(temp));
+		
+		if(temp.x < 0){
+			longitude += M_PI;
+		}
 	}
 	// Move backward
 	if(glfwGetKey(window, 'S') == GLFW_PRESS){
+		glm::dvec4 tempDirection = glm::dvec4(cos(vertical) * sin(horizontal), sin(vertical), cos(vertical) * cos(horizontal), 0.0);
+		glm::dmat4 m1 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-latitude), glm::dvec3(0.0, 0.0, 1.0));
+		glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-longitude), glm::dvec3(0.0, 1.0, 0.0));
 		
+		tempDirection = m1*tempDirection;
+		tempDirection = m2*tempDirection;
+		glm::dvec3 dir = glm::dvec3(tempDirection);
+		
+		// Local pos
+		glm::dvec3 tempup = glm::dvec3(cos(latitude) * sin(longitude), sin(latitude), cos(latitude) * cos(longitude));
+		
+		glm::dvec3 tempPosition = body->getCenter() + tempup*body->getRadius()*height;
+		tempPosition -= glm::normalize(dir) * speed * deltaTime;
+		
+		glm::dvec3 temp = tempPosition - body->getCenter();
+		
+		longitude = (M_PI/2.0) - atan(temp.z / temp.x);
+		latitude = (M_PI/2.0) - acos(temp.y / glm::length(temp));
+		
+		if(temp.x < 0){
+			longitude += M_PI;
+		}
 	}
 	// Strafe right
 	if(glfwGetKey(window, 'D') == GLFW_PRESS){
+		glm::dvec4 tempDirection = glm::dvec4(cos(vertical) * sin(horizontal), sin(vertical), cos(vertical) * cos(horizontal), 0.0);
+		glm::dmat4 m1 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-latitude), glm::dvec3(0.0, 0.0, 1.0));
+		glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-longitude), glm::dvec3(0.0, 1.0, 0.0));
 		
+		tempDirection = m1*tempDirection;
+		tempDirection = m2*tempDirection;
+		glm::dvec3 dir = glm::dvec3(tempDirection);
+		
+		// Local pos
+		glm::dvec3 tempup = glm::dvec3(cos(latitude) * sin(longitude), sin(latitude), cos(latitude) * cos(longitude));
+		glm::dvec3 right = glm::cross(tempup, dir);
+		
+		glm::dvec3 tempPosition = body->getCenter() + tempup*body->getRadius()*height;
+		tempPosition -= glm::normalize(right) * speed * deltaTime;
+		
+		glm::dvec3 temp = tempPosition - body->getCenter();
+		
+		longitude = (M_PI/2.0) - atan(temp.z / temp.x);
+		latitude = (M_PI/2.0) - acos(temp.y / glm::length(temp));
+		
+		if(temp.x < 0){
+			longitude += M_PI;
+		}
 	}
 	// Strafe left
 	if(glfwGetKey(window, 'A') == GLFW_PRESS){
+		glm::dvec4 tempDirection = glm::dvec4(cos(vertical) * sin(horizontal), sin(vertical), cos(vertical) * cos(horizontal), 0.0);
+		glm::dmat4 m1 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-latitude), glm::dvec3(0.0, 0.0, 1.0));
+		glm::dmat4 m2 = glm::rotate(glm::dmat4(1.0), -(M_PI/2.0-longitude), glm::dvec3(0.0, 1.0, 0.0));
 		
+		tempDirection = m1*tempDirection;
+		tempDirection = m2*tempDirection;
+		glm::dvec3 dir = glm::dvec3(tempDirection);
+		
+		// Local pos
+		glm::dvec3 tempup = glm::dvec3(cos(latitude) * sin(longitude), sin(latitude), cos(latitude) * cos(longitude));
+		glm::dvec3 right = glm::cross(tempup, dir);
+		
+		glm::dvec3 tempPosition = body->getCenter() + tempup*body->getRadius()*height;
+		tempPosition += glm::normalize(right) * speed * deltaTime;
+		
+		glm::dvec3 temp = tempPosition - body->getCenter();
+		
+		longitude = (M_PI/2.0) - atan(temp.z / temp.x);
+		latitude = (M_PI/2.0) - acos(temp.y / glm::length(temp));
+		
+		if(temp.x < 0){
+			longitude += M_PI;
+		}
 	}
 	// Climb
 	if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){

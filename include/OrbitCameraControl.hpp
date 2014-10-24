@@ -20,6 +20,7 @@ class OrbitCameraControl: public AbstractCamera{
 		double speed, mouseSpeed;
 		double previousTime;
 		double height;
+		double dt;
 	public:
 		/**
 		* Constructs this camera
