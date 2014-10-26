@@ -41,7 +41,7 @@ void InputView::onKeyInput(int key){
 		input += key;
 	}
 	
-	if(key == GLFW_KEY_ENTER){
+	if(key == GLFW_KEY_ENTER || key == GLFW_KEY_KP_ENTER){
 		// remove listener
 		KeyboardInput::getInstance()->removeInputAction(this);
 		

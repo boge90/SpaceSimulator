@@ -1,5 +1,6 @@
 #include "../include/Config.hpp"
 #include <string.h>
+#include <iostream>
 
 Config::Config(int argc, char **args){
 	// Setting defult values
@@ -12,24 +13,22 @@ Config::Config(int argc, char **args){
 	this->flipCheck = false;
 	
 	// Reading program input parameters
-	for(int i=0; i<argc; i++){
+	for(int i=1; i<argc; i++){
 		if(strcmp(args[i], "--dt") == 0){
 			dt = strtod(args[++i], NULL);
-		}
-		if(strcmp(args[i], "--debug") == 0){
+		}else if(strcmp(args[i], "--debug") == 0){
 			debugLevel = strtod(args[++i], NULL);
-		}
-		if(strcmp(args[i], "--bodyVertexDepth") == 0){
+		}else if(strcmp(args[i], "--bodyVertexDepth") == 0){
 			bodyVertexDepth = strtod(args[++i], NULL);
-		}
-		if(strcmp(args[i], "--fullscreen") == 0){
+		}else if(strcmp(args[i], "--fullscreen") == 0){
 			fullscreen = true;
-		}
-		if(strcmp(args[i], "--discardResult") == 0){
+		}else if(strcmp(args[i], "--discardResult") == 0){
 			discardResult = true;
-		}
-		if(strcmp(args[i], "--flipCheck") == 0){
+		}else if(strcmp(args[i], "--flipCheck") == 0){
 			flipCheck = true;
+		}else{
+			std::cout << "Config.cpp\t\tNo options for arg " << args[i] << std::endl;
+			exit(EXIT_FAILURE);
 		}
 	}
 }

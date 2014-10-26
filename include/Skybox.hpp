@@ -20,13 +20,16 @@ class Skybox: public Renderable{
 		GLuint vertexBuffer6;
 		GLuint texCordsBuffer;
 		
-		// Side1
+		// Sides
 		GLuint tex1;
 		GLuint tex2;
 		GLuint tex3;
 		GLuint tex4;
 		GLuint tex5;
 		GLuint tex6;
+		
+		// Rendering data
+		float intensity;
 		
 		// Misc
 		Config *config;
@@ -46,6 +49,11 @@ class Skybox: public Renderable{
 		* Renders the skybox
 		**/
 		void render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up);
+		
+		/**
+		*
+		**/
+		void setIntensity(float intensity);
 };
 
 #endif

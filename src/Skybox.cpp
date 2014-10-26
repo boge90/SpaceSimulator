@@ -10,6 +10,9 @@ Skybox::Skybox(Config *config){
 	if((debugLevel & 0x10) == 16){			
 		std::cout << "Skybox.cpp\t\tInitializing" << std::endl;
 	}
+	
+	// Init
+	this->intensity = 1.f;
 
 	// Side vertices
 	double val = 1.0;
@@ -151,6 +154,10 @@ void Skybox::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, gl
 	GLuint mvpMatrixId = glGetUniformLocation(shader->getID(), "MVP");
 	glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, &mvp[0][0]);
 	
+	// Setting intensity value
+	GLuint intensityId = glGetUniformLocation(shader->getID(), "intensity");
+	glUniform1f(intensityId, intensity);
+	
 	// Drawing side 1
     glBindTexture(GL_TEXTURE_2D, tex1);
 	glEnableVertexAttribArray(0);
@@ -197,4 +204,8 @@ void Skybox::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, gl
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Skybox::setIntensity(float intensity){
+	this->intensity = intensity;
 }

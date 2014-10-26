@@ -16,27 +16,28 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	}
 	
 	// Initializing visualization system
-	renderer = new Renderer(this, config);
-	frame = new Frame(1800, 1000, "Space", renderer, this, config);
+	this->renderer = new Renderer(this, config);
+	this->frame = new Frame(1800, 1000, "Space", renderer, this, config);
 	
 	// Initializing sub renderers
-	skybox = new Skybox(config);
-	bodyTracer = new BodyTracer(bodies, config);
-	bodyLocator = new BodyLocator(bodies, config);
+	this->skybox = new Skybox(config);
+	this->bodyTracer = new BodyTracer(bodies, config);
+	this->bodyLocator = new BodyLocator(bodies, config);
 	
 	// Adding renderables
-	renderer->addRenderable(skybox);
-	renderer->addRenderable(bodyTracer);
+	this->renderer->addRenderable(skybox);
+	this->renderer->addRenderable(bodyTracer);
 	for(unsigned int i=0; i<bodies->size(); i++){
 		(*bodies)[i]->init();
-		renderer->addRenderable((*bodies)[i]);
+		this->renderer->addRenderable((*bodies)[i]);
 	}
-	renderer->addRenderable(bodyLocator);
+	this->renderer->addRenderable(bodyLocator);
 	
 	// Initializing sub simulators
-	nbody = new Nbody(bodies, config);
-	bodyRotator = new BodyRotator(bodies, config);
-	rayTracer = new RayTracer(bodies, config);
+	this->nbody = new Nbody(bodies, config);
+	this->bodyRotator = new BodyRotator(bodies, config);
+	this->rayTracer = new RayTracer(bodies, config);
+	this->starDimmer = new StarDimmer(this, bodies, config);
 }
 
 Simulator::~Simulator(){
@@ -56,10 +57,11 @@ Simulator::~Simulator(){
 	delete bodyTracer;
 	delete skybox;
 	delete bodyLocator;
+	delete starDimmer;
 }
 
-void Simulator::simulate(void){	
-	if(!paused){	
+void Simulator::simulate(void){
+	if(!paused){
 		// Sub - simulations
 		nbody->simulateGravity();
 		rayTracer->simulateRays();
@@ -73,6 +75,11 @@ void Simulator::simulate(void){
 	// Check user input IFF menu is hidden
 	if(!(frame->getHud()->isVisible())){
 		frame->getHud()->getActivatedCamera()->checkUserInput();
+	}
+	
+	// Simulations that need updated camera position
+	if(!paused){
+		starDimmer->simulateStarDimming(frame->getHud()->getActivatedCamera()->getPosition());
 	}
 	
 	// Update visualization
@@ -113,4 +120,8 @@ BodyLocator* Simulator::getBodyLocator(void){
 
 Frame* Simulator::getFrame(void){
 	return frame;
+}
+
+Skybox* Simulator::getSkybox(void){
+	return skybox;
 }

@@ -6,10 +6,13 @@ in vec2 texCoord;
 // Texture
 uniform sampler2D tex;
 
+// Intensity
+uniform float intensity;
+
 // Color
 out vec4 color;
 
 void main(){
 	// Output color = color of the texture at the specified UV
-	color = texture2D(tex, texCoord);
+	color = texture2D(tex, texCoord) * intensity;
 }

@@ -85,6 +85,8 @@ void OrbitCameraControl::checkUserInput(void){
 	// Position
 	position = body->getCenter() + up*body->getRadius()*height;
 	
+	speed = body->getRadius()*height - body->getRadius();
+	
 	// Move forward	
 	if(glfwGetKey(window, 'W') == GLFW_PRESS){
 		glm::dvec4 tempDirection = glm::dvec4(cos(vertical) * sin(horizontal), sin(vertical), cos(vertical) * cos(horizontal), 0.0);

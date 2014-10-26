@@ -7,6 +7,7 @@ class Simulator;
 #include "../include/Skybox.hpp"
 #include "../include/Renderer.hpp"
 #include "../include/RayTracer.hpp"
+#include "../include/StarDimmer.hpp"
 #include "../include/BodyTracer.hpp"
 #include "../include/BodyLocator.hpp"
 #include "../include/BodyRotator.hpp"
@@ -39,6 +40,7 @@ class Simulator{
 		Nbody *nbody;
 		BodyRotator *bodyRotator;
 		RayTracer *rayTracer;
+		StarDimmer *starDimmer;
 	public:
 		/**
 		* Creates the simultor class for N-Body simulation
@@ -100,6 +102,11 @@ class Simulator{
 		* Returns the pointer to the visualization frame
 		**/
 		Frame* getFrame(void);
+		
+		/**
+		* Returns the pointer to the skybox object
+		**/
+		Skybox* getSkybox(void);
 };
 
 #endif

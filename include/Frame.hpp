@@ -112,11 +112,6 @@ class Frame{
 		int getHeight(void);
 		
 		/**
-		* Returns the shader
-		**/
-		Shader* getShader(void);
-		
-		/**
 		* Returns the pointer to the GLFW window object
 		**/
 		GLFWwindow* getWindow(void);
