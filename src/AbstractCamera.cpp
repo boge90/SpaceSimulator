@@ -1,5 +1,4 @@
 #include "../include/AbstractCamera.hpp"
-#include <float.h>
 
 AbstractCamera::AbstractCamera(Config *config){
 	// Debug
@@ -13,7 +12,7 @@ AbstractCamera::AbstractCamera(Config *config){
 	this->position = glm::dvec3(0, 0, 0);
 	
 	// MVP
-	projection = glm::perspective(fov, 5.0f / 3.0f, 0.001f, 1000000000000.f);
+	projection = glm::perspectiveFov(float(M_PI)*fov/180.f, 1800.f, 1000.f, 0.001f, 1000000000000.f);
 }
 
 AbstractCamera::~AbstractCamera(){
@@ -44,7 +43,7 @@ float AbstractCamera::getFieldOfView(void){
 
 void AbstractCamera::setFieldOfView(float fov){
 	this->fov = fov;
-	projection = glm::perspective(fov, 5.0f / 3.0f, 0.001f, 1000000000000.f);
+	this->projection = glm::perspectiveFov(float(M_PI)*fov/180.f, 1800.f, 1000.f, 0.001f, 1000000000000.f);
 }
 
 void AbstractCamera::setActive(bool active){

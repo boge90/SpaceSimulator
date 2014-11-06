@@ -125,3 +125,7 @@ Frame* Simulator::getFrame(void){
 Skybox* Simulator::getSkybox(void){
 	return skybox;
 }
+
+StarDimmer* Simulator::getStarDimmer(void){
+	return starDimmer;
+}

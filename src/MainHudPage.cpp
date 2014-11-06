@@ -15,6 +15,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	this->pausedBox = new CheckBox("PAUSE", false, config);
 	this->cullBackfaceBox = new CheckBox("CULL BACK FACE", true, config);
 	this->wireframeBox = new CheckBox("WIREFRAME", false, config);
+	this->starDimmerBox = new CheckBox("STAR DIMMING", true, config);
 	this->futureBodyPathBox = new CheckBox("FUTURE PATH", false, config);
 	this->futureBodyInputView = new IntegerInputView("FUTURE BODY PATH", config);
 	this->bodyLocatorBox = new CheckBox("BODY LOCATOR", false, config);
@@ -31,6 +32,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	pausedBox->addStateChangeAction(this);
 	cullBackfaceBox->addStateChangeAction(this);
 	wireframeBox->addStateChangeAction(this);
+	starDimmerBox->addStateChangeAction(this);
 	futureBodyPathBox->addStateChangeAction(this);
 	futureBodyInputView->addIntegerInputAction(this);
 	bodyLocatorBox->addStateChangeAction(this);
@@ -44,6 +46,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	addChild(pausedBox);
 	addChild(cullBackfaceBox);
 	addChild(wireframeBox);
+	addChild(starDimmerBox);
 	addChild(futureBodyPathBox);
 	addChild(futureBodyInputView);
 	addChild(bodyLocatorBox);
@@ -73,6 +76,8 @@ void MainHudPage::onStateChange(CheckBox *box, bool newState){
 		for(int i=0; i<size; i++){
 			(*bodies)[i]->setWireframeMode(newState);
 		}
+	}else if(box == starDimmerBox){ // Toggle star dimming
+		simulator->getStarDimmer()->setActivated(newState);
 	}else if(box == futureBodyPathBox){ // Toggle body path visualization
 		simulator->getBodyTracer()->setActive(newState);
 	}else if(box == bodyLocatorBox){ // Toggle body locator visualization

@@ -107,6 +107,11 @@ class Simulator{
 		* Returns the pointer to the skybox object
 		**/
 		Skybox* getSkybox(void);
+		
+		/**
+		* Returns the pointer to the star dimmer
+		**/
+		StarDimmer* getStarDimmer(void);
 };
 
 #endif

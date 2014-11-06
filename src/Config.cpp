@@ -26,6 +26,14 @@ Config::Config(int argc, char **args){
 			discardResult = true;
 		}else if(strcmp(args[i], "--flipCheck") == 0){
 			flipCheck = true;
+		}else if(strcmp(args[i], "--help") == 0){
+			std::cout << "--dt FLOAT            - Controls the delta time used in the simulation" << std::endl;
+			std::cout << "--debug INT           - Controls the debugging level, where each bit in the integer represents a debug switch" << std::endl;
+			std::cout << "--bodyVertexDepth INT - Controls the recursion level when creating the vertices for the bodies, higher yields finer mesh" << std::endl;
+			std::cout << "--fullscreen          - Turns on fullscreen mode" << std::endl;
+			std::cout << "--discardResult       - Turns off the writing back the end result to disk" << std::endl;
+			std::cout << "--flipCheck           - Turns on the flip check for the Body camera" << std::endl;
+			exit(EXIT_SUCCESS);
 		}else{
 			std::cout << "Config.cpp\t\tNo options for arg " << args[i] << std::endl;
 			exit(EXIT_FAILURE);

@@ -86,7 +86,7 @@ void CameraHudPage::draw(DrawService *drawService){
 }
 
 void CameraHudPage::onFloatInput(FloatInputView *view, double value){
-	activeCamera->setFieldOfView(value);
+	activeCamera->setFieldOfView(float(value));
 }
 
 AbstractCamera* CameraHudPage::getActivatedCamera(void){

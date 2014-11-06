@@ -22,6 +22,7 @@ class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStat
 		CheckBox *pausedBox;
 		CheckBox *cullBackfaceBox;
 		CheckBox *wireframeBox;
+		CheckBox *starDimmerBox;
 		CheckBox *futureBodyPathBox;
 		IntegerInputView *futureBodyInputView;
 		CheckBox *bodyLocatorBox;

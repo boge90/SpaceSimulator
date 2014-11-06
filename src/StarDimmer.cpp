@@ -65,5 +65,9 @@ bool StarDimmer::isActivated(void){
 }
 
 void StarDimmer::setActivated(bool activated){
+	if(!activated){	
+		simulator->getSkybox()->setIntensity(1.f);
+	}
+
 	this->activated = activated;
 }
