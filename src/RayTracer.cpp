@@ -18,7 +18,7 @@ RayTracer::RayTracer(std::vector<Body*> *bodies, Config *config){
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *body = (*bodies)[i];
 		
-		addBodyToRayTracer(body->getVertexBuffer(), body->getSolarCoverageBuffer(), body->getNumVertices(), body->isStar(), config);
+		addBodyToRayTracer(body->getVertexBuffer(), body->getSolarCoverageBuffer(), body->isStar(), config);
 	}
 }
 
@@ -47,7 +47,8 @@ void RayTracer::simulateRays(){
 
 void RayTracer::simulateRaysLevelOff(){
 	for(size_t i=0; i<bodies->size(); i++){
-		rayTracerIllunimate(i);
+		Body *body = (*bodies)[i];
+		rayTracerIllunimate(i, body->getNumVertices());
 	}
 	illuminated = true;
 }
@@ -73,7 +74,7 @@ void RayTracer::simulateRaysLevelOne(){
 			glm::dmat4 m3 = glm::rotate(glm::dmat4(1.0), (body->getRotation()), glm::dvec3(0.0, 1.0, 0.0));
 			glm::dmat4 mat = m1*m2*m3;
 		
-			rayTracerSimulateRaysOne(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, &mat[0][0]);
+			rayTracerSimulateRaysOne(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, body->getNumVertices(), &mat[0][0]);
 		}
 	}
 
@@ -84,7 +85,7 @@ void RayTracer::simulateRaysLevelTwo(){
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *b = (*bodies)[i];
 		if(!b->isStar()){
-			rayTracerUnillunimate(i);
+			rayTracerUnillunimate(i, b->getNumVertices());
 		}
 	}
 
@@ -113,13 +114,13 @@ void RayTracer::simulateRaysLevelTwo(){
 			glm::dmat4 mat2 = mm1*mm2*mm3;
 			
 			if(source->isStar()){			
-				rayTracerSimulateRaysTwo(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, &mat1[0][0], &mat2[0][0], 1.f);
+				rayTracerSimulateRaysTwo(i, c1.x, c1.y, c1.z, source->getNumVertices(), j, c2.x, c2.y, c2.z, body->getNumVertices(), &mat1[0][0], &mat2[0][0], 1.f);
 			}else{
 				double dist = glm::length(c2 - c1);
 				float intensity = (4.f*powf(10, 7)) / dist;
 				
 				if(intensity > 0.01){ // Only simulate Body -> body light when they are close
-					rayTracerSimulateRaysTwo(i, c1.x, c1.y, c1.z, j, c2.x, c2.y, c2.z, &mat1[0][0], &mat2[0][0], intensity);
+					rayTracerSimulateRaysTwo(i, c1.x, c1.y, c1.z, source->getNumVertices(), j, c2.x, c2.y, c2.z, body->getNumVertices(), &mat1[0][0], &mat2[0][0], intensity);
 				}
 			}
 		}

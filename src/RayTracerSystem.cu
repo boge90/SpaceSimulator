@@ -18,10 +18,10 @@ void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVe
 void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer);
 void __global__ unilluminate(int numBodyVertices, float *solarCoverageBuffer);
 
-void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, int numVertices, bool isStar, Config *config){
+void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, bool isStar, Config *config){
 	// Debug
 	if((config->getDebugLevel() & 0x8) == 8){	
-		printf("RayTracerSystem.cu\tAdding body to ray tracer system (%d, %d, %d, %d)\n", vertexBuffer, solarCoverageBuffer, numVertices, isStar);
+		printf("RayTracerSystem.cu\tAdding body to ray tracer system (%d, %d, %d)\n", vertexBuffer, solarCoverageBuffer, isStar);
 	}
 	
 	// Initializing unit
@@ -34,14 +34,13 @@ void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, int num
 	RayTracingUnit unit;
 	unit.solarCoverageBuffer = solarCoverageResource;
 	unit.vertexBuffer = vertexResource;
-	unit.numVertices = numVertices;
 	unit.isStar = isStar;
 	
 	// Adding body to body list
 	resources.push_back(unit);
 }
 
-void rayTracerSimulateRaysOne(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, double *mat){
+void rayTracerSimulateRaysOne(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, int numVertices, double *mat){
 	// Local vars
 	double3 *bodyVertices = 0;
 	float *solarCoverage = 0;
@@ -55,15 +54,20 @@ void rayTracerSimulateRaysOne(int starIndex, double x1, double y1, double z1, in
 	cudaGraphicsResourceGetMappedPointer((void**)&bodyVertices, &num_bytes_bodyVertices, resources[bodyIndex].vertexBuffer);
 	cudaGraphicsResourceGetMappedPointer((void**)&solarCoverage, &num_bytes_solarCoverage, resources[bodyIndex].solarCoverageBuffer);
 	
-	int numBodyVertices = resources[bodyIndex].numVertices;
+	int threads = 512;
+	if(numVertices < threads){
+		threads = numVertices;
+	}
 	
-	dim3 grid((numBodyVertices/512) + 1);
-	dim3 block(512);
+	dim3 grid((numVertices/512) + 1);
+	dim3 block(threads);
 	
-	simulateRaysOne<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numBodyVertices, bodyVertices, solarCoverage);
+	
+	simulateRaysOne<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numVertices, bodyVertices, solarCoverage);
+	
 }
 
-void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, double *bodyMat, double *sourceMat, float intensity){
+void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, int numSourceVertices, int bodyIndex, double x2, double y2, double z2, int numBodyVertices, double *bodyMat, double *sourceMat, float intensity){
 	// Local vars
 	double3 *sourceVertices = 0;
 	double3 *bodyVertices = 0;
@@ -85,11 +89,13 @@ void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, 
 	cudaGraphicsResourceGetMappedPointer((void**)&bodyVertices, &num_bytes_bodyVertices, resources[bodyIndex].vertexBuffer);
 	cudaGraphicsResourceGetMappedPointer((void**)&bodyCoverage, &num_bytes_bodyCoverage, resources[bodyIndex].solarCoverageBuffer);
 	
-	int numBodyVertices = resources[bodyIndex].numVertices;
-	int numSourceVertices = resources[sourceIndex].numVertices;
+	int threads = 1024;
+	if(numBodyVertices < threads){
+		threads = numBodyVertices;
+	}
 	
-	dim3 grid((numBodyVertices/512) + 1);
-	dim3 block(512);
+	dim3 grid((numBodyVertices/1024) + 1);
+	dim3 block(threads);
 	
 	if(resources[sourceIndex].isStar){ // Star light does not need the accuracy of level TWO
 		simulateRaysOne<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numBodyVertices, bodyVertices, bodyCoverage);
@@ -98,15 +104,13 @@ void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, 
 	}
 }
 
-void rayTracerIllunimate(int index){
+void rayTracerIllunimate(int index, int numBodyVertices){
 	// Local vars
 	float *solarCoverage = 0;
 	size_t num_bytes_solarCoverage;
 	
 	// Getting the arrays
 	cudaGraphicsResourceGetMappedPointer((void**)&solarCoverage, &num_bytes_solarCoverage, resources[index].solarCoverageBuffer);
-
-	int numBodyVertices = resources[index].numVertices;
 
 	dim3 grid((numBodyVertices/512) + 1);
 	dim3 block(512);
@@ -114,15 +118,13 @@ void rayTracerIllunimate(int index){
 	illuminate<<<grid, block>>>(numBodyVertices, solarCoverage);
 }
 
-void rayTracerUnillunimate(int index){
+void rayTracerUnillunimate(int index, int numBodyVertices){
 	// Local vars
 	float *solarCoverage = 0;
 	size_t num_bytes_solarCoverage;
 	
 	// Getting the arrays
 	cudaGraphicsResourceGetMappedPointer((void**)&solarCoverage, &num_bytes_solarCoverage, resources[index].solarCoverageBuffer);
-
-	int numBodyVertices = resources[index].numVertices;
 
 	dim3 grid((numBodyVertices/512) + 1);
 	dim3 block(512);

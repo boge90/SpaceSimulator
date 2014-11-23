@@ -191,11 +191,11 @@ void OrbitCameraControl::checkUserInput(void){
 	}
 	// Climb
 	if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS){
-		height *= 1.001;
+		height *= 1.0001;
 	}
 	// Go down
 	if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS){
-		height /= 1.001;
+		height /= 1.0001;
 		if(height < 1.0){height = 1.0;}
 	}
 

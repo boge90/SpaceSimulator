@@ -6,7 +6,6 @@ Config::Config(int argc, char **args){
 	// Setting defult values
 	this->renderingDeviceNumber = 0;
 	this->dt = 10.0;
-	this->bodyVertexDepth = 4;
 	this->debugLevel = 0; // (Main loop), (Memory), (GUI), (Init and Finalize), (Init++ and Finalize++), (CUDA Launch), (Render object), (Calculations)
 	this->fullscreen = false;
 	this->discardResult = false;
@@ -18,8 +17,6 @@ Config::Config(int argc, char **args){
 			dt = strtod(args[++i], NULL);
 		}else if(strcmp(args[i], "--debug") == 0){
 			debugLevel = strtod(args[++i], NULL);
-		}else if(strcmp(args[i], "--bodyVertexDepth") == 0){
-			bodyVertexDepth = strtod(args[++i], NULL);
 		}else if(strcmp(args[i], "--fullscreen") == 0){
 			fullscreen = true;
 		}else if(strcmp(args[i], "--discardResult") == 0){
@@ -55,10 +52,6 @@ size_t Config::getDebugLevel(void){
 
 size_t Config::getRenderingDeviceNumber(void){
 	return renderingDeviceNumber;
-}
-
-size_t Config::getBodyVertexDepth(void){
-	return bodyVertexDepth;
 }
 
 int* Config::getMpiSizePtr(void){

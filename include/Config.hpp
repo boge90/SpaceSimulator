@@ -8,7 +8,6 @@ class Config{
 		double dt;
 		size_t renderingDeviceNumber;
 		size_t debugLevel;
-		size_t bodyVertexDepth;
 		
 		// Camera
 		bool flipCheck;
@@ -49,12 +48,6 @@ class Config{
 		* Returns the device number that should be used for rendering
 		**/
 		size_t getRenderingDeviceNumber(void);
-		
-		/**
-		* Returns the  depth that the body vertex generation algorithm
-		* should perform. i.e. number of recursions
-		**/
-		size_t getBodyVertexDepth(void);
 		
 		/**
 		* Returns the pointer to the mpi size

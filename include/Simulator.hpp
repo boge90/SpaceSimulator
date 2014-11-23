@@ -3,7 +3,10 @@
 
 class Simulator;
 
+#include "../include/Body.hpp"
+#include "../include/Nbody.hpp"
 #include "../include/Frame.hpp"
+#include "../include/Config.hpp"
 #include "../include/Skybox.hpp"
 #include "../include/Renderer.hpp"
 #include "../include/RayTracer.hpp"
@@ -11,9 +14,7 @@ class Simulator;
 #include "../include/BodyTracer.hpp"
 #include "../include/BodyLocator.hpp"
 #include "../include/BodyRotator.hpp"
-#include "../include/Nbody.hpp"
-#include "../include/Body.hpp"
-#include "../include/Config.hpp"
+#include "../include/BodyLevelOfDetail.hpp"
 
 #include <vector>
 
@@ -35,6 +36,7 @@ class Simulator{
 		Skybox *skybox;
 		BodyTracer *bodyTracer;
 		BodyLocator *bodyLocator;
+		BodyLevelOfDetail *bodyLevelOfDetail;
 
 		// Sub simulators
 		Nbody *nbody;

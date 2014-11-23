@@ -40,7 +40,11 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	// Enabling CULLING of back faces
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-
+	
+	// Blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
 	// GL
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	
@@ -76,7 +80,7 @@ void Frame::update(void){
 	glm::dvec3 position = hud->getActivatedCamera()->getPosition();
 	glm::dvec3 direction = hud->getActivatedCamera()->getDirection();
 	glm::dvec3 up = hud->getActivatedCamera()->getUp();
-		
+	
 	// Rendering
 	renderer->render(&vp, position, direction, up);
 	

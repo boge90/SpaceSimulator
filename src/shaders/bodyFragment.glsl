@@ -13,5 +13,5 @@ out vec4 color;
 
 void main(){
 	// Output color = color of the texture at the specified UV
-	color = vec4(fragmentColor, 1.0) * texture2D(tex, texCoord) * solarCoverage;
+	color = vec4(fragmentColor * solarCoverage, 1.0) * texture2D(tex, texCoord);
 }

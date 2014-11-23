@@ -4,11 +4,14 @@
 #include <vector>
 #include <string>
 
-#include "../include/common.hpp"
-#include "../include/Renderable.hpp"
+class Body;
+
 #include "../include/BMP.hpp"
+#include "../include/common.hpp"
 #include "../include/Shader.hpp"
 #include "../include/Config.hpp"
+#include "../include/Renderable.hpp"
+#include "../include/Atmosphere.hpp"
 
 enum BodyType{PLANET, STAR, COMET};
 
@@ -26,9 +29,10 @@ class Body: public Renderable{
 		BodyType bodyType;
 		std::string texturePath;
 		std::string name;
+		int lod;
 		
 		// Functions
-		void generateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth);
+		void calculateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth);
 		
 		// Body number
 		static int bodyNumber;
@@ -36,7 +40,7 @@ class Body: public Renderable{
 		
 		// Rendering
 		Shader *shader;
-		int numVertices, numIndices;
+		size_t numVertices, numIndices;
 		bool wireFrame;
 		glm::vec3 rgb;
 		GLuint indexBuffer;
@@ -44,6 +48,9 @@ class Body: public Renderable{
 		GLuint vertexBuffer;
 		GLuint colorBuffer;
 		GLuint solarCoverBuffer;
+		
+		// Atmosphere
+		Atmosphere *atmosphere;
 		
 		// Texture
 		GLuint tex;
@@ -128,6 +135,16 @@ class Body: public Renderable{
 		void setForce(glm::dvec3 force);
 		
 		/**
+		* Returns the current Level Of Detail
+		**/
+		int getLOD(void);
+		
+		/**
+		* sets the current Level Of Detail
+		**/
+		void setLOD(int lod);
+		
+		/**
 		* Returns the vertex buffer
 		**/
 		GLuint getVertexBuffer(void);
@@ -143,14 +160,24 @@ class Body: public Renderable{
 		GLuint getSolarCoverageBuffer(void);
 		
 		/**
-		* Returns the solar coverage buffer
+		* Returns the vertex index buffer
 		**/
-		GLuint getVertexSpeedBuffer(void);
+		GLuint getVertexIndexBuffer(void);
+		
+		/**
+		* Returns the number of indices in theindex buffer
+		**/
+		size_t getNumIndices(void);
 		
 		/**
 		* Returns the number of vertices for this body
 		**/
 		int getNumVertices(void);
+		
+		/**
+		* Generates a set of vertices and updates the buffers
+		**/
+		void generateVertices(int depth);
 		
 		/**
 		* Changes the state of the wireFrame mode

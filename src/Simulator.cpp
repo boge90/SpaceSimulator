@@ -23,6 +23,7 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	this->skybox = new Skybox(config);
 	this->bodyTracer = new BodyTracer(bodies, config);
 	this->bodyLocator = new BodyLocator(bodies, config);
+	this->bodyLevelOfDetail = new BodyLevelOfDetail(bodies, config);
 	
 	// Adding renderables
 	this->renderer->addRenderable(skybox);
@@ -58,6 +59,7 @@ Simulator::~Simulator(){
 	delete skybox;
 	delete bodyLocator;
 	delete starDimmer;
+	delete bodyLevelOfDetail;
 }
 
 void Simulator::simulate(void){
@@ -79,7 +81,9 @@ void Simulator::simulate(void){
 	
 	// Simulations that need updated camera position
 	if(!paused){
-		starDimmer->simulateStarDimming(frame->getHud()->getActivatedCamera()->getPosition());
+		glm::dvec3 position = frame->getHud()->getActivatedCamera()->getPosition();
+		starDimmer->simulateStarDimming(position);
+		bodyLevelOfDetail->update(position);
 	}
 	
 	// Update visualization
