@@ -75,6 +75,21 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 			pos = line.find(delimiter);
 			token = line.substr(0, pos);
 		    line.erase(0, pos + delimiter.length());
+			float atmosR = atof(token.c_str());
+			
+			pos = line.find(delimiter);
+			token = line.substr(0, pos);
+		    line.erase(0, pos + delimiter.length());
+			float atmosG = atof(token.c_str());
+			
+			pos = line.find(delimiter);
+			token = line.substr(0, pos);
+		    line.erase(0, pos + delimiter.length());
+			float atmosB = atof(token.c_str());
+			
+			pos = line.find(delimiter);
+			token = line.substr(0, pos);
+		    line.erase(0, pos + delimiter.length());
 			double rotation = atof(token.c_str());
 			
 			pos = line.find(delimiter);
@@ -109,7 +124,7 @@ void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 				line.erase(0, pos + delimiter.length());
 			}
 			
-			Body *body = new Body(name, glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), rotation, radius, mass, inclination, rotationSpeed, static_cast<BodyType>(bodyType), texturePath, config);
+			Body *body = new Body(name, glm::dvec3(posX, posY, posZ), glm::dvec3(velX, velY, velZ), glm::vec3(r, g, b), glm::vec3(atmosR, atmosG, atmosB), rotation, radius, mass, inclination, rotationSpeed, static_cast<BodyType>(bodyType), texturePath, config);
 			bodies->push_back(body);
 		}
 		
@@ -138,6 +153,7 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 		glm::dvec3 position = body->getCenter();
 		glm::dvec3 velocity = body->getVelocity();
 		glm::vec3 rgb = body->getRGB();
+		glm::vec3 atmosphere = body->getAtmosphereColor();
 		BodyType type = body->getBodyType();
 		
 		// Write body data
@@ -151,6 +167,9 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 		dataFile << rgb.x << ", ";
 		dataFile << rgb.y << ", ";
 		dataFile << rgb.z << ", ";
+		dataFile << atmosphere.x << ", ";
+		dataFile << atmosphere.y << ", ";
+		dataFile << atmosphere.z << ", ";
 		dataFile << body->getRotation() << ", ";
 		dataFile << body->getRadius() << ", ";
 		dataFile << body->getMass() << ", ";

@@ -32,7 +32,7 @@ class Body: public Renderable{
 		int lod;
 		
 		// Functions
-		void calculateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth);
+		void calculateVertices(std::vector<glm::vec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth);
 		
 		// Body number
 		static int bodyNumber;
@@ -51,6 +51,7 @@ class Body: public Renderable{
 		
 		// Atmosphere
 		Atmosphere *atmosphere;
+		glm::vec3 atmosphereColor;
 		
 		// Texture
 		GLuint tex;
@@ -62,7 +63,7 @@ class Body: public Renderable{
 		/**
 		* Creates a body
 		**/
-		Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double rotation, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config);
+		Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, glm::vec3 atmosphereColor, double rotation, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config);
 		
 		/**
 		* Finalizes
@@ -98,6 +99,11 @@ class Body: public Renderable{
 		* Returns the color
 		**/
 		glm::vec3 getRGB(void);
+		
+		/**
+		* Returns the color
+		**/
+		glm::vec3 getAtmosphereColor(void);
 		
 		/**
 		* Returns the mass for this body

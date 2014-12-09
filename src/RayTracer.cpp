@@ -34,6 +34,10 @@ void RayTracer::setLevel(int level){
 }
 
 void RayTracer::simulateRays(){
+	if(debugLevel & 128){
+		std::cout << "RayTracer.cpp\t\tsimulateRays()" << std::endl;
+	}
+	
 	prepareRaySimulation();
 	if(level == 0 && !illuminated){
 		simulateRaysLevelOff();

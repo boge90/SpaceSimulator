@@ -23,6 +23,10 @@ StarDimmer::~StarDimmer(void){
 
 void StarDimmer::simulateStarDimming(glm::dvec3 cameraPosition){
 	if(activated){
+		if(debug & 128){
+			std::cout << "StarDimmer.cpp\t\tsimulateStarDimming()" << std::endl;
+		}
+	
 		float intensity = 0.1f;
 		
 		for(size_t i=0; i<bodies->size(); i++){

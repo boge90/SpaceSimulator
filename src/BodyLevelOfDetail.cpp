@@ -19,6 +19,10 @@ BodyLevelOfDetail::~BodyLevelOfDetail(){
 }
 
 void BodyLevelOfDetail::update(glm::dvec3 cameraPosition){
+	if(debugLevel & 128){
+		std::cout << "BodyLevelOfDetail.cpp\tupdate()" << std::endl;
+	}
+
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *body = (*bodies)[i];
 	
@@ -26,7 +30,8 @@ void BodyLevelOfDetail::update(glm::dvec3 cameraPosition){
 		
 		int lod = temp * 5;
 		
-		if(lod > 7){lod = 7;}
+		if(lod < 1){lod = 1;}
+		if(lod > 9){lod = 9;}
 		
 		if(lod != body->getLOD() && lod >= 0){
 			body->setLOD(lod);

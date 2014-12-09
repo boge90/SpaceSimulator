@@ -1,5 +1,4 @@
 #include "../include/BodyRotator.hpp"
-#include "../include/BodyRotatorSystem.cuh"
 #include <iostream>
 
 BodyRotator::BodyRotator(std::vector<Body*> *bodies, Config *config){
@@ -23,6 +22,10 @@ BodyRotator::~BodyRotator(){
 }
 
 void BodyRotator::simulateRotation(void){
+	if(debugLevel & 128){
+		std::cout << "BodyRotator.cpp\t\tsimulateRotation()" << std::endl;
+	}
+
 	double theta;
 	glm::dvec3 center;
 

@@ -13,8 +13,8 @@ __constant__ double cuda_source_matrix[16];
 static std::vector<RayTracingUnit> resources; 
 
 // CUDA function prototypes
-void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage);
-void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, double3 *sourceVertices, float *sourceCoverage, float intensity);
+void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, float3 *bodyVertices, float *bodyCoverage);
+void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, float3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, float3 *sourceVertices, float *sourceCoverage, float intensity);
 void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer);
 void __global__ unilluminate(int numBodyVertices, float *solarCoverageBuffer);
 
@@ -42,7 +42,7 @@ void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, bool is
 
 void rayTracerSimulateRaysOne(int starIndex, double x1, double y1, double z1, int bodyIndex, double x2, double y2, double z2, int numVertices, double *mat){
 	// Local vars
-	double3 *bodyVertices = 0;
+	float3 *bodyVertices = 0;
 	float *solarCoverage = 0;
 	size_t num_bytes_bodyVertices;
 	size_t num_bytes_solarCoverage;
@@ -64,13 +64,12 @@ void rayTracerSimulateRaysOne(int starIndex, double x1, double y1, double z1, in
 	
 	
 	simulateRaysOne<<<grid, block>>>(make_double3(x2,y2,z2), make_double3(x1,y1,z1), numVertices, bodyVertices, solarCoverage);
-	
 }
 
 void rayTracerSimulateRaysTwo(int sourceIndex, double x1, double y1, double z1, int numSourceVertices, int bodyIndex, double x2, double y2, double z2, int numBodyVertices, double *bodyMat, double *sourceMat, float intensity){
 	// Local vars
-	double3 *sourceVertices = 0;
-	double3 *bodyVertices = 0;
+	float3 *sourceVertices = 0;
+	float3 *bodyVertices = 0;
 	float *sourceCoverage = 0;
 	float *bodyCoverage = 0;
 	size_t num_bytes_sourceVertices;
@@ -152,7 +151,7 @@ void finalizeRaySimulation(void){
 	}
 }
 
-void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage){
+void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, float3 *bodyVertices, float *bodyCoverage){
 	// Global thread index
 	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
 	
@@ -161,7 +160,7 @@ void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, dou
 
 	// Vertex data
 	float lightIntensity = 0.f;
-	double3 bodyNormal = bodyVertices[index];
+	float3 bodyNormal = bodyVertices[index];
 	
 	double vx = cuda_body_matrix[0]*bodyNormal.x + cuda_body_matrix[4]*bodyNormal.y + cuda_body_matrix[8]*bodyNormal.z + cuda_body_matrix[12];
 	double vy = cuda_body_matrix[1]*bodyNormal.x + cuda_body_matrix[5]*bodyNormal.y + cuda_body_matrix[9]*bodyNormal.z + cuda_body_matrix[13];
@@ -181,7 +180,7 @@ void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, dou
 	bodyCoverage[index] = lightIntensity;
 }
 
-void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, double3 *sourceVertices, float *sourceCoverage, float intensity){
+void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, float3 *bodyVertices, float *bodyCoverage, double3 sc, int numSourceVertices, float3 *sourceVertices, float *sourceCoverage, float intensity){
 	// Global thread index
 	int index = (blockIdx.x * blockDim.x) + threadIdx.x;
 	
@@ -193,13 +192,13 @@ void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVe
 	if(lightIntensity == 1.f){return;}
 
 	// Vector FROM source TO body
-	double3 dirVec;
+	float3 dirVec;
 	dirVec.x = bc.x - sc.x;
 	dirVec.y = bc.y - sc.y;
 	dirVec.z = bc.z - sc.z;
 	
 	// Vertex data
-	double3 bodyNormal = bodyVertices[index];
+	float3 bodyNormal = bodyVertices[index];
 	double3 bodyVertex;
 	
 	bodyVertex.x = cuda_body_matrix[0]*bodyNormal.x + cuda_body_matrix[4]*bodyNormal.y + cuda_body_matrix[8]*bodyNormal.z + cuda_body_matrix[12];
@@ -216,7 +215,7 @@ void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, double3 *bodyVe
 		if(sourceCov <= 0.2f){continue;}
 		
 		// Vertex and direction
-		double3 sourceNormal = sourceVertices[i];
+		float3 sourceNormal = sourceVertices[i];
 		double3 sourceVertex;
 		
 		// Source vertex and normal

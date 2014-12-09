@@ -41,8 +41,9 @@ void Atmosphere::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction
 	
 	
 	float intensity = (1.f - (distanceToGround/maxAtmosphereHeight)) * 0.95f;
-	if(intensity > 0.f){	
-		glm::vec3 color(0.f, 0.3f*intensity, intensity);
+	if(intensity > 0.f){
+		glm::vec3 color = body->getAtmosphereColor() * intensity;
+	
 		GLuint colorId = glGetUniformLocation(shader->getID(), "in_color");
 		glUniform3f(colorId, color.x, color.y, color.z);
 	
@@ -50,7 +51,7 @@ void Atmosphere::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction
 		GLuint vertexId = glGetAttribLocation(shader->getID(), "in_vertex");
 		glEnableVertexAttribArray(vertexId);
 		glBindBuffer(GL_ARRAY_BUFFER, body->getVertexBuffer());
-		glVertexAttribPointer(vertexId, 3, GL_DOUBLE, GL_FALSE, sizeof(double)*3, 0);
+		glVertexAttribPointer(vertexId, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
 		
 		// Binding solar coverage buffer
 		GLuint coverageId = glGetAttribLocation(shader->getID(), "in_coverage");

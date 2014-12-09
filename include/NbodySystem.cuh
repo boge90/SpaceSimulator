@@ -9,17 +9,12 @@ extern "C"{
 	/**
 	*
 	**/
-	void initializeNbodySystem(Config *config);
-
-	/**
-	* Function for initializing the NBody system running on the GPU
-	**/
-	void addBodyVertexBuffer(GLuint buffer, Config *config);
+	void initializeNbodySystem(double G, double dt, double *positions, double *velocities, double *mass, size_t numBodies, Config *config);
 	
 	/**
 	* Functions for translating all vertices for a body given by transformation matrix
 	**/
-	void moveBody(int bodyIndex, int numVertices, double *translation);
+	void update(double *newPositions);
 }
 
 #endif

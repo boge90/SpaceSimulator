@@ -5,7 +5,7 @@
 
 int Body::bodyNumber = 0;
 
-Body::Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, double rotation, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config){
+Body::Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 rgb, glm::vec3 atmosphereColor, double rotation, double radius, double mass, double inclination, double rotationSpeed, BodyType bodyType, std::string texturePath, Config *config){
 	// Debug
 	this->config = config;
 	this->debugLevel = config->getDebugLevel();
@@ -29,6 +29,7 @@ Body::Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 r
 	this->center = center;
 	this->velocity = velocity;
 	this->rgb = rgb;
+	this->atmosphereColor = atmosphereColor;
 	this->radius = radius;
 	this->mass = mass;
 	this->inclination = inclination;
@@ -115,17 +116,17 @@ void Body::init(){
 
 void Body::generateVertices(int depth){
 	// Calculates vertices and colors
-	std::vector<glm::dvec3> *vertices = new std::vector<glm::dvec3>();
+	std::vector<glm::vec3> *vertices = new std::vector<glm::vec3>();
 	std::vector<glm::vec3> *color = new std::vector<glm::vec3>();
 	std::vector<GLuint> *indices = new std::vector<GLuint>();
 	
 	// Starting vertices
-	vertices->push_back(glm::dvec3(0.0, radius, 0.0));
-	vertices->push_back(glm::dvec3(0.0, 0.0, -radius));
-	vertices->push_back(glm::dvec3(radius, 0.0, 0.0));
-	vertices->push_back(glm::dvec3(0.0, 0.0, radius));
-	vertices->push_back(glm::dvec3(-radius, 0.0, 0.0));
-	vertices->push_back(glm::dvec3(0.0, -radius, 0.0));
+	vertices->push_back(glm::vec3(0.f, radius, 0.f));
+	vertices->push_back(glm::vec3(0.f, 0.f, -radius));
+	vertices->push_back(glm::vec3(radius, 0.f, 0.f));
+	vertices->push_back(glm::vec3(0.f, 0.f, radius));
+	vertices->push_back(glm::vec3(-radius, 0.f, 0.f));
+	vertices->push_back(glm::vec3(0.f, -radius, 0.f));
 	color->push_back(rgb);
 	color->push_back(rgb);
 	color->push_back(rgb);
@@ -149,7 +150,7 @@ void Body::generateVertices(int depth){
 	// Normalize vertices into sphere
 	for(size_t i=0; i<numVertices; i++){
 		// Calculating direction vector
-		glm::dvec3 vertex = (*vertices)[i];
+		glm::vec3 vertex = (*vertices)[i];
 		vertex /= glm::length(vertex);
 		
 		vertex.x = vertex.x*radius;
@@ -164,7 +165,7 @@ void Body::generateVertices(int depth){
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, numIndices*sizeof(GLuint), &(indices->front()), GL_STATIC_DRAW);
     
     glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-    glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(double), &(vertices->front()), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(float), &(vertices->front()), GL_DYNAMIC_DRAW);
     
     glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
     glBufferData(GL_ARRAY_BUFFER, numVertices*3*sizeof(float), &(color->front()), GL_DYNAMIC_DRAW);
@@ -181,16 +182,18 @@ void Body::generateVertices(int depth){
 	std::vector<glm::vec2> *coords = new std::vector<glm::vec2>();
 
 	for(size_t i=0; i<vertices->size(); i++){
-		glm::dvec3 vertex = (*vertices)[i];
+		glm::vec3 vertex = (*vertices)[i];
 		vertex = glm::normalize(vertex);
 		
 		vertex = -vertex;
 		
-		float u = 0.5 - ((atan2(vertex.z, vertex.x))/(2*M_PI));
+		float u = 0.5 - ((atan2(vertex.z, vertex.x))/(2.f*M_PI));
 		float v = 0.5 - (asin(vertex.y)/M_PI);
 		
-		assert(u >= 0 && u <= 1);
-		assert(v >= 0 && v <= 1);
+		
+		//printf("U = %f, V = %f\n", u, v);
+		//assert(u >= 0 && u <= 1);
+		//assert(v >= 0 && v <= 1);
 		
 		coords->push_back(glm::vec2(u, v));
 	}
@@ -205,18 +208,18 @@ void Body::generateVertices(int depth){
     free(coords);
 }
 
-void Body::calculateVertices(std::vector<glm::dvec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth){
+void Body::calculateVertices(std::vector<glm::vec3> *vertices, std::vector<glm::vec3> *colors, std::vector<GLuint> *indices, int i1, int i2, int i3, int currentDepth, int finalDepth){
 	if(currentDepth < finalDepth){ // Generate more vertices	
 		// Triangle vertices
-		glm::dvec3 v1 = (*vertices)[i1];
-		glm::dvec3 v2 = (*vertices)[i2];
-		glm::dvec3 v3 = (*vertices)[i3];
+		glm::vec3 v1 = (*vertices)[i1];
+		glm::vec3 v2 = (*vertices)[i2];
+		glm::vec3 v3 = (*vertices)[i3];
 		
 		// Calculating additional vertices
 		int u1Idx, u2Idx, u3Idx;
-		glm::dvec3 u1 = glm::dvec3(((v2.x-v1.x)/2) + v1.x, ((v2.y-v1.y)/2) + v1.y, ((v2.z-v1.z)/2) + v1.z);
-		glm::dvec3 u2 = glm::dvec3(((v3.x-v1.x)/2) + v1.x, ((v3.y-v1.y)/2) + v1.y, ((v3.z-v1.z)/2) + v1.z);
-		glm::dvec3 u3 = glm::dvec3(((v3.x-v2.x)/2) + v2.x, ((v3.y-v2.y)/2) + v2.y, ((v3.z-v2.z)/2) + v2.z);
+		glm::vec3 u1 = glm::vec3(((v2.x-v1.x)/2) + v1.x, ((v2.y-v1.y)/2) + v1.y, ((v2.z-v1.z)/2) + v1.z);
+		glm::vec3 u2 = glm::vec3(((v3.x-v1.x)/2) + v1.x, ((v3.y-v1.y)/2) + v1.y, ((v3.z-v1.z)/2) + v1.z);
+		glm::vec3 u3 = glm::vec3(((v3.x-v2.x)/2) + v2.x, ((v3.y-v2.y)/2) + v2.y, ((v3.z-v2.z)/2) + v2.z);
 		
 		colors->push_back(rgb);
 		vertices->push_back(u1);
@@ -271,7 +274,7 @@ void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm:
 	// Binding vertex VBO
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, sizeof(double)*3, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
 	
 	// Binding color VBO
 	glEnableVertexAttribArray(1);
@@ -338,6 +341,10 @@ glm::dvec3 Body::getForce(void){
 
 glm::vec3 Body::getRGB(void){
 	return rgb;
+}
+
+glm::vec3 Body::getAtmosphereColor(void){
+	return atmosphereColor;
 }
 
 double Body::getMass(void){

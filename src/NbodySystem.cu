@@ -1,58 +1,49 @@
 #include "../include/NbodySystem.cuh"
 #include <stdio.h>
 #include <vector>
-
 #include <cuda_runtime_api.h>
-#include <cuda_gl_interop.h>
 
-// Vector of vertes resources to all bodies
-//static std::vector<struct cudaGraphicsResource*> *resources = new std::vector<struct cudaGraphicsResource*>();
-static std::vector<struct cudaGraphicsResource*> resources;
+// data
+static size_t numBodies;
+static double *cudaPositions;
+static double *cudaVelocity;
+static double *cudaForces;
+static double *cudaMass;
+
+static double *temp;
+
+// Constants
+__constant__ double cudaG;
+__constant__ double cudaDt;
 
 // Kernel prototypes
-void __global__ moveBodyKernel(double3 *vertices, int num_vertices);
+void __global__ cudaCalculateForce(size_t numBodies, double *cudaPositions, double *cudaForces, double *cudaMass);
+void __global__ cudaUpdatePositions(size_t numBodies, double *cudaPositions, double *cudaVelocity, double *cudaForces, double *cudaMass);
 
-// CUDA Memory
-__constant__ double cuda_translation_matrix[16];
-
-void initializeNbodySystem(Config *config){
+void initializeNbodySystem(double G, double dt, double *positions, double *velocity, double *mass, size_t in_numBodies, Config *config){
 	if((config->getDebugLevel() & 0x10) == 16){	
-		printf("NbodySystem.cu\t\tInitializing\n");	
-	}
-}
-
-void addBodyVertexBuffer(GLuint buffer, Config *config){
-	if((config->getDebugLevel() & 0x0) == 8){		
-		printf("NbodySystem.cu\t\tAdding vertex buffer %d\n", buffer);
+		printf("NbodySystem.cu\t\tInitializing\n");
 	}
 	
-	// Creating new cuda resource
-	struct cudaGraphicsResource *resource;
-	cudaGraphicsGLRegisterBuffer(&resource, buffer, cudaGraphicsRegisterFlagsNone);
+	temp = (double*) malloc(numBodies*3*sizeof(double));
+	for(size_t i=0; i<numBodies*3; i++){temp[i] = 0.0;}
 	
-	// Adding the new resource
-	resources.push_back(resource);
-}
-
-void moveBody(int bodyIndex, int numVertices, double *translation){
-	// Local vars
-	double3 *vertices = 0;
-	size_t num_bytes_vertices;
+	// Init
+	numBodies = in_numBodies;
 	
-	// Getting the vertex array pointer
-	cudaGraphicsMapResources(1, &resources[bodyIndex]);
-	cudaGraphicsResourceGetMappedPointer((void**)&vertices, &num_bytes_vertices, resources[bodyIndex]);
+	// Allocating memory
+	cudaMalloc(&cudaPositions, numBodies*3*sizeof(double));
+	cudaMalloc(&cudaVelocity, numBodies*3*sizeof(double));
+	cudaMalloc(&cudaForces, numBodies*3*sizeof(double));
+	cudaMalloc(&cudaMass, numBodies*sizeof(double));
 	
-	// Transferring the translation matrix
-	cudaMemcpyToSymbol(cuda_translation_matrix, translation, 4*4*sizeof(double), 0, cudaMemcpyHostToDevice);
+	// Setting initial data
+	cudaMemcpy(cudaPositions, positions, numBodies*3*sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(cudaVelocity, velocity, numBodies*3*sizeof(double), cudaMemcpyHostToDevice);
+	cudaMemcpy(cudaMass, mass, numBodies*sizeof(double), cudaMemcpyHostToDevice);
 	
-	// CUDA call
-	dim3 block((numVertices/512) + 1);
-	dim3 grid(512);
-	moveBodyKernel<<<block, grid>>>(vertices, numVertices);
-	
-	// Unmapping, making ready for rendering
-	cudaGraphicsUnmapResources(1, &resources[bodyIndex]);
+	cudaMemcpyToSymbol(cudaG, &G, sizeof(double), 0, cudaMemcpyHostToDevice);
+	cudaMemcpyToSymbol(cudaDt, &dt, sizeof(double), 0, cudaMemcpyHostToDevice);
 	
 	// Error check
 	cudaError_t error = cudaGetLastError();
@@ -61,20 +52,109 @@ void moveBody(int bodyIndex, int numVertices, double *translation){
 	}
 }
 
-void __global__ moveBodyKernel(double3 *vertices, int num_vertices){
-	// Global index
-	int i = (blockIdx.x*blockDim.x) + threadIdx.x;
+void update(double *newPositions){
+	// CUDA
+	dim3 grid((numBodies/512) + 1);
+	dim3 block(512);
+	cudaCalculateForce<<<grid, block>>>(numBodies, cudaPositions, cudaForces, cudaMass);
+	cudaUpdatePositions<<<grid, block>>>(numBodies, cudaPositions, cudaVelocity, cudaForces, cudaMass);
 	
-	// Boundary check
-	if(i >= num_vertices)return;
+	// Getting new data
+	cudaMemcpy(newPositions, cudaPositions, numBodies*3*sizeof(double), cudaMemcpyDeviceToHost);
+	
+	// Error check
+	cudaError_t error = cudaGetLastError();
+	if(error != 0){
+		printf("NbodySystem.cu\t\tError: %s\n", cudaGetErrorString(error));
+	}
+}
 
-	// Multiplying vertex and translation matrix, (Rotation around inclination axis and movement of whole body)
-	double vx = cuda_translation_matrix[0]*vertices[i].x + cuda_translation_matrix[4]*vertices[i].y + cuda_translation_matrix[8]*vertices[i].z + cuda_translation_matrix[12];
-	double vy = cuda_translation_matrix[1]*vertices[i].x + cuda_translation_matrix[5]*vertices[i].y + cuda_translation_matrix[9]*vertices[i].z + cuda_translation_matrix[13];
-	double vz = cuda_translation_matrix[2]*vertices[i].x + cuda_translation_matrix[6]*vertices[i].y + cuda_translation_matrix[10]*vertices[i].z + cuda_translation_matrix[14];
+// has speedup potential by using SHARED memory
+// 48 KiB can contain the data needed for 614 bodies (double3 + double3 + double3 + double)
+void __global__ cudaCalculateForce(size_t numBodies, double *cudaPositions, double *cudaForces, double *cudaMass){
+	size_t bodyId = (blockIdx.x * blockDim.x) + threadIdx.x;
 	
-	// Forcing sphere structure
-	vertices[i].x = vx;
-	vertices[i].y = vy;
-	vertices[i].z = vz;
+	if(bodyId >= numBodies){return;}
+	
+	// Initialize force
+	double3 position;
+	position.x = cudaPositions[bodyId*3 + 0];
+	position.y = cudaPositions[bodyId*3 + 1];
+	position.z = cudaPositions[bodyId*3 + 2];
+	double3 force;
+	force.x = 0.0;
+	force.y = 0.0;
+	force.z = 0.0;
+	double mass = cudaMass[bodyId];
+	
+	// Looping bodies
+	for(size_t i=0; i<numBodies; i++){
+		if(i != bodyId){
+			// Calculating distance between bodies
+			double dist_x = cudaPositions[i*3 + 0] - position.x;
+			double dist_y = cudaPositions[i*3 + 1] - position.y;
+			double dist_z = cudaPositions[i*3 + 2] - position.z;
+			
+			double abs_dist = sqrt(dist_x*dist_x + dist_y*dist_y + dist_z*dist_z);
+			abs_dist = abs_dist*abs_dist*abs_dist;
+			
+			// Updating force
+			force.x += (cudaG * mass * cudaMass[i])/abs_dist * dist_x;
+			force.y += (cudaG * mass * cudaMass[i])/abs_dist * dist_y;
+			force.z += (cudaG * mass * cudaMass[i])/abs_dist * dist_z;
+		}
+	}
+	
+	cudaForces[bodyId*3 + 0] = force.x;	
+	cudaForces[bodyId*3 + 1] = force.y;	
+	cudaForces[bodyId*3 + 2] = force.z;
+}
+
+void __global__ cudaUpdatePositions(size_t numBodies, double *cudaPositions, double *cudaVelocity, double *cudaForces, double *cudaMass){
+	int bodyId = (blockIdx.x * blockDim.x) + threadIdx.x;
+	
+	if(bodyId >= numBodies){return;}
+	
+	// Reading body data
+	double mass;
+	mass = cudaMass[bodyId];
+	
+	double3 force;
+	force.x = cudaForces[bodyId*3 + 0];
+	force.y = cudaForces[bodyId*3 + 1];
+	force.z = cudaForces[bodyId*3 + 2];
+	
+	double3 position;
+	position.x = cudaPositions[bodyId*3 + 0];
+	position.y = cudaPositions[bodyId*3 + 1];
+	position.z = cudaPositions[bodyId*3 + 2];
+	
+	double3 velocity;
+	velocity.x = cudaVelocity[bodyId*3 + 0];
+	velocity.y = cudaVelocity[bodyId*3 + 1];
+	velocity.z = cudaVelocity[bodyId*3 + 2];
+	
+	// Calculating delta
+	double3 delta;
+	delta.x = cudaDt * velocity.x;
+	delta.y = cudaDt * velocity.y;
+	delta.z = cudaDt * velocity.z;
+	
+	// Updating new position based on delta
+	position.x += delta.x;
+	position.y += delta.y;
+	position.z += delta.z;
+	
+	cudaPositions[bodyId*3 + 0] = position.x;
+	cudaPositions[bodyId*3 + 1] = position.y;
+	cudaPositions[bodyId*3 + 2] = position.z;
+	
+	// Updating new velocity
+	velocity.x += cudaDt * force.x/mass;
+	velocity.y += cudaDt * force.y/mass;
+	velocity.z += cudaDt * force.z/mass;
+	
+	cudaVelocity[bodyId*3 + 0] = velocity.x;
+	cudaVelocity[bodyId*3 + 1] = velocity.y;
+	cudaVelocity[bodyId*3 + 2] = velocity.z;
 }

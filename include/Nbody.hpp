@@ -11,6 +11,7 @@ class Nbody{
 		std::vector<Body*> *bodies;
 		double G;
 		double dt;
+		double *positions;
 		
 		// Misc
 		size_t debugLevel;

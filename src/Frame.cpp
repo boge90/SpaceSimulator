@@ -68,6 +68,11 @@ Frame::~Frame(void){
 }
 
 void Frame::update(void){
+	// debug
+	if(debugLevel & 128){
+		std::cout << "Frame.cpp\t\tupdate()" << std::endl;
+	}
+
 	// Misc
 	totalFrameCount++;
 	lastSecondFrameCount++;
