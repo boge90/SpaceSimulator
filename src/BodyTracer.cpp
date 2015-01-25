@@ -117,6 +117,8 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 	while(num < MAX_VERTICES){	
 		// Calculate force
 		for(size_t i=0; i<size; i++){
+			glm::dvec3 force = forces[i];
+
 			for(size_t j=0; j<size; j++){
 				if(i != j){				
 					double dist_x = positions[j].x - positions[i].x;
@@ -124,15 +126,15 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 					double dist_z = positions[j].z - positions[i].z;
 
 					double abs_dist = sqrt(dist_x*dist_x + dist_y*dist_y + dist_z*dist_z);
-					double dist_cubed = abs_dist*abs_dist*abs_dist;
+					abs_dist = abs_dist*abs_dist*abs_dist;
 
-					glm::dvec3 force = forces[i];
-					force.x += (G * masses[i] * masses[j])/dist_cubed * dist_x;
-					force.y += (G * masses[i] * masses[j])/dist_cubed * dist_y;
-					force.z += (G * masses[i] * masses[j])/dist_cubed * dist_z;
-					forces[i] = force;
+					force.x += (G * masses[i] * masses[j])/abs_dist * dist_x;
+					force.y += (G * masses[i] * masses[j])/abs_dist * dist_y;
+					force.z += (G * masses[i] * masses[j])/abs_dist * dist_z;
 				}
 			}
+			
+			forces[i] = force;
 		}
 	
 		// Update position

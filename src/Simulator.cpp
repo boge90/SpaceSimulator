@@ -73,7 +73,7 @@ void Simulator::simulate(void){
 		simulationSteps++;
 		time += dt;
 	}
-
+	
 	// Check user input IFF menu is hidden
 	if(!(frame->getHud()->isVisible())){
 		frame->getHud()->getActivatedCamera()->checkUserInput();

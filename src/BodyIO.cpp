@@ -1,6 +1,7 @@
 #include "../include/BodyIO.hpp"
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 void BodyIO::read(double *time, std::vector<Body*> *bodies, Config *config){
 	if((config->getDebugLevel() & 0x8) == 8){	
@@ -144,7 +145,7 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 	dataFile.open ("bodies.data");
 	
 	// Write body data
-	dataFile << time << "\n";
+	dataFile << std::fixed << setprecision(5) << time << "\n";
 
 	int size = bodies->size();
 	for(int i=0; i<size; i++){
@@ -164,17 +165,17 @@ void BodyIO::write(double time, std::vector<Body*> *bodies, Config *config){
 		dataFile << velocity.x << ", ";
 		dataFile << velocity.y << ", ";
 		dataFile << velocity.z << ", ";
-		dataFile << rgb.x << ", ";
-		dataFile << rgb.y << ", ";
-		dataFile << rgb.z << ", ";
-		dataFile << atmosphere.x << ", ";
-		dataFile << atmosphere.y << ", ";
-		dataFile << atmosphere.z << ", ";
-		dataFile << body->getRotation() << ", ";
-		dataFile << body->getRadius() << ", ";
-		dataFile << body->getMass() << ", ";
-		dataFile << body->getInclination() << ", ";
-		dataFile << body->getRotationSpeed() << ", ";
+		dataFile << setprecision(2) << rgb.x << ", ";
+		dataFile << setprecision(2) << rgb.y << ", ";
+		dataFile << setprecision(2) << rgb.z << ", ";
+		dataFile << setprecision(2) << atmosphere.x << ", ";
+		dataFile << setprecision(2) << atmosphere.y << ", ";
+		dataFile << setprecision(2) << atmosphere.z << ", ";
+		dataFile << setprecision(5) << body->getRotation() << ", ";
+		dataFile << setprecision(5) << body->getRadius() << ", ";
+		dataFile << setprecision(5) << body->getMass() << ", ";
+		dataFile << setprecision(5) << body->getInclination() << ", ";
+		dataFile << setprecision(5) << body->getRotationSpeed() << ", ";
 	
 		dataFile << type;		
 		if(type < 2){			

@@ -10,6 +10,8 @@ Config::Config(int argc, char **args){
 	this->fullscreen = false;
 	this->discardResult = false;
 	this->flipCheck = false;
+	this->maxBodyLod = 9;
+	this->minBodyLod = 1;
 	
 	// Reading program input parameters
 	for(int i=1; i<argc; i++){
@@ -17,6 +19,10 @@ Config::Config(int argc, char **args){
 			dt = strtod(args[++i], NULL);
 		}else if(strcmp(args[i], "--debug") == 0){
 			debugLevel = strtod(args[++i], NULL);
+		}else if(strcmp(args[i], "--maxBodyLod") == 0){
+			maxBodyLod = strtod(args[++i], NULL);
+		}else if(strcmp(args[i], "--minBodyLod") == 0){
+			minBodyLod = strtod(args[++i], NULL);
 		}else if(strcmp(args[i], "--fullscreen") == 0){
 			fullscreen = true;
 		}else if(strcmp(args[i], "--discardResult") == 0){
@@ -26,7 +32,8 @@ Config::Config(int argc, char **args){
 		}else if(strcmp(args[i], "--help") == 0){
 			std::cout << "--dt FLOAT            - Controls the delta time used in the simulation" << std::endl;
 			std::cout << "--debug INT           - Controls the debugging level, where each bit in the integer represents a debug switch" << std::endl;
-			std::cout << "--bodyVertexDepth INT - Controls the recursion level when creating the vertices for the bodies, higher yields finer mesh" << std::endl;
+			std::cout << "--maxBodyLod INT      - Controls the MAX recursion level when creating the vertices for the bodies, higher yields finer mesh" << std::endl;
+			std::cout << "--minBodyLod INT      - Controls the MIN recursion level when creating the vertices for the bodies, lower yields coarser mesh" << std::endl;
 			std::cout << "--fullscreen          - Turns on fullscreen mode" << std::endl;
 			std::cout << "--discardResult       - Turns off the writing back the end result to disk" << std::endl;
 			std::cout << "--flipCheck           - Turns on the flip check for the Body camera" << std::endl;
@@ -48,6 +55,14 @@ double Config::getDt(void){
 
 size_t Config::getDebugLevel(void){
 	return debugLevel;
+}
+
+size_t Config::getMaxBodyLod(void){
+	return maxBodyLod;
+}
+
+size_t Config::getMinBodyLod(void){
+	return minBodyLod;
 }
 
 size_t Config::getRenderingDeviceNumber(void){

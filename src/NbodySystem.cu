@@ -10,8 +10,6 @@ static double *cudaVelocity;
 static double *cudaForces;
 static double *cudaMass;
 
-static double *temp;
-
 // Constants
 __constant__ double cudaG;
 __constant__ double cudaDt;
@@ -24,9 +22,6 @@ void initializeNbodySystem(double G, double dt, double *positions, double *veloc
 	if((config->getDebugLevel() & 0x10) == 16){	
 		printf("NbodySystem.cu\t\tInitializing\n");
 	}
-	
-	temp = (double*) malloc(numBodies*3*sizeof(double));
-	for(size_t i=0; i<numBodies*3; i++){temp[i] = 0.0;}
 	
 	// Init
 	numBodies = in_numBodies;
@@ -52,7 +47,7 @@ void initializeNbodySystem(double G, double dt, double *positions, double *veloc
 	}
 }
 
-void update(double *newPositions){
+void update(double *newPositions, double *newVelocities){
 	// CUDA
 	dim3 grid((numBodies/512) + 1);
 	dim3 block(512);
@@ -61,6 +56,7 @@ void update(double *newPositions){
 	
 	// Getting new data
 	cudaMemcpy(newPositions, cudaPositions, numBodies*3*sizeof(double), cudaMemcpyDeviceToHost);
+	cudaMemcpy(newVelocities, cudaVelocity, numBodies*3*sizeof(double), cudaMemcpyDeviceToHost);
 	
 	// Error check
 	cudaError_t error = cudaGetLastError();

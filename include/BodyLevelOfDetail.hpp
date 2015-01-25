@@ -12,6 +12,10 @@ class BodyLevelOfDetail{
 		size_t debugLevel;
 		Config *config;
 	
+		// LOD
+		size_t max;
+		size_t min;
+	
 		// Data
 		std::vector<Body*> *bodies;
 	public:

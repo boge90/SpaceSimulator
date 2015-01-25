@@ -14,6 +14,7 @@ Nbody::Nbody(std::vector<Body*> *bodies, Config *config){
 	this->bodies = bodies;
 	this->G = 6.7 * pow(10, -11);
 	this->positions = (double*) malloc(bodies->size()*3*sizeof(double));
+	this->velocities = (double*) malloc(bodies->size()*3*sizeof(double));
 	
 	// Creating temp positions array
 	double *velocities = (double*) malloc(bodies->size()*3*sizeof(double));
@@ -48,6 +49,7 @@ Nbody::~Nbody(void){
 	}
 	
 	free(positions);
+	free(velocities);
 }
 
 void Nbody::simulateGravity(void){
@@ -56,13 +58,16 @@ void Nbody::simulateGravity(void){
 	}
 	
 	// Updating bodies on GPU
-	update(positions);
+	update(positions, velocities);
 	
 	// Updating bodies
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *body = (*bodies)[i];
+		
 		glm::dvec3 pos = glm::dvec3(positions[i*3 + 0], positions[i*3 + 1], positions[i*3 + 2]);
+		glm::dvec3 vel = glm::dvec3(velocities[i*3 + 0], velocities[i*3 + 1], velocities[i*3 + 2]);
 		
 		body->setCenter(pos);
+		body->setVelocity(vel);
 	}
 }

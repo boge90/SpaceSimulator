@@ -31,8 +31,10 @@ void Atmosphere::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction
 	float maxAtmosphereHeight = (body->getRadius() * 1.015696123f) - body->getRadius();
 
 	// Setting uniforms
+	double scale = body->getRadius();
 	glm::mat4 mvp = (*vp) * glm::translate(glm::mat4(1), glm::vec3(body->getCenter() - position));
 	mvp = mvp * glm::scale(glm::mat4(1.f), glm::vec3((distanceToGround/maxAtmosphereHeight) + 1.01f));
+	mvp = mvp * glm::scale(glm::mat4(1.f), glm::vec3(scale, scale, scale));
 	mvp = mvp * glm::rotate(glm::mat4(1.f), float(body->getInclination()), glm::vec3(0, 0, 1));
 	mvp = mvp * glm::rotate(glm::mat4(1.f), float(body->getRotation()), glm::vec3(0, 1, 0));
 	

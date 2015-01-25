@@ -9,6 +9,8 @@ BodyLevelOfDetail::BodyLevelOfDetail(std::vector<Body*> *bodies, Config *config)
 	}
 	
 	// Init
+	this->max = config->getMaxBodyLod();
+	this->min = config->getMinBodyLod();
 	this->bodies = bodies;
 }
 
@@ -28,10 +30,10 @@ void BodyLevelOfDetail::update(glm::dvec3 cameraPosition){
 	
 		float temp = 2*asin(body->getRadius()/glm::length(body->getCenter() - cameraPosition));
 		
-		int lod = temp * 5;
+		size_t lod = temp * 5;
 		
-		if(lod < 1){lod = 1;}
-		if(lod > 9){lod = 9;}
+		if(lod < min){lod = min;}
+		if(lod > max){lod = max;}
 		
 		if(lod != body->getLOD() && lod >= 0){
 			body->setLOD(lod);

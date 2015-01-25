@@ -42,6 +42,7 @@ class Body: public Renderable{
 		Shader *shader;
 		size_t numVertices, numIndices;
 		bool wireFrame;
+		bool fakeSize;
 		glm::vec3 rgb;
 		GLuint indexBuffer;
 		GLuint texCoordBuffer;
@@ -143,12 +144,12 @@ class Body: public Renderable{
 		/**
 		* Returns the current Level Of Detail
 		**/
-		int getLOD(void);
+		size_t getLOD(void);
 		
 		/**
 		* sets the current Level Of Detail
 		**/
-		void setLOD(int lod);
+		void setLOD(size_t lod);
 		
 		/**
 		* Returns the vertex buffer
@@ -189,6 +190,11 @@ class Body: public Renderable{
 		* Changes the state of the wireFrame mode
 		**/
 		void setWireframeMode(bool active);
+		
+		/**
+		* Changes the state of the fakeSize mode
+		**/
+		void setFakeSize(bool active);
 		
 		/**
 		* Returns this body's inclination (rads)

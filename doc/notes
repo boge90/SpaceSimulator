@@ -1,18 +1,2 @@
-Deps
-	GLFW3:
-		- unzip
-		- cmake
-		- make
-		- sudo make install
-	AntTweakBar
-		- unzip
-		- cd src/
-		- make
-		- sudo cp lib/libAntTweakBar.so.1 /usr/lib/
-		- sudo cp lib/libAntTweakBar.so /usr/lib/
-		- sudo cp include/AntTweakBar.h /usr/include/
-
-Issues
-	+ Create menubar, see www.open.gl/framebuffers.
-	- Think that maybe there are a lot of unnecessary indices generated for the spheres. Since when moving the camera inside an spehre, you can still see the walls. And when the camera is inside
-	a spehere, you should NOT be able to see anything.
+Body data found at:
+http://ssd.jpl.nasa.gov/horizons.cgi

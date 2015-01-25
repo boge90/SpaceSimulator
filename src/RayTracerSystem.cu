@@ -174,6 +174,8 @@ void __global__ simulateRaysOne(double3 bc, double3 sc, int numBodyVertices, flo
 	
 	if(planEq > 0){
 		lightIntensity = 1.f;
+	}else{
+		lightIntensity = 0.01f;
 	}
 	
 	// Setting vertex color
@@ -245,7 +247,7 @@ void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, float3 *bodyVer
 	
 	// Setting vertex color
 	if(count == 0){
-		bodyCoverage[index] = 0.f;
+		bodyCoverage[index] = 0.01f;
 	}else{	
 		bodyCoverage[index] = lightIntensity;
 	}

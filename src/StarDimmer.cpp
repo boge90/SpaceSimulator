@@ -53,8 +53,12 @@ void StarDimmer::simulateStarDimming(glm::dvec3 cameraPosition){
 				double l1 = glm::length(cameraPosition - star->getCenter());
 				double l2 = glm::length(body->getCenter() - star->getCenter());
 				
-				if(test >= 0.0 && l1 > l2){
-					intensity = 1.f;
+				if(test == 0.0){
+					intensity = 0.2f;
+				}else if(test >= 0.0 && l1 > l2){
+					intensity += test/(body->getRadius()*body->getRadius());
+					
+					if(intensity > 1.f){intensity = 1.f;}
 					break;
 				}
 			}

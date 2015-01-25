@@ -36,6 +36,7 @@ Body::Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 r
 	this->rotationSpeed = rotationSpeed;
 	this->bodyType = bodyType;
 	this->wireFrame = false;
+	this->fakeSize = false;
 	this->rotation = rotation;
 	this->force = glm::dvec3(0.0, 0.0, 0.0);
 	this->texturePath = texturePath;
@@ -69,7 +70,11 @@ void Body::init(){
 	atmosphere = new Atmosphere(this, config);
 
 	// Loading shader
-	shader = new Shader("src/shaders/bodyVertex.glsl", "src/shaders/bodyFragment.glsl", config);
+	if(bodyType == STAR || bodyType == PLANET){
+		shader = new Shader("src/shaders/bodyVertex.glsl", "src/shaders/bodyFragment.glsl", config);
+	}else{	
+		shader = new Shader("src/shaders/cometVertex.glsl", "src/shaders/cometFragment.glsl", config);
+	}
 	
 	// Generating buffers
 	glGenBuffers(1, &indexBuffer);
@@ -121,12 +126,12 @@ void Body::generateVertices(int depth){
 	std::vector<GLuint> *indices = new std::vector<GLuint>();
 	
 	// Starting vertices
-	vertices->push_back(glm::vec3(0.f, radius, 0.f));
-	vertices->push_back(glm::vec3(0.f, 0.f, -radius));
-	vertices->push_back(glm::vec3(radius, 0.f, 0.f));
-	vertices->push_back(glm::vec3(0.f, 0.f, radius));
-	vertices->push_back(glm::vec3(-radius, 0.f, 0.f));
-	vertices->push_back(glm::vec3(0.f, -radius, 0.f));
+	vertices->push_back(glm::vec3(0.f, 1.f, 0.f));
+	vertices->push_back(glm::vec3(0.f, 0.f, -1.f));
+	vertices->push_back(glm::vec3(1.f, 0.f, 0.f));
+	vertices->push_back(glm::vec3(0.f, 0.f, 1.f));
+	vertices->push_back(glm::vec3(-1.f, 0.f, 0.f));
+	vertices->push_back(glm::vec3(0.f, -1.f, 0.f));
 	color->push_back(rgb);
 	color->push_back(rgb);
 	color->push_back(rgb);
@@ -152,10 +157,6 @@ void Body::generateVertices(int depth){
 		// Calculating direction vector
 		glm::vec3 vertex = (*vertices)[i];
 		vertex /= glm::length(vertex);
-		
-		vertex.x = vertex.x*radius;
-		vertex.y = vertex.y*radius;
-		vertex.z = vertex.z*radius;
 		
 		(*vertices)[i] = vertex;
 	}
@@ -246,9 +247,10 @@ void Body::calculateVertices(std::vector<glm::vec3> *vertices, std::vector<glm::
 }
 
 void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
-	// Size check
-	if(2*asin(radius/glm::length(center - position)) < 0.25*M_PI/180.0){
-		return;
+	// FakeSize
+	float scale = radius;
+	if(fakeSize){
+		scale = (glm::length(center - position))/25.f;
 	}
 	
 	// Render atmosphere
@@ -262,10 +264,11 @@ void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm:
 		glBindTexture(GL_TEXTURE_2D, tex);
 	}
 	
-	// Translating and rotating body
+	// Translating, scaling and rotating body
 	glm::mat4 mvp = (*vp) * glm::translate(glm::mat4(1), glm::vec3(center - position));
 	mvp = mvp * glm::rotate(glm::mat4(1.f), float(inclination), glm::vec3(0, 0, 1));
 	mvp = mvp * glm::rotate(glm::mat4(1.f), float(rotation), glm::vec3(0, 1, 0));
+	mvp = mvp * glm::scale(glm::mat4(1.f), glm::vec3(scale, scale, scale));
 	
 	// Get a handle for our "MVP" uniform.
 	GLuint mvpMatrixId = glGetUniformLocation(shader->getID(), "MVP");
@@ -375,11 +378,11 @@ void Body::setForce(glm::dvec3 force){
 	this->force = glm::vec3(force);
 }
 
-int Body::getLOD(void){
+size_t Body::getLOD(void){
 	return lod;
 }
 		
-void Body::setLOD(int lod){
+void Body::setLOD(size_t lod){
 	this->lod = lod;
 }
 
@@ -414,6 +417,16 @@ void Body::setWireframeMode(bool active){
 		std::cout << "Body.cpp\t\tTurning ON wireframe for body " << bodyNum << std::endl;
 	}else{
 		std::cout << "Body.cpp\t\tTurning OFF wireframe for body " << bodyNum << std::endl;
+	}
+}
+
+void Body::setFakeSize(bool active){
+	this->fakeSize = active;
+	
+	if(fakeSize){
+		std::cout << "Body.cpp\t\tTurning ON fakeSize for body " << bodyNum << std::endl;
+	}else{
+		std::cout << "Body.cpp\t\tTurning OFF fakeSize for body " << bodyNum << std::endl;
 	}
 }
 

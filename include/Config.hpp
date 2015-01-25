@@ -5,9 +5,14 @@
 
 class Config{
 	private:
+		// Misc
 		double dt;
 		size_t renderingDeviceNumber;
 		size_t debugLevel;
+		
+		// Bodies
+		size_t maxBodyLod;
+		size_t minBodyLod;
 		
 		// Camera
 		bool flipCheck;
@@ -43,6 +48,16 @@ class Config{
 		* of a certain debug area
 		**/
 		size_t getDebugLevel(void);
+		
+		/**
+		* Returns the max level of detail for the bodies
+		**/
+		size_t getMaxBodyLod(void);
+		
+		/**
+		* Returns the min level of detail for the bodies
+		**/
+		size_t getMinBodyLod(void);
 		
 		/**
 		* Returns the device number that should be used for rendering

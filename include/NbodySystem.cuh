@@ -14,7 +14,7 @@ extern "C"{
 	/**
 	* Functions for translating all vertices for a body given by transformation matrix
 	**/
-	void update(double *newPositions);
+	void update(double *newPositions, double *newVelocities);
 }
 
 #endif

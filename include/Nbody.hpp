@@ -12,6 +12,7 @@ class Nbody{
 		double G;
 		double dt;
 		double *positions;
+		double *velocities;
 		
 		// Misc
 		size_t debugLevel;

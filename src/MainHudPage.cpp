@@ -1,4 +1,5 @@
 #include "../include/MainHudPage.hpp"
+#include "../include/DateService.hpp"
 
 #include <iostream>
 
@@ -15,6 +16,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	this->pausedBox = new CheckBox("PAUSE", false, config);
 	this->cullBackfaceBox = new CheckBox("CULL BACK FACE", true, config);
 	this->wireframeBox = new CheckBox("WIREFRAME", false, config);
+	this->fakeSizeBox = new CheckBox("FAKE SIZE", false, config);
 	this->starDimmerBox = new CheckBox("STAR DIMMING", true, config);
 	this->futureBodyPathBox = new CheckBox("FUTURE PATH", false, config);
 	this->futureBodyInputView = new IntegerInputView("FUTURE BODY PATH", config);
@@ -32,6 +34,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	pausedBox->addStateChangeAction(this);
 	cullBackfaceBox->addStateChangeAction(this);
 	wireframeBox->addStateChangeAction(this);
+	fakeSizeBox->addStateChangeAction(this);
 	starDimmerBox->addStateChangeAction(this);
 	futureBodyPathBox->addStateChangeAction(this);
 	futureBodyInputView->addIntegerInputAction(this);
@@ -46,6 +49,7 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	addChild(pausedBox);
 	addChild(cullBackfaceBox);
 	addChild(wireframeBox);
+	addChild(fakeSizeBox);
 	addChild(starDimmerBox);
 	addChild(futureBodyPathBox);
 	addChild(futureBodyInputView);
@@ -75,6 +79,13 @@ void MainHudPage::onStateChange(CheckBox *box, bool newState){
 	
 		for(int i=0; i<size; i++){
 			(*bodies)[i]->setWireframeMode(newState);
+		}
+	}else if(box == fakeSizeBox){ // Toggle fakeSize
+		std::vector<Body*> *bodies = simulator->getBodies();
+		int size = bodies->size();
+	
+		for(int i=0; i<size; i++){
+			(*bodies)[i]->setFakeSize(newState);
 		}
 	}else if(box == starDimmerBox){ // Toggle star dimming
 		simulator->getStarDimmer()->setActivated(newState);
@@ -110,8 +121,10 @@ void MainHudPage::draw(DrawService *drawService){
 	HudPage::draw(drawService);
 	
 	// Updating time
-	std::string text = "TIME ";
-	text += std::to_string(simulator->getTime());	
+	std::string date;
+	std::string text = "DATE ";
+	DateService::getDate(simulator->getTime(), &date);	
+	text += date;
 	this->timeView->setText(text);
 	
 	// Updating FPS
