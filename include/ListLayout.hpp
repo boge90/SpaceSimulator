@@ -2,11 +2,11 @@
 #define LIST_LAYOUT_H
 
 #include "../include/DrawService.hpp"
-#include "../include/Layout.hpp"
+#include "../include/ScrollLayout.hpp"
 #include "../include/Config.hpp"
 #include <vector>
 
-class ListLayout: public Layout{
+class ListLayout: public ScrollLayout{
 	private:
 		
 	public:
@@ -24,6 +24,11 @@ class ListLayout: public Layout{
 		* Layout class function
 		**/ 
 		virtual void addChild(View *view);
+		
+		/**
+		* Scroll
+		**/ 
+		void scroll( double xoffset, double yoffset );
 };
 
 #endif

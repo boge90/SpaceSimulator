@@ -12,7 +12,6 @@ class BodyCameraControl: public AbstractCamera{
 	private:
 		// OpenGL
 		GLFWwindow *window;
-		Frame *frame;
 	
 		// Data
 		Body *body;
@@ -27,6 +26,12 @@ class BodyCameraControl: public AbstractCamera{
 		double verticalAngle;
 		double mouseSpeed;
 		double previousTime;
+		
+		/**
+		* Called when this camera is active and the user presses the keyboard
+		**/
+		void onKeyInput(int key);
+		
 	public:
 		/**
 		* Creates and initializes the body camera

@@ -14,6 +14,7 @@ class Body;
 #include "../include/Atmosphere.hpp"
 
 enum BodyType{PLANET, STAR, COMET};
+enum Visualization{NORMAL, TEMPERATURE};
 
 class Body: public Renderable{
 	private:
@@ -39,9 +40,11 @@ class Body: public Renderable{
 		int bodyNum;
 		
 		// Rendering
-		Shader *shader;
+		Shader *normalShader, *temperatureShader;
 		size_t numVertices, numIndices;
 		bool wireFrame;
+		Visualization visualization;
+		
 		bool fakeSize;
 		glm::vec3 rgb;
 		GLuint indexBuffer;
@@ -49,6 +52,7 @@ class Body: public Renderable{
 		GLuint vertexBuffer;
 		GLuint colorBuffer;
 		GLuint solarCoverBuffer;
+		GLuint surfaceTemperatureBuffer;
 		
 		// Atmosphere
 		Atmosphere *atmosphere;
@@ -172,6 +176,11 @@ class Body: public Renderable{
 		GLuint getVertexIndexBuffer(void);
 		
 		/**
+		* Returns the surface temperature buffer
+		**/
+		GLuint getSurfaceTemperatureBuffer(void);
+		
+		/**
 		* Returns the number of indices in theindex buffer
 		**/
 		size_t getNumIndices(void);
@@ -190,6 +199,11 @@ class Body: public Renderable{
 		* Changes the state of the wireFrame mode
 		**/
 		void setWireframeMode(bool active);
+		
+		/**
+		* Sets the current visualization type (i.e. changing GLSL shader)
+		**/
+		void setVisualizationType(Visualization type);
 		
 		/**
 		* Changes the state of the fakeSize mode

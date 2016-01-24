@@ -10,7 +10,7 @@ class BodyTracer: public Renderable{
 	private:
 		// Calculation data
 		size_t MAX_VERTICES;
-		double dt;
+		double *dt;
 		double G;
 		std::vector<Body*> *bodies;
 		

@@ -9,7 +9,7 @@ extern "C"{
 	/**
 	*
 	**/
-	void initializeNbodySystem(double G, double dt, double *positions, double *velocities, double *mass, size_t numBodies, Config *config);
+	void initializeNbodySystem(double G, double *dt, double *positions, double *velocities, double *mass, size_t numBodies, Config *config);
 	
 	/**
 	* Functions for translating all vertices for a body given by transformation matrix

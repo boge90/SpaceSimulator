@@ -13,9 +13,9 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	this->simulator = simulator;
 	this->fpsView = new TextView("", config);
 	this->timeView = new TextView("", config);
+	this->secondsView = new TextView("", config);
 	this->pausedBox = new CheckBox("PAUSE", false, config);
 	this->cullBackfaceBox = new CheckBox("CULL BACK FACE", true, config);
-	this->wireframeBox = new CheckBox("WIREFRAME", false, config);
 	this->fakeSizeBox = new CheckBox("FAKE SIZE", false, config);
 	this->starDimmerBox = new CheckBox("STAR DIMMING", true, config);
 	this->futureBodyPathBox = new CheckBox("FUTURE PATH", false, config);
@@ -26,14 +26,13 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	this->exitButton = new Button("EXIT", config);
 	
 	// SelectView options
-	rayTracingLevelView->addItem("OFF", 0);
 	rayTracingLevelView->addItem("1", 1);
 	rayTracingLevelView->addItem("2", 2);
+	rayTracingLevelView->addItem("OFF", 0);
 	
 	// Adding listeners
 	pausedBox->addStateChangeAction(this);
 	cullBackfaceBox->addStateChangeAction(this);
-	wireframeBox->addStateChangeAction(this);
 	fakeSizeBox->addStateChangeAction(this);
 	starDimmerBox->addStateChangeAction(this);
 	futureBodyPathBox->addStateChangeAction(this);
@@ -46,9 +45,9 @@ MainHudPage::MainHudPage(int x, int y, int width, int height, Simulator *simulat
 	// Add view
 	addChild(fpsView);
 	addChild(timeView);
+	addChild(secondsView);
 	addChild(pausedBox);
 	addChild(cullBackfaceBox);
-	addChild(wireframeBox);
 	addChild(fakeSizeBox);
 	addChild(starDimmerBox);
 	addChild(futureBodyPathBox);
@@ -73,14 +72,7 @@ void MainHudPage::onClick(View *view, int button, int action){
 }
 
 void MainHudPage::onStateChange(CheckBox *box, bool newState){
-	if(box == wireframeBox){ // Toggle wireframe
-		std::vector<Body*> *bodies = simulator->getBodies();
-		int size = bodies->size();
-	
-		for(int i=0; i<size; i++){
-			(*bodies)[i]->setWireframeMode(newState);
-		}
-	}else if(box == fakeSizeBox){ // Toggle fakeSize
+	if(box == fakeSizeBox){ // Toggle fakeSize
 		std::vector<Body*> *bodies = simulator->getBodies();
 		int size = bodies->size();
 	
@@ -126,6 +118,9 @@ void MainHudPage::draw(DrawService *drawService){
 	DateService::getDate(simulator->getTime(), &date);	
 	text += date;
 	this->timeView->setText(text);
+	
+	text = std::to_string(simulator->getTime());
+	this->secondsView->setText(text);
 	
 	// Updating FPS
 	text = "FPS ";

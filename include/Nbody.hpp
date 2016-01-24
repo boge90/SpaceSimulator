@@ -10,7 +10,7 @@ class Nbody{
 		// Simulation data
 		std::vector<Body*> *bodies;
 		double G;
-		double dt;
+		double* dt;
 		double *positions;
 		double *velocities;
 		

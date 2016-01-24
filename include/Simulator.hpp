@@ -9,11 +9,13 @@ class Simulator;
 #include "../include/Config.hpp"
 #include "../include/Skybox.hpp"
 #include "../include/Renderer.hpp"
+#include "../include/Keyboard.hpp"
 #include "../include/RayTracer.hpp"
 #include "../include/StarDimmer.hpp"
 #include "../include/BodyTracer.hpp"
 #include "../include/BodyLocator.hpp"
 #include "../include/BodyRotator.hpp"
+#include "../include/DeltaTimeChecker.hpp"
 #include "../include/BodyLevelOfDetail.hpp"
 
 #include <vector>
@@ -23,14 +25,17 @@ class Simulator{
 		// Simulation data
 		std::vector<Body*> *bodies;
 		double time;
-		double dt;
+		double *dt;
 		int simulationSteps;
 		size_t debugLevel;
 		bool paused;
-
+		
 		// Frame for visualization
 		Renderer *renderer;
 		Frame *frame;
+		
+		// Input
+		Keyboard *keyboard;
 		
 		// Sub renderers
 		Skybox *skybox;
@@ -43,6 +48,9 @@ class Simulator{
 		BodyRotator *bodyRotator;
 		RayTracer *rayTracer;
 		StarDimmer *starDimmer;
+
+		// Misc checkers
+		DeltaTimeChecker *deltaTimeChecker;
 	public:
 		/**
 		* Creates the simultor class for N-Body simulation

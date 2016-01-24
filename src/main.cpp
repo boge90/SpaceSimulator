@@ -25,26 +25,27 @@ int main(int argc, char **args){
 	}
 	
 	if(config->isMaster()){	
-		GLFWwindow *window = OpenGlHelper::init(config);
-		
-		// Exit if no window could be created
-		if(window == NULL){exit(EXIT_FAILURE);}
-		
 		// Reading bodies from disk
 		double time;
 		std::vector<Body*> *bodies = new std::vector<Body*>();
 		BodyIO::read(&time, bodies, config);
+		
+		// Goto time
+		GLFWwindow *window = OpenGlHelper::init(config);
 	
+		// Exit if no window could be created
+		if(window == NULL){exit(EXIT_FAILURE);}
+
 		// Init
 		glfwDestroyWindow(window);
 		Simulator *simulator = new Simulator(time, bodies, config);
-	
+
 		// Main loop
 		std::cout << "main.cpp\t\tEntering main loop\n";
 		while(simulator->isRunning()){		
 			simulator->simulate();
 		}
-	
+
 		// Writing bodies to disk
 		if(!config->isDiscardResult()){		
 			BodyIO::write(simulator->getTime(), bodies, config);

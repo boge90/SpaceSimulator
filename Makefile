@@ -15,7 +15,7 @@ OBJ_FILES := $(CPP_OBJ_FILES) $(CU_OBJ_FILES) $(C_OBJ_FILES)
 
 # Flags
 CUDA_HOME := /usr/local/cuda
-LD_FLAGS := -lGL -lGLU -lGLEW -lglfw3 -lX11 -lXxf86vm -lXrandr -lpthread -lXi -L$(CUDA_HOME)/lib64/ -lcudart
+LD_FLAGS := -lm -lGL -lGLU -lglfw3 -lGLEW -lX11 -lXxf86vm -lXrandr -lpthread -lXi -lcudart -lXcursor -lXinerama
 CC_FLAGS := -c -O3 -Wall -std=c++0x
 CU_FLAGS := -m64 -arch=sm_35 -c
 
@@ -43,5 +43,8 @@ obj/%.o: src/%.cu
 	$(NVCC) $(CU_FLAGS) -o $@ $<
 	
 clean:
-	rm obj/*.o
-	rm $(EXECUTABLE)
+	-rm obj/*.o
+	-rm *~
+	-rm src/*~
+	-rm include/*~
+	-rm $(EXECUTABLE)

@@ -11,7 +11,6 @@ class OrbitCameraControl: public AbstractCamera{
 		size_t debugLevel;
 	
 		Body *body;
-		Frame *frame;
 		GLFWwindow *window;
 		
 		// Camera data
@@ -20,7 +19,7 @@ class OrbitCameraControl: public AbstractCamera{
 		double speed, mouseSpeed;
 		double previousTime;
 		double height;
-		double dt;
+		double *dt;
 	public:
 		/**
 		* Constructs this camera

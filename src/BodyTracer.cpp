@@ -23,7 +23,12 @@ BodyTracer::BodyTracer(std::vector<Body*> *bodies, Config *config){
 	glGenBuffers(1, &colorBuffer);
 	
 	// Shader
-	shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl", config);
+	shader = new Shader(config);
+	
+	// Creating shader
+	shader->addShader("src/shaders/vertex.glsl", GL_VERTEX_SHADER);
+	shader->addShader("src/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+	shader->link();
 }
 
 BodyTracer::~BodyTracer(void){
@@ -110,7 +115,8 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 	}
 	startVertex = positions[bodyNum];
 
-	// Calculating future path	
+	// Calculating future path
+	double delta_time = *dt;
 	size_t num=0;
 	std::cout << "BodyTracer.cpp\t\tCalculating future path for body " << bodyNum << std::endl;
 	double t0 = glfwGetTime();
@@ -147,9 +153,9 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 			glm::dvec3 center = positions[i];
 			glm::dvec3 delta;
 		
-			delta.x = dt*velocity[i].x;
-			delta.y = dt*velocity[i].y;
-			delta.z = dt*velocity[i].z;
+			delta.x = delta_time*velocity[i].x;
+			delta.y = delta_time*velocity[i].y;
+			delta.z = delta_time*velocity[i].z;
 		
 			// Updating new center
 			center.x += delta.x;
@@ -177,9 +183,9 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 			}
 		
 			// Updating new velocity
-			vel.x += dt * f.x/masses[i];
-			vel.y += dt * f.y/masses[i];
-			vel.z += dt * f.z/masses[i];
+			vel.x += delta_time * f.x/masses[i];
+			vel.y += delta_time * f.y/masses[i];
+			vel.z += delta_time * f.z/masses[i];
 			velocity[i] = vel;
 		
 			// Reset force for next iteration
@@ -190,8 +196,8 @@ void BodyTracer::calculateFuturePath(size_t bodyNum){
 	
 	// DEBUG
 	std::cout << "BodyTracer.cpp\t\tCalculated " << vertices.size() << " vertices in " << glfwGetTime()-t0 << " seconds" << std::endl;
-	std::cout << "BodyTracer.cpp\t\tThe track represents the path for the next " << (num*dt)/(3600.0*24.0*365.242199) << " earth years" << std::endl;
-	std::cout << "BodyTracer.cpp\t\tClosest encounter are in " << (timeStep*dt)/(3600*24) << " days, and will then be " << (closest/1000) << " km from earth" << std::endl;
+	std::cout << "BodyTracer.cpp\t\tThe track represents the path for the next " << (num*delta_time)/(3600.0*24.0*365.242199) << " earth years" << std::endl;
+	std::cout << "BodyTracer.cpp\t\tClosest encounter are in " << (timeStep*delta_time)/(3600*24) << " days, and will then be " << (closest/1000) << " km from earth" << std::endl;
 	
 	// Vertex count used for rendering
 	numVertices = vertices.size();

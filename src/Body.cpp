@@ -9,7 +9,7 @@ Body::Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 r
 	// Debug
 	this->config = config;
 	this->debugLevel = config->getDebugLevel();
-	if((debugLevel & 0x10) == 16){	
+	if((debugLevel & 0x10) == 16){
 		std::cout << "Body.cpp\t\tInitializing body " << bodyNumber << " (" << this << ")" << "\n";
 	}
 	
@@ -40,7 +40,9 @@ Body::Body(std::string name, glm::dvec3 center, glm::dvec3 velocity, glm::vec3 r
 	this->rotation = rotation;
 	this->force = glm::dvec3(0.0, 0.0, 0.0);
 	this->texturePath = texturePath;
-	this->lod = 1;
+	this->lod = config->getMinBodyLod();
+	this->surfaceTemperatureBuffer = 0;
+	this->visualization = NORMAL;
 }
 
 Body::~Body(){
@@ -49,7 +51,7 @@ Body::~Body(){
 	}
 	
 	// Clean objects
-	delete shader;
+	delete normalShader;
 	delete atmosphere;
 	
 	// Freeing texture image memory
@@ -69,19 +71,31 @@ void Body::init(){
 	// Atmosphere
 	atmosphere = new Atmosphere(this, config);
 
-	// Loading shader
+	// Loading shaders
 	if(bodyType == STAR || bodyType == PLANET){
-		shader = new Shader("src/shaders/bodyVertex.glsl", "src/shaders/bodyFragment.glsl", config);
+		normalShader = new Shader(config);
+		normalShader->addShader("src/shaders/bodyVertex.glsl", GL_VERTEX_SHADER);
+		normalShader->addShader("src/shaders/bodyFragment.glsl", GL_FRAGMENT_SHADER);
 	}else{	
-		shader = new Shader("src/shaders/cometVertex.glsl", "src/shaders/cometFragment.glsl", config);
+		normalShader = new Shader(config);
+		normalShader->addShader("src/shaders/cometVertex.glsl", GL_VERTEX_SHADER);
+		normalShader->addShader("src/shaders/cometFragment.glsl", GL_FRAGMENT_SHADER);
 	}
 	
+	normalShader->link();
+	
+	temperatureShader = new Shader(config);
+	temperatureShader->addShader("src/shaders/bodyTemperatureVertex.glsl", GL_VERTEX_SHADER);
+	temperatureShader->addShader("src/shaders/bodyTemperatureFragment.glsl", GL_FRAGMENT_SHADER);
+	temperatureShader->link();
+	
 	// Generating buffers
+	glGenBuffers(1, &colorBuffer);
 	glGenBuffers(1, &indexBuffer);
 	glGenBuffers(1, &vertexBuffer);
-	glGenBuffers(1, &colorBuffer);
-    glGenBuffers(1, &solarCoverBuffer);
 	glGenBuffers(1, &texCoordBuffer);
+    glGenBuffers(1, &solarCoverBuffer);
+	glGenBuffers(1, &surfaceTemperatureBuffer);
 	
 	// Calculating vertices
 	generateVertices(lod);
@@ -113,10 +127,26 @@ void Body::init(){
 			}
 		}
 	}
+	
+	// Surface temperatur buffer
+	float *temperatur = (float*) malloc(numVertices*sizeof(float));
+	for(size_t i=0; i<numVertices; i++){
+		temperatur[i] = 0.f;
+	}
+    glBindBuffer(GL_ARRAY_BUFFER, surfaceTemperatureBuffer);
+    glBufferData(GL_ARRAY_BUFFER, numVertices*sizeof(float), temperatur, GL_DYNAMIC_DRAW);
+	
     
 	if((debugLevel & 0x8) == 8){	
 	    std::cout << "Body.cpp\t\tInitialized " << numVertices << " vertices for body " << bodyNum << std::endl;
 	}
+}
+
+static inline float clamp(float in, float min, float max)
+{
+	if(in < min){return min;}
+	else if(in > max){return max;}
+	else{return in;}
 }
 
 void Body::generateVertices(int depth){
@@ -151,7 +181,7 @@ void Body::generateVertices(int depth){
 	
 	numVertices = vertices->size();
 	numIndices = indices->size();
-	
+
 	// Normalize vertices into sphere
 	for(size_t i=0; i<numVertices; i++){
 		// Calculating direction vector
@@ -191,10 +221,11 @@ void Body::generateVertices(int depth){
 		float u = 0.5 - ((atan2(vertex.z, vertex.x))/(2.f*M_PI));
 		float v = 0.5 - (asin(vertex.y)/M_PI);
 		
-		
-		//printf("U = %f, V = %f\n", u, v);
-		//assert(u >= 0 && u <= 1);
-		//assert(v >= 0 && v <= 1);
+		u = clamp(u, 0.f, 1.f);
+		v = clamp(v, 0.f, 1.f);
+
+		assert(u >= 0 && u <= 1);
+		assert(v >= 0 && v <= 1);
 		
 		coords->push_back(glm::vec2(u, v));
 	}
@@ -247,6 +278,11 @@ void Body::calculateVertices(std::vector<glm::vec3> *vertices, std::vector<glm::
 }
 
 void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){
+	// Size check
+	//if(2*asin(radius/glm::length(center - position)) < 0.25*M_PI/180.0 && !fakeSize){
+	//	return;
+	//}
+
 	// FakeSize
 	float scale = radius;
 	if(fakeSize){
@@ -255,14 +291,6 @@ void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm:
 	
 	// Render atmosphere
 	atmosphere->render(vp, position, direction, up);
-
-	// Binding the Body shader
-	shader->bind();
-	
-	// Activating texture
-	if(bodyType == STAR || bodyType == PLANET){
-		glBindTexture(GL_TEXTURE_2D, tex);
-	}
 	
 	// Translating, scaling and rotating body
 	glm::mat4 mvp = (*vp) * glm::translate(glm::mat4(1), glm::vec3(center - position));
@@ -270,30 +298,57 @@ void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm:
 	mvp = mvp * glm::rotate(glm::mat4(1.f), float(rotation), glm::vec3(0, 1, 0));
 	mvp = mvp * glm::scale(glm::mat4(1.f), glm::vec3(scale, scale, scale));
 	
-	// Get a handle for our "MVP" uniform.
-	GLuint mvpMatrixId = glGetUniformLocation(shader->getID(), "MVP");
-	glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, &mvp[0][0]);
+	if ( visualization == NORMAL ){	
+		// Binding the Body shader
+		normalShader->bind();
+	
+		// Activating texture
+		if(bodyType == STAR || bodyType == PLANET){
+			glBindTexture(GL_TEXTURE_2D, tex);
+		}
+	
+		// Get a handle for our "MVP" uniform.
+		GLuint mvpMatrixId = glGetUniformLocation(normalShader->getID(), "MVP");
+		glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, &mvp[0][0]);
 
-	// Binding vertex VBO
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
+		// Binding vertex VBO
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
 	
-	// Binding color VBO
-	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
+		// Binding color VBO
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
 	
-	// Binding solar coverage VBO
-	glEnableVertexAttribArray(2);
-	glBindBuffer(GL_ARRAY_BUFFER, solarCoverBuffer);
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(float), 0);
+		// Binding solar coverage VBO
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, solarCoverBuffer);
+		glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, sizeof(float), 0);
 	
-	// Binding texture coordinate buffer
-	if(bodyType == STAR || bodyType == PLANET){
-		glEnableVertexAttribArray(3);
-		glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
-		glVertexAttribPointer(3, 2, GL_FLOAT, GL_TRUE, sizeof(float)*2, 0);
+		// Binding texture coordinate buffer
+		if(bodyType == STAR || bodyType == PLANET){
+			glEnableVertexAttribArray(3);
+			glBindBuffer(GL_ARRAY_BUFFER, texCoordBuffer);
+			glVertexAttribPointer(3, 2, GL_FLOAT, GL_TRUE, sizeof(float)*2, 0);
+		}
+	}else if ( visualization == TEMPERATURE ){
+		// Binding the Body shader
+		temperatureShader->bind();
+		
+		// Get a handle for our "MVP" uniform.
+		GLuint mvpMatrixId = glGetUniformLocation(normalShader->getID(), "MVP");
+		glUniformMatrix4fv(mvpMatrixId, 1, GL_FALSE, &mvp[0][0]);
+
+		// Binding vertex VBO
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float)*3, 0);
+
+		// Binding vertex VBO
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, surfaceTemperatureBuffer);
+		glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, sizeof(float), 0);
 	}
 	
 	// Indices
@@ -303,7 +358,7 @@ void Body::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm:
 	if(wireFrame){
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
-		
+	
 	// Draw
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, (void*)0);
 	
@@ -402,6 +457,10 @@ GLuint Body::getVertexIndexBuffer(void){
 	return indexBuffer;
 }
 
+GLuint Body::getSurfaceTemperatureBuffer(void){
+	return surfaceTemperatureBuffer;
+}
+
 size_t Body::getNumIndices(void){
 	return numIndices;
 }
@@ -418,6 +477,18 @@ void Body::setWireframeMode(bool active){
 	}else{
 		std::cout << "Body.cpp\t\tTurning OFF wireframe for body " << bodyNum << std::endl;
 	}
+}
+
+void Body::setVisualizationType(Visualization type){
+	switch (type){
+		case NORMAL:
+			std::cout << "Body.cpp\t\tChanging visualization to NORMAL for " << name << std::endl;
+			break;
+		case TEMPERATURE:
+			std::cout << "Body.cpp\t\tChanging visualization to TEMPERATURE for " << name << std::endl;
+			break;
+	}
+	this->visualization = type;
 }
 
 void Body::setFakeSize(bool active){

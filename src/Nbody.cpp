@@ -17,7 +17,6 @@ Nbody::Nbody(std::vector<Body*> *bodies, Config *config){
 	this->velocities = (double*) malloc(bodies->size()*3*sizeof(double));
 	
 	// Creating temp positions array
-	double *velocities = (double*) malloc(bodies->size()*3*sizeof(double));
 	double *mass = (double*) malloc(bodies->size()*sizeof(double));
 	for(size_t i=0; i<bodies->size(); i++){
 		Body *body = (*bodies)[i];
@@ -39,7 +38,6 @@ Nbody::Nbody(std::vector<Body*> *bodies, Config *config){
 	initializeNbodySystem(G, dt, positions, velocities, mass, bodies->size(), config);
 	
 	// Cleanup
-	free(velocities);
 	free(mass);
 }
 

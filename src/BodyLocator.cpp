@@ -13,7 +13,12 @@ BodyLocator::BodyLocator(std::vector<Body*> *bodies, Config *config){
 	this->bodies = bodies;
 	this->active = false;
 	this->bodyIndex = 0;
-	this->shader = new Shader("src/shaders/vertex.glsl", "src/shaders/fragment.glsl", config);
+	this->shader = new Shader(config);
+	
+	// Creating shader
+	shader->addShader("src/shaders/vertex.glsl", GL_VERTEX_SHADER);
+	shader->addShader("src/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+	shader->link();
 	
 	// Buffers
 	glGenBuffers(1, &vertexBuffer);

@@ -48,6 +48,11 @@ class KeyboardInput{
 		* Returns the pointer to the singleton object
 		**/
 		static KeyboardInput* getInstance(void);
+	
+		/**
+		* Deletes the singleton object
+		**/
+		static void destroy(void);
 };
 
 #endif

@@ -9,6 +9,7 @@ class Config{
 		double dt;
 		size_t renderingDeviceNumber;
 		size_t debugLevel;
+		double mouseSpeed;
 		
 		// Bodies
 		size_t maxBodyLod;
@@ -22,6 +23,9 @@ class Config{
 		
 		// Visualization
 		bool fullscreen;
+
+		/* HUD */
+		bool combinedBodyHudPages;
 		
 		// MPI
 		int size;
@@ -41,13 +45,18 @@ class Config{
 		/**
 		* Returns the simulation 'delta time' value
 		**/
-		double getDt(void);
+		double* getDt(void);
 		
 		/**
 		* Returns the debug levels, each bit represents the ON/OFF switch
 		* of a certain debug area
 		**/
 		size_t getDebugLevel(void);
+		
+		/**
+		* Returns the mouse speed scale
+		**/
+		double getMouseSpeed(void);
 		
 		/**
 		* Returns the max level of detail for the bodies
@@ -95,6 +104,11 @@ class Config{
 		*
 		**/
 		bool isFlipCheck(void);
+
+		/**
+		*
+		**/
+		bool isCombinedBodyHudPages(void);
 };
 
 #endif

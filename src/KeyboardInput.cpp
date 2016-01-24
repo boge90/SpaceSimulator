@@ -49,3 +49,9 @@ KeyboardInput* KeyboardInput::getInstance(void){
 	
 	return instance;
 }
+
+void KeyboardInput::destroy(void){
+	if(instance != NULL){
+		delete instance;
+	}
+}

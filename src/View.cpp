@@ -45,7 +45,13 @@ void View::addViewClickedAction(ViewClickedAction *action){
 	clickActions->push_back(action);
 }
 
-void View::draw(DrawService *service){
+void View::draw(DrawService *service)
+{
+	drawBorder(service, red, green, blue);
+}
+
+void View::drawBorder(DrawService *service, char red, char green, char blue)
+{
 	service->drawLine(x, y, x+width, y, red, green, blue);
 	service->drawLine(x, y, x, y+height, red, green, blue);
 	service->drawLine(x, y+height, x+width, y+height, red, green, blue);

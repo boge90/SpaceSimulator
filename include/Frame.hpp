@@ -60,6 +60,11 @@ class Frame{
 		*
 		**/
 		static void mouseCallback(GLFWwindow *window, int button, int action, int mods);
+		
+		/**
+		*
+		**/
+		static void mouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset);
 	public:
 		/**
 		* Constructor

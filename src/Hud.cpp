@@ -2,6 +2,7 @@
 #include "../include/CameraHudPage.hpp"
 #include "../include/MainHudPage.hpp"
 #include "../include/BodyHudPage.hpp"
+#include "../include/CombinedBodyHudPage.hpp"
 
 #include <iostream>
 
@@ -38,10 +39,16 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator, Frame *frame, Config *config)
 	
 	// Adding Body HUD pages
 	std::vector<Body*> *bodies = simulator->getBodies();
-	for(size_t i=0; i<bodies->size(); i++){
-		std::string title = (*(*bodies)[i]->getName());
-	
-		pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, title, (*bodies)[i], config));
+	if ( config->isCombinedBodyHudPages() )
+	{
+		pages->push_back( new CombinedBodyHudPage(10+50+10, 0, width-140, height-1, "BODY INFORMATION", bodies, config) );
+	}
+	else
+	{
+		for(size_t i=0; i<bodies->size(); i++){
+			std::string title = (*(*bodies)[i]->getName());
+			pages->push_back(new BodyHudPage(10+50+10, 0, width-140, height-1, title, (*bodies)[i], config));
+		}
 	}
 	
 	// Texture
@@ -57,7 +64,12 @@ HUD::HUD(GLFWwindow *window, Simulator *simulator, Frame *frame, Config *config)
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels);
 	
 	// Shader
-	shader = new Shader("src/shaders/hudVertex.glsl", "src/shaders/hudFragment.glsl", config);
+	shader = new Shader(config);
+	
+	// Creating shader
+	shader->addShader("src/shaders/hudVertex.glsl", GL_VERTEX_SHADER);
+	shader->addShader("src/shaders/hudFragment.glsl", GL_FRAGMENT_SHADER);
+	shader->link();
 	
 	// Generating vertex buffer
 	float z = 0.f;
@@ -143,12 +155,6 @@ void HUD::render(void){
 
 void HUD::toggleVisibility(void){
 	this->visible = !visible;
-	
-	// Reactivating camera after HUD is hidden, such that DELTA timing
-	// used in cameras are not WAY too high
-	if(!visible){
-		cameraHudPage->getActivatedCamera()->setActive(true);
-	}
 }
 
 bool HUD::isVisible(void){
@@ -181,6 +187,45 @@ void HUD::hudClickedRecur(int button, int action, int x, int y, Layout *layout){
 			}
 		}else{
 			hudClickedRecur(button, action, x, y, cast);
+		}
+	}
+}
+
+void HUD::hudScroll( int mouse_x, int mouse_y, double xoffset, double yoffset){
+	if(visible){
+		Layout *layout = (*pages)[activePage];
+		hudScrollRecur( mouse_x, mouse_y, xoffset, yoffset, layout);
+	}
+}
+
+void HUD::hudScrollRecur(int mouse_x, int mouse_y, double xoffset, double yoffset, Layout *layout){
+	/* Check self first */
+	ScrollLayout *scroll_cast_self = dynamic_cast<ScrollLayout*>(layout);
+	if ( scroll_cast_self != NULL )
+	{
+		scroll_cast_self->scroll(xoffset, yoffset);
+	}
+	else
+	{
+		/* Checking children */
+		std::vector<View*> *children = layout->getChildren();	
+		for(size_t i=0; i<children->size(); i++){
+			View *child = (*children)[i];
+		
+			Layout *cast = dynamic_cast<Layout*>(child);
+			if( cast != NULL )
+			{
+				ScrollLayout *scroll_cast = dynamic_cast<ScrollLayout*>(cast);
+
+				if ( scroll_cast != NULL )
+				{
+					scroll_cast->scroll( xoffset, yoffset );
+				}
+				else
+				{
+					hudScrollRecur( mouse_x, mouse_y, xoffset, yoffset, cast);
+				}
+			}
 		}
 	}
 }

@@ -4,8 +4,11 @@
 #include "../include/HudPage.hpp"
 #include "../include/Body.hpp"
 #include "../include/Config.hpp"
+#include "../include/CheckBox.hpp"
+#include "../include/CheckBoxStateChangeAction.hpp"
+#include "../include/SelectViewStateChangeAction.hpp"
 
-class BodyHudPage: public HudPage{
+class BodyHudPage: public HudPage, public CheckBoxStateChangeAction, SelectViewStateChangeAction<Visualization>{
 	private:
 		// Data
 		Body *body;
@@ -15,6 +18,9 @@ class BodyHudPage: public HudPage{
 		TextView *positionViewY;
 		TextView *positionViewZ;
 		TextView *velocityView;
+		CheckBox *wireframeBox;
+		
+		SelectView<Visualization> *visualizationTypeView;
 	public:
 		/**
 		*
@@ -25,6 +31,16 @@ class BodyHudPage: public HudPage{
 		*
 		**/
 		~BodyHudPage();
+		
+		/**
+		* CheckBox state change listener
+		**/
+		void onStateChange(CheckBox *box, bool newState);
+        
+        /**
+        *
+        **/
+        void onStateChange(SelectView<Visualization> *view, Visualization t);
 		
 		/**
 		*

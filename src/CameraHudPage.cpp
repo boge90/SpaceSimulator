@@ -98,9 +98,22 @@ std::vector<AbstractCamera*>* CameraHudPage::getCameras(void){
 }
 
 void CameraHudPage::onStateChange(SelectView<AbstractCamera*> *view, AbstractCamera *t){
+	// Deactivating previous camera 
+	activeCamera->setActive(false);
+	
+	// Setting new camera
 	activeCamera = t;
+	
+	// Activating new camera
+	activeCamera->setActive(true);
 }
 
 void CameraHudPage::onClick(View *view, int button, int action){
+	// Deactivating previous camera 
+	activeCamera->setActive(false);
+	
 	activeCamera = (*cameraControllers)[0]; // Free camera controller
+	
+	// Activating new camera
+	activeCamera->setActive(true);
 }

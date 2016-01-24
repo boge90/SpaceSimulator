@@ -33,7 +33,7 @@ DrawService::~DrawService(void){
 void DrawService::fill(unsigned char r, unsigned char g, unsigned char b){
 	int i;
     for(i = 0; i < width*height; i++){
-    	pixels[i*3+2] = r;	
+    	pixels[i*3+2] = r;
     	pixels[i*3+1] = g;
     	pixels[i*3+0] = b;
     }
@@ -1190,23 +1190,35 @@ void DrawService::drawLine(int xs, int ys, int xe, int ye, unsigned char r, unsi
 
 void DrawService::setPixel(int x, int y, unsigned char r, unsigned char g, unsigned char b){
 	//Verify coordinates in screen
-	assert(x < width && x >= 0);
-	assert(y < height && y >= 0);
-	
-	//Set pixel
-	pixels[y*width*3 + x*3 + 2] = r;
-	pixels[y*width*3 + x*3 + 1] = g;
-	pixels[y*width*3 + x*3 + 0] = b;
+	if ( y >= 0 && y < height && x >= 0 && x < width)
+	{
+		//Set pixel
+		pixels[y*width*3 + x*3 + 2] = r;
+		pixels[y*width*3 + x*3 + 1] = g;
+		pixels[y*width*3 + x*3 + 0] = b;
+	}
 }
 
 inline unsigned char DrawService::getRed(int x, int y){
-	return pixels[y*width*3 + x*3 + 2];
+	if ( y >= 0 && y < height && x >= 0 && x < width)
+	{
+		return pixels[y*width*3 + x*3 + 2];
+	}
+	return 0;
 }
 
 inline unsigned char DrawService::getGreen(int x, int y){
-	return pixels[y*width*3 + x*3 + 1];
+	if ( y >= 0 && y < height && x >= 0 && x < width)
+	{
+		return pixels[y*width*3 + x*3 + 1];
+	}
+	return 0;
 }
 
 inline unsigned char DrawService::getBlue(int x, int y){
-	return pixels[y*width*3 + x*3];
+	if ( y >= 0 && y < height && x >= 0 && x < width)
+	{
+		return pixels[y*width*3 + x*3];
+	}
+	return 0;
 }

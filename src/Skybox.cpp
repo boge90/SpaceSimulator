@@ -99,7 +99,12 @@ Skybox::Skybox(Config *config){
     glBufferData(GL_ARRAY_BUFFER, sizeof(texCords), &texCords, GL_STATIC_DRAW);
 	
 	// Shader
-	shader = new Shader("src/shaders/skyboxVertex.glsl", "src/shaders/skyboxFragment.glsl", config);
+	shader = new Shader(config);
+	
+	// Creating shader
+	shader->addShader("src/shaders/skyboxVertex.glsl", GL_VERTEX_SHADER);
+	shader->addShader("src/shaders/skyboxFragment.glsl", GL_FRAGMENT_SHADER);
+	shader->link();
 	
 	// Freeing host memory
 	BmpService::freeImage(bmp1, config);
@@ -135,7 +140,7 @@ Skybox::~Skybox(){
 
 void Skybox::render(glm::mat4 *vp, glm::dvec3 position, glm::dvec3 direction, glm::dvec3 up){	
 	// Model matrix is identidy matrix, because the skybox should NOT move
-	glm::mat4 m1 = glm::rotate(glm::mat4(1), 55.f, glm::vec3(0, 1, 0));
+	glm::mat4 m1 = glm::rotate(glm::mat4(1), 75.f, glm::vec3(0, 1, 0));
 	glm::mat4 m2 = glm::rotate(glm::mat4(1), 70.f, glm::vec3(0, 0, 1));
 	glm::mat4 mvp = (*vp) * m2 * m1;
 

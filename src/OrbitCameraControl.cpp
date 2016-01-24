@@ -1,7 +1,7 @@
 #include "../include/OrbitCameraControl.hpp"
 #include <iostream>
 
-OrbitCameraControl::OrbitCameraControl(GLFWwindow *window, Frame *frame, Body *body, Config *config): AbstractCamera(config){
+OrbitCameraControl::OrbitCameraControl(GLFWwindow *window, Frame *frame, Body *body, Config *config): AbstractCamera(config, frame, window){
 	this->debugLevel = config->getDebugLevel();
 	if((debugLevel & 0x10) == 16){		
 		std::cout << "BodyCameraControl.cpp\tInitializing for body " << body << "\n";
@@ -9,7 +9,6 @@ OrbitCameraControl::OrbitCameraControl(GLFWwindow *window, Frame *frame, Body *b
 
 	this->body = body;
 	this->window = window;
-	this->frame = frame;
 	
 	this->height = 1.0;
 	this->latitude = 0.0;
@@ -17,7 +16,7 @@ OrbitCameraControl::OrbitCameraControl(GLFWwindow *window, Frame *frame, Body *b
 	this->horizontal = 0.0;
 	this->vertical = 0.0;
 	this->speed = 500000;
-	this->mouseSpeed = 0.05;
+	this->mouseSpeed = 0.05f * config->getMouseSpeed();
 	this->previousTime = 0;
 	this->dt = config->getDt();
 }
@@ -40,14 +39,21 @@ void OrbitCameraControl::checkUserInput(void){
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
 
-		// Reset mouse position for next frame
-		int frameWidth = frame->getWidth();
-		int frameHeight = frame->getHeight();
-		glfwSetCursorPos(window, frameWidth/2, frameHeight/2);
+		if ( !prev_initialized )
+		{
+			prevX = xpos;
+			prevY = ypos;
+			prev_initialized = true;
+			return;
+		}
 
 		// Compute new orientation
-		horizontal += mouseSpeed * deltaTime * double(frameWidth/2.0 - xpos);
-		vertical += mouseSpeed * deltaTime * double(frameHeight/2.0 - ypos);
+		horizontal += mouseSpeed * deltaTime * (prevX - xpos);
+		vertical += mouseSpeed * deltaTime * (prevY - ypos);
+
+		prevX = xpos;
+		prevY = ypos;
+		mouse2_pressed = true;
 
 		if(vertical > M_PI/2.0){
 			vertical = M_PI/2.0;
@@ -56,9 +62,13 @@ void OrbitCameraControl::checkUserInput(void){
 		}
 
 		// Flip upside down check must be compared to UP vector
-	}else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE){
+	}else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_RELEASE && mouse2_pressed){
 		// Showing mouse cursor again after left mouse button is released
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		prevX = 0.0;
+		prevY = 0.0;
+		prev_initialized = false;
+		mouse2_pressed = false;
 	}
 
 	// Up vector

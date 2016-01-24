@@ -13,18 +13,40 @@ BodyHudPage::BodyHudPage(int x, int y, int width, int height, std::string title,
 	this->positionViewY = new TextView("", config);
 	this->positionViewZ = new TextView("", config);
 	this->velocityView = new TextView("", config);
+	this->wireframeBox = new CheckBox("WIREFRAME", false, config);
+	this->visualizationTypeView = new SelectView<Visualization>("VISUALIZATION TYPE", config);
+	
+	// Listeners
+	wireframeBox->addStateChangeAction(this);
+	visualizationTypeView->addSelectViewStateChangeAction(this);
+	
+	// Adding visualization types
+	visualizationTypeView->addItem("NORMAL", NORMAL);
+	visualizationTypeView->addItem("TEMPERATURE", TEMPERATURE);
 	
 	// Adding child
 	addChild(positionViewX);
 	addChild(positionViewY);
 	addChild(positionViewZ);
 	addChild(velocityView);
+	addChild(wireframeBox);
+	addChild(visualizationTypeView);
 }
 
 BodyHudPage::~BodyHudPage(){
-	if((debugLevel & 0x10) == 16){	
+	if((debugLevel & 0x10) == 16){
 		std::cout << "BodyHudPage.cpp\t\tFinalizing" << std::endl;
 	}
+}
+
+void BodyHudPage::onStateChange(CheckBox *box, bool newState){
+	if( box == wireframeBox ){
+		body->setWireframeMode(newState);
+	}
+}
+
+void BodyHudPage::onStateChange(SelectView<Visualization> *view, Visualization t){
+	body->setVisualizationType(t);
 }
 
 void BodyHudPage::draw(DrawService *drawService){

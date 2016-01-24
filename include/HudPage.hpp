@@ -9,6 +9,7 @@ class HudPage: public ListLayout{
 	private:
 		// GUI
 		TextView *titleView;
+
 	public:
 		/**
 		* Creates an empty HUD page object

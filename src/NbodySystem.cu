@@ -1,10 +1,10 @@
 #include "../include/NbodySystem.cuh"
 #include <stdio.h>
-#include <vector>
 #include <cuda_runtime_api.h>
 
 // data
 static size_t numBodies;
+static double *delta_time;
 static double *cudaPositions;
 static double *cudaVelocity;
 static double *cudaForces;
@@ -18,14 +18,15 @@ __constant__ double cudaDt;
 void __global__ cudaCalculateForce(size_t numBodies, double *cudaPositions, double *cudaForces, double *cudaMass);
 void __global__ cudaUpdatePositions(size_t numBodies, double *cudaPositions, double *cudaVelocity, double *cudaForces, double *cudaMass);
 
-void initializeNbodySystem(double G, double dt, double *positions, double *velocity, double *mass, size_t in_numBodies, Config *config){
+void initializeNbodySystem(double G, double *dt, double *positions, double *velocity, double *mass, size_t in_numBodies, Config *config){
 	if((config->getDebugLevel() & 0x10) == 16){	
 		printf("NbodySystem.cu\t\tInitializing\n");
 	}
 	
 	// Init
 	numBodies = in_numBodies;
-	
+	delta_time = dt;
+
 	// Allocating memory
 	cudaMalloc(&cudaPositions, numBodies*3*sizeof(double));
 	cudaMalloc(&cudaVelocity, numBodies*3*sizeof(double));
@@ -38,7 +39,6 @@ void initializeNbodySystem(double G, double dt, double *positions, double *veloc
 	cudaMemcpy(cudaMass, mass, numBodies*sizeof(double), cudaMemcpyHostToDevice);
 	
 	cudaMemcpyToSymbol(cudaG, &G, sizeof(double), 0, cudaMemcpyHostToDevice);
-	cudaMemcpyToSymbol(cudaDt, &dt, sizeof(double), 0, cudaMemcpyHostToDevice);
 	
 	// Error check
 	cudaError_t error = cudaGetLastError();
@@ -53,6 +53,9 @@ void update(double *newPositions, double *newVelocities){
 	dim3 block(512);
 	cudaCalculateForce<<<grid, block>>>(numBodies, cudaPositions, cudaForces, cudaMass);
 	cudaUpdatePositions<<<grid, block>>>(numBodies, cudaPositions, cudaVelocity, cudaForces, cudaMass);
+
+	// Copy DT in case it has changed (should check if it has changed)
+	cudaMemcpyToSymbol(cudaDt, delta_time, sizeof(double), 0, cudaMemcpyHostToDevice);
 	
 	// Getting new data
 	cudaMemcpy(newPositions, cudaPositions, numBodies*3*sizeof(double), cudaMemcpyDeviceToHost);

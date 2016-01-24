@@ -56,6 +56,11 @@ class HUD: public ViewClickedAction{
 		* Called when finding a layout class in the view tree, for traversing down the tree
 		**/
 		void hudClickedRecur(int button, int action, int x, int y, Layout *layout);
+		
+		/**
+		* Called when finding a scrolllayout class in the view tree, for traversing down the tree
+		**/
+		void hudScrollRecur( int mouse_x, int mouse_y, double xoffset, double yoffset, Layout *layout );
 	public:
 		/**
 		* Creates the HUD object
@@ -91,6 +96,11 @@ class HUD: public ViewClickedAction{
 		* Called when the mouse is clicked
 		**/
 		void hudClicked(int button, int action, int x, int y);
+		
+		/**
+		* Called when the user is scrolling
+		**/
+		void hudScroll( int mouse_x, int mouse_y, double xoffset, double yoffset);
 		
 		/**
 		* Called when the left or right button is clicked

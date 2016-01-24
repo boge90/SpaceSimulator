@@ -18,6 +18,7 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	// Initializing visualization system
 	this->renderer = new Renderer(this, config);
 	this->frame = new Frame(1800, 1000, "Space", renderer, this, config);
+	this->keyboard = new Keyboard(bodies, config);
 	
 	// Initializing sub renderers
 	this->skybox = new Skybox(config);
@@ -39,6 +40,9 @@ Simulator::Simulator(double time, std::vector<Body*> *bodies, Config *config){
 	this->bodyRotator = new BodyRotator(bodies, config);
 	this->rayTracer = new RayTracer(bodies, config);
 	this->starDimmer = new StarDimmer(this, bodies, config);
+
+	// Misc checkers
+	this->deltaTimeChecker = new DeltaTimeChecker( config );
 }
 
 Simulator::~Simulator(){
@@ -47,9 +51,10 @@ Simulator::~Simulator(){
 		std::cout << "Simulator.cpp\t\tFinalizing" << std::endl;
 	}
 	
-	std::cout << "Simulator.cpp\t\tExecuted " << simulationSteps << " simulations steps (" << (simulationSteps*dt)/(3600.0) << " hours)\n";
+	std::cout << "Simulator.cpp\t\tExecuted " << simulationSteps << " simulations steps (" << (simulationSteps* (*dt) )/(3600.0) << " hours)\n";
 	
 	// Free
+	delete keyboard;
 	delete frame;
 	delete renderer;
 	delete nbody;
@@ -60,23 +65,21 @@ Simulator::~Simulator(){
 	delete bodyLocator;
 	delete starDimmer;
 	delete bodyLevelOfDetail;
+	delete deltaTimeChecker;
 }
 
 void Simulator::simulate(void){
 	if(!paused){
 		// Sub - simulations
 		nbody->simulateGravity();
-		rayTracer->simulateRays();
 		bodyRotator->simulateRotation();
-
-		// Misc
-		simulationSteps++;
-		time += dt;
+		rayTracer->simulateRays();
 	}
 	
 	// Check user input IFF menu is hidden
 	if(!(frame->getHud()->isVisible())){
 		frame->getHud()->getActivatedCamera()->checkUserInput();
+		frame->getHud()->getActivatedCamera()->checkMouseLocation();
 	}
 	
 	// Simulations that need updated camera position
@@ -84,10 +87,18 @@ void Simulator::simulate(void){
 		glm::dvec3 position = frame->getHud()->getActivatedCamera()->getPosition();
 		starDimmer->simulateStarDimming(position);
 		bodyLevelOfDetail->update(position);
+		
+		// Misc
+		simulationSteps++;
+		time += *dt;
 	}
 	
 	// Update visualization
 	frame->update();
+
+	// Misc checkers
+	double fps = frame->getFPS();
+	deltaTimeChecker->update_delta_time_if_needed( fps, time );
 }
 
 double Simulator::getTime(void){

@@ -20,7 +20,11 @@ class FreeCameraControl: public AbstractCamera{
 		
 		//GLFW
 		GLFWwindow *window;
-		Frame *frame;
+		
+		/**
+		* Called when this camera is active and the user presses the keyboard
+		**/
+		void onKeyInput(int key);
 	public:
 		/**
 		* Constructs the camera object

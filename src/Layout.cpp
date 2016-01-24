@@ -32,9 +32,6 @@ void Layout::addChild(View *view){
 void Layout::draw(DrawService *drawService){
 	// Super
 	View::draw(drawService);
-
-	// Calling parent
-	View::draw(drawService);
 	
 	// Drawing children
 	size_t numChildren = children->size();

@@ -19,9 +19,9 @@ class MainHudPage: public HudPage, public ViewClickedAction, public CheckBoxStat
 		// GUI elements
 		TextView *fpsView;
 		TextView *timeView;
+		TextView *secondsView;
 		CheckBox *pausedBox;
 		CheckBox *cullBackfaceBox;
-		CheckBox *wireframeBox;
 		CheckBox *fakeSizeBox;
 		CheckBox *starDimmerBox;
 		CheckBox *futureBodyPathBox;

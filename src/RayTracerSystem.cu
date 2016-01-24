@@ -18,12 +18,7 @@ void __global__ simulateRaysTwo(double3 bc, int numBodyVertices, float3 *bodyVer
 void __global__ illuminate(int numBodyVertices, float *solarCoverageBuffer);
 void __global__ unilluminate(int numBodyVertices, float *solarCoverageBuffer);
 
-void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, bool isStar, Config *config){
-	// Debug
-	if((config->getDebugLevel() & 0x8) == 8){	
-		printf("RayTracerSystem.cu\tAdding body to ray tracer system (%d, %d, %d)\n", vertexBuffer, solarCoverageBuffer, isStar);
-	}
-	
+void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, bool isStar){
 	// Initializing unit
 	struct cudaGraphicsResource *vertexResource;
 	cudaGraphicsGLRegisterBuffer(&vertexResource, vertexBuffer, cudaGraphicsRegisterFlagsNone);

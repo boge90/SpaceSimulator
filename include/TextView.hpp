@@ -13,7 +13,6 @@ class TextView: public View{
 		int leftPadding;
 		int topPadding;
 		int charPadding;
-		bool repaintFlag;
 		
 		/**
 		* Draws the string
@@ -44,11 +43,6 @@ class TextView: public View{
 		* Returns the pointer to the text string
 		**/
 		std::string* getText();
-		
-		/**
-		*
-		**/
-		void repaint(void);
 };
 
 #endif

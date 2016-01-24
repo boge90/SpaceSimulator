@@ -7,7 +7,7 @@
 
 class Layout: public View{
 	protected:
-		std::vector<View*> *children;	
+		std::vector<View*> *children;
 		
 	public:
 		/**

@@ -33,10 +33,11 @@ void BodyRotator::simulateRotation(void){
 		Body *body = (*bodies)[i];
 		
 		theta = body->getRotation();
-		theta += body->getRotationSpeed()*dt;
+		theta += body->getRotationSpeed() * (*dt);
 		
 		if(theta > 2.0*M_PI){
-			theta -= 2.0*M_PI;
+			int complete_circles = theta / (2.0*M_PI);
+			theta -= complete_circles * 2.0*M_PI;
 		}
 		
 		body->setRotation(theta);

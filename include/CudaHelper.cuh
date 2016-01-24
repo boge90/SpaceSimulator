@@ -3,8 +3,8 @@
 
 #include "../include/Config.hpp"
 
-#include </usr/local/cuda/include/cuda_runtime.h>
-#include </usr/local/cuda/include/cuda_gl_interop.h>
+#include <cuda_runtime.h>
+#include <cuda_gl_interop.h>
 #include <vector>
 
 class CudaHelper{

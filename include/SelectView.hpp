@@ -22,7 +22,6 @@ template <class T> class SelectView: public Layout, public ViewClickedAction{
 		
 		// GUI
 		std::string text;
-		bool repaint;
 		Button *nextButton;
 		Button *prevButton;
 		TextView *textView;
@@ -57,7 +56,6 @@ template <class T> class SelectView: public Layout, public ViewClickedAction{
 	
 			// Init
 			this->text = text;
-			this->repaint = false;
 			this->activeElement = 0;
 			this->names = new std::vector<std::string>();
 			this->values = new std::vector<T>();
@@ -139,19 +137,21 @@ template <class T> class SelectView: public Layout, public ViewClickedAction{
 		*
 		**/
 		void draw(DrawService *drawService){
-			// Super
-			View::draw(drawService);
-			
+			/* Drawing black boarder on old position, in case boarder is moved */
+			textView->drawBorder(drawService, 0, 0, 0);
+
 			int x = this->x + 135 + DrawService::widthOf(text) + 5;
 			int y = this->y + 5;
 			textView->relocate(x, y, drawService->widthOf((*names)[activeElement]) + 20, 20);
 			textView->setText((*names)[activeElement]);
-			textView->repaint();
-				
+
 			titleView->draw(drawService);
 			prevButton->draw(drawService);
 			textView->draw(drawService);
 			nextButton->draw(drawService);
+
+			// Super
+			View::draw(drawService);
 		}
 		
 		/**

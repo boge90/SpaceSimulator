@@ -15,7 +15,7 @@ extern "C"{
 	/**
 	* Adding a body's vertex and color buffer to the ray traycing system
 	**/
-	void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, bool isStar, Config *config);
+	void addBodyToRayTracer(GLuint vertexBuffer, GLuint solarCoverageBuffer, bool isStar);
 	
 	/**
 	* Simulates the rays for all the bodies and the stars

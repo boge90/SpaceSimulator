@@ -10,7 +10,12 @@ Atmosphere::Atmosphere(Body *body, Config *config){
 	
 	// Init
 	this->body = body;
-	this->shader = new Shader("src/shaders/atmosphereVertex.glsl", "src/shaders/atmosphereFragment.glsl", config);
+	this->shader = new Shader(config);
+	
+	// Creating shader
+	shader->addShader("src/shaders/atmosphereVertex.glsl", GL_VERTEX_SHADER);
+	shader->addShader("src/shaders/atmosphereFragment.glsl", GL_FRAGMENT_SHADER);
+	shader->link();
 }
 
 Atmosphere::~Atmosphere(){

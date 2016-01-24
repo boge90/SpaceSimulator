@@ -10,7 +10,7 @@ class BodyRotator{
 	private:
 		// Data
 		std::vector<Body*> *bodies;
-		double dt;
+		double *dt;
 		
 		// Misc
 		Config *config;

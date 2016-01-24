@@ -19,25 +19,30 @@ using namespace std;
 class Shader{
 	private:
 		// OpenGl
-		GLuint shaderId;
+		GLuint programId;
 		
 		// Misc
 		size_t debugLevel;
-		
-		/**
-		* Method for loading and compiling shaders
-		**/
-		GLuint loadShaders(const char *vertex_file_path, const char *fragment_file_path);
 	public:
 		/**
 		* Loads the shaders specified from arguments and compiles them
 		**/
-		Shader(const char *vertexShader, const char *fragmentShader, Config *config);
+		Shader(Config *config);
 		
 		/**
 		* Finalizes the shader
 		**/
 		~Shader(void);
+		
+		/**
+		* Method for loading and compiling shaders
+		**/
+		void addShader(const char *path, GLenum shaderType);
+		
+		/**
+		*
+		**/
+		void link(void);
 		
 		/**
 		* Binds this shader

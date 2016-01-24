@@ -4,12 +4,17 @@
 #include <stdlib.h>
 #include <iostream>
 
+class AbstractCamera;
+
 #include "../include/common.hpp"
 #include "../include/Config.hpp"
 #include "../include/Shader.hpp"
+#include "../include/Frame.hpp"
+#include "../include/KeyboardInput.hpp"
+#include "../include/KeyboardInputAction.hpp"
 
 // Function prototypes
-class AbstractCamera{
+class AbstractCamera: public KeyboardInputAction{
 	protected:
 		// Camera
 		float fov;
@@ -19,14 +24,34 @@ class AbstractCamera{
 		glm::dvec3 position;
 		glm::dvec3 direction;
 		glm::dvec3 up;
+
+		double prevX;
+		double prevY;
+		bool prev_initialized;
+		bool mouse1_pressed;
+		bool mouse2_pressed;
+		bool mouse3_pressed;
 		
 		size_t debugLevel;
 		bool active;
+		
+		// Keyboard
+		KeyboardInput *keyboard;
+
+		/* Frame */
+		Frame *frame;
+		GLFWwindow *window;
+		
+		/**
+		* Called when the user has activated the field, and
+		* pushes keyboard buttons
+		**/
+		virtual void onKeyInput(int key);
 	public:
 		/**
 		* Creates the camera and initializes it in vec3(0, 0, 0)
 		**/
-		AbstractCamera(Config *config);
+		AbstractCamera(Config *config, Frame *frame, GLFWwindow *window);
 		
 		/**
 		* Finalizes the camera
@@ -47,6 +72,11 @@ class AbstractCamera{
 		* Called when the camera is actived
 		**/
 		virtual void setActive(bool active);
+		
+		/**
+		*
+		**/
+		void checkMouseLocation(void);
 		
 		/**
 		*

@@ -40,7 +40,7 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	// Enabling CULLING of back faces
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	
+
 	// Blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -49,6 +49,7 @@ Frame::Frame(int width, int height, const char *title, Renderer *renderer, Simul
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 	
 	// Callback functions
+	glfwSetScrollCallback(window, mouseScrollCallback);
 	glfwSetMouseButtonCallback(window, mouseCallback);
 	glfwSetWindowCloseCallback(window, windowCloseCallback);
 	glfwSetWindowSizeCallback(window, windowSizeChangeCallback);
@@ -64,6 +65,8 @@ Frame::~Frame(void){
 
 	delete hud;
 
+	KeyboardInput::destroy();
+
 	glfwTerminate();
 }
 
@@ -78,7 +81,7 @@ void Frame::update(void){
 	lastSecondFrameCount++;
 
 	// Reset transformations and Clear
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
 
 	// Getting view and projection matrix, and camera attributes
 	glm::mat4 vp = hud->getActivatedCamera()->getVP();
@@ -139,7 +142,7 @@ void Frame::keyCallback(GLFWwindow* window, int key, int scancode, int action, i
 	}
 	
 	// Keyboard input
-	if(key != GLFW_KEY_ESCAPE && action == GLFW_PRESS){	
+	if(key != GLFW_KEY_ESCAPE && action != GLFW_RELEASE){	
 		Frame::instance->keyboardInput->addInput(key);
 	}
 }
@@ -148,9 +151,17 @@ void Frame::mouseCallback(GLFWwindow *window, int button, int action, int mods){
 	// Getting mouse position
 	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
-	
+
 	// Passing data to menu
 	Frame::instance->hud->hudClicked(button, action, xpos, ypos);
+}
+
+void Frame::mouseScrollCallback(GLFWwindow *window, double xoffset, double yoffset){
+	// Getting mouse position
+	double xpos, ypos;
+	glfwGetCursorPos(window, &xpos, &ypos);
+
+	Frame::instance->hud->hudScroll( xpos, ypos, xoffset, yoffset );
 }
 
 HUD* Frame::getHud(){
